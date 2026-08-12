@@ -299,4 +299,4 @@ Optional (non-blocking): if future polish targets shorter Hero scroll depth, a m
 **Branch:** `cursor/hero-mobile-composition-1eee`  
 **Starting SHA:** `a4cb32e`  
 **Implementation commit:** `984e8e1`  
-**Documentation commit:** `de46adc`
+**Documentation commit:** `bb82d5c`
