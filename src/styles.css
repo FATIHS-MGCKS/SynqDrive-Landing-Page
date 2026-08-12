@@ -504,9 +504,6 @@ svg {
 
 .mobilenav {
   --mobilenav-top: var(--masthead-h);
-}
-
-.mobilenav {
   position: fixed;
   inset: var(--mobilenav-top) 0 0 0;
   z-index: 45;

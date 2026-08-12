@@ -219,7 +219,7 @@ No landing-section CSS was modified except shared header/mobilenav rules decoupl
 
 ## 20. Commit SHA
 
-*(recorded after push)*
+`0383f83` — `feat(navigation): rebuild mobile navigation experience`
 
 ---
 
