@@ -316,8 +316,8 @@ EN page height: 9630 → **9150px** (−480px).
 
 **Branch:** `cursor/global-mobile-layout-1eee`  
 **Starting SHA:** `e7d6508`  
-**Implementation commit:** *(recorded on commit)*  
-**Documentation commit:** *(if separate)*
+**Implementation commit:** `b125093`  
+**Documentation commit:** `fefc8f1`
 
 ---
 
