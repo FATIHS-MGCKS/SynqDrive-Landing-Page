@@ -240,7 +240,7 @@ npm run qa      — 18/18 pass (16 existing + 2 keyboard tab-order tests)
 
 ### Commit SHA
 
-*(recorded after push to `main`)*
+`c1d1bcf` — `fix(navigation): remove closed dropdown from keyboard flow`
 
 ### Explicit non-actions
 
