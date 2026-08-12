@@ -341,8 +341,9 @@ screenshots are byte-identical to the locally approved build.
 
 - **P1.6 / P1.6.1:** Production deployment, live acceptance, and artefact hygiene — **complete** (2026-08-12).
 - **P2.1:** Mobile experience baseline audit — **complete** (2026-08-12).
-- **P2.2:** Global mobile layout system — **implemented locally** (not deployed); see below and [`docs/audits/landing-page-phase-2.2-global-mobile-layout-system-2026-08.md`](audits/landing-page-phase-2.2-global-mobile-layout-system-2026-08.md).
-- **Phase 2.3–2.8:** Section-specific mobile composition — **pending**.
+- **P2.2:** Global mobile layout system — **merged to main** (PR #2, 2026-08-12).
+- **P2.3:** Hero mobile composition — **implemented locally** (not deployed); see [`docs/audits/landing-page-phase-2.3-hero-mobile-composition-2026-08.md`](audits/landing-page-phase-2.3-hero-mobile-composition-2026-08.md).
+- **Phase 2.4–2.8:** Remaining section-specific mobile composition — **pending**.
 - Solutions, Resources, and Pricing top-level navigation remain deferred until real destination pages exist (DEC-004).
 - Taxi & Mobility may become a future Solutions page; it does not imply generally available Taxi Dispatch (DEC-009).
 - The product visuals are English on both locales. German screenshot variants deferred.
@@ -399,3 +400,29 @@ Phase 2.2 introduces a shared responsive foundation in `src/styles.css` without 
 - Chromium: **37/37** (33 Phase-1 + 4 P2.2 structural tests)
 - WebKit smoke: **2/2**
 - P2.2 screenshots: `qa/p22-*` (gitignored)
+
+## Hero mobile composition (P2.3 — local, not deployed)
+
+**Audit:** [`docs/audits/landing-page-phase-2.3-hero-mobile-composition-2026-08.md`](audits/landing-page-phase-2.3-hero-mobile-composition-2026-08.md)
+
+P2.3 restructures Hero markup and CSS only — no navigation, asset, or downstream section changes.
+
+### Composition
+
+| Viewport | Order |
+|---|---|
+| Mobile (≤1024) | `.hero__intro` → `.hero__media` → `.hero__proof` (semantic DOM) |
+| Desktop (≥1025) | Grid: intro + proof left column; product frame right column (visual equivalent to pre-P2.3) |
+
+### Key CSS
+
+- `.hero__intro` / `.hero__proof` / `.hero__media` grid placement preserves desktop split
+- Tighter Hero padding at ≤1024 / ≤760 using P2.2 spacing tokens
+- Compact proof list on phone (`13.5px`, reduced row padding)
+
+### QA
+
+- Chromium: **47/47** (41 prior + 6 P2.3 hero tests)
+- WebKit smoke: **2/2**
+- P2.3 screenshots: `qa/p23-*` (gitignored)
+- 390×844 DE frame top: **508px** (P2.2 **716px**)

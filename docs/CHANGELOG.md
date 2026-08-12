@@ -12,6 +12,33 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+---
+
+## Hero mobile composition (P2.3) — 2026-08-12
+
+**Phase:** P2.3 — Hero mobile composition (local only; **not deployed**)  
+**Audit:** [`docs/audits/landing-page-phase-2.3-hero-mobile-composition-2026-08.md`](audits/landing-page-phase-2.3-hero-mobile-composition-2026-08.md)
+
+### Changed
+
+- Hero mobile source order: intro → product visual → proof (semantic DOM reorder)
+- Desktop Hero grid preserves left-copy / right-product layout
+- Tighter Hero padding and compact proof typography on phone
+
+### Not changed
+
+- Phase-1 navigation, product image assets, copy text, other sections
+- Production (`synqdrive.eu`)
+
+### Verified (local)
+
+- `npm run build` — pass
+- Chromium QA **47/47**; WebKit smoke **2/2**
+- H-01 **RESOLVED**; G-02/G-03/M-03 improved in Hero only (global **PARTIAL**)
+- 390×844 DE Hero frame top: **508px** (P2.2 **716px**)
+
+---
+
 ## Global mobile layout system (P2.2) — 2026-08-12
 
 **Phase:** P2.2 — Global mobile layout system (local only; **not deployed**)  
