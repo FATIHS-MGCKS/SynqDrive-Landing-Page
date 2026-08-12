@@ -12,9 +12,26 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ## Phase 1 production deployment (P1.6) — 2026-08-12
 
+**Phase:** P1.6 — Production deployment & live acceptance  
 **Audit:** [`docs/audits/landing-page-phase-1.6-production-deployment-2026-08.md`](audits/landing-page-phase-1.6-production-deployment-2026-08.md)
 
-Deployed Phase-1 navigation (desktop Platform disclosure + mobile modal) to `https://synqdrive.eu`. Runtime artefact matches release candidate `c77dc76`. Build performed from repository HEAD `ff235ea`. Product application at `app.synqdrive.eu` unaffected.
+### Deployed
+
+- Phase-1 desktop Platform disclosure navigation (P1.3 / P1.3.1)
+- Phase-1 mobile modal navigation (P1.4 / P1.4.1)
+- Runtime release candidate **`c77dc76`** to `https://synqdrive.eu` (build from repository HEAD **`ff235ea`**)
+
+### Production acceptance
+
+- Local QA: 33 Chromium + 2 WebKit — pass
+- Production QA: 33 Chromium + 2 WebKit smoke — pass (6 Chromium tests retried after Hostinger rate-limit cooldown)
+- Product application isolation verified — no VPS/product impact
+
+### Not changed (explicit)
+
+- Product application / `app.synqdrive.eu`
+- DNS (except incidental `www` redirect behaviour noted in audit)
+- Landing-page sections, product images, deferred IA categories
 
 ---
 
