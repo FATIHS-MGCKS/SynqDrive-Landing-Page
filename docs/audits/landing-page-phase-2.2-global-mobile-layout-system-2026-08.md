@@ -405,12 +405,23 @@ Phase-1 navigation tests: **unchanged / green**.
 
 ### 10. Commits
 
-| Commit | Message |
-|---|---|
-| *(implementation)* | `fix(responsive): correct mobile frame and stack primitives` |
-| *(documentation)* | `docs(audit): record P2.2 system correction` |
+| Role | SHA | Message |
+|---|---|---|
+| Implementation | `9c6bea5` | `fix(responsive): correct mobile frame and stack primitives` |
+| Documentation | `32bc09a` | `docs(audit): record P2.2 system correction` |
 
-**P2.2.1 implementation commit:** *(recorded on commit)*
+---
+
+## P2.2 FINAL TECHNICAL STATE
+
+- Build: PASS
+- Chromium QA: **41/41**
+- WebKit: **2/2**
+- Phase-1 navigation regression: PASS
+- Vehicle flush containment: PASS
+- Stack spacing ownership: PASS
+- P2.2 Production deployment: **NOT PERFORMED**
+- P2.3: **NOT STARTED**
 
 ---
 
