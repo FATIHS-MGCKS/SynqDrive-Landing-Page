@@ -18,13 +18,55 @@
  * vehicle list, the assistant and the inbox are upright enough to sit in a split.
  */
 import { icon } from './icons.generated.mjs';
+import { flattenPlatformMenu } from '../content/site.mjs';
 import { action, esc, iconMark, productFrame, sectionHead } from './primitives.mjs';
 
 /** Exported so the <link rel="preload"> in the document head cannot drift. */
 export const HERO_SIZES = '(max-width: 900px) 92vw, 50vw';
 
-export function header(c, other) {
-  const platformItems = c.nav.platformItems
+function renderPlatformPanel(c) {
+  const menu = c.nav.platformMenu;
+  const groups = menu.groups
+    .map(
+      (group) => `<div class="nav-panel__group">
+            <p class="nav-panel__group-title">${esc(group.title)}</p>
+            <ul class="nav-panel__list">
+              ${group.items
+                .map(
+                  (item) => `<li>
+                    <a class="nav-panel__link" href="${item.href}">
+                      <span class="nav-panel__link-label">${esc(item.label)}</span>
+                      <span class="nav-panel__link-desc">${esc(item.description)}</span>
+                    </a>
+                  </li>`,
+                )
+                .join('')}
+            </ul>
+          </div>`,
+    )
+    .join('');
+
+  const footer = menu.footerLink
+    ? `<div class="nav-panel__footer">
+          <a class="nav-panel__footer-link" href="${menu.footerLink.href}">
+            ${esc(menu.footerLink.label)}<span class="nav-panel__footer-arrow">${icon('arrow-right')}</span>
+          </a>
+        </div>`
+    : '';
+
+  return `<div class="nav-panel" id="platform-menu" data-dropdown-menu>
+          <a class="nav-panel__overview" href="${menu.overview.href}">
+            <span class="nav-panel__overview-label">${esc(menu.overview.label)}</span>
+            <span class="nav-panel__overview-desc">${esc(menu.overview.description)}</span>
+          </a>
+          <div class="nav-panel__groups">${groups}</div>
+          ${footer}
+        </div>`;
+}
+
+export function header(c, other, site) {
+  const platformPanel = renderPlatformPanel(c);
+  const drawerLinks = flattenPlatformMenu(c.nav.platformMenu)
     .map((item) => `<li><a href="${item.href}">${esc(item.label)}</a></li>`)
     .join('');
 
@@ -34,7 +76,7 @@ export function header(c, other) {
           <img src="/assets/synqdrive-logo.png" width="1024" height="216" alt="SynqDrive" />
         </a>
 
-        <nav class="mainnav" aria-label="${esc(c.nav.platform)}">
+        <nav class="mainnav mainnav--platform" aria-label="${esc(c.nav.mainLabel)}">
           <div class="mainnav__group" data-dropdown>
             <button
               type="button"
@@ -46,11 +88,8 @@ export function header(c, other) {
               ${esc(c.nav.platform)}
               <span class="mainnav__chevron">${icon('chevron-down')}</span>
             </button>
-            <ul class="mainnav__menu" id="platform-menu" data-dropdown-menu>
-              ${platformItems}
-            </ul>
+            ${platformPanel}
           </div>
-          <a class="mainnav__link" href="${c.nav.contactHref}">${esc(c.nav.contact)}</a>
         </nav>
 
         <div class="masthead__actions">
@@ -63,8 +102,8 @@ export function header(c, other) {
           >
             ${icon('globe')}<span>${esc(other.htmlLang.toUpperCase())}</span>
           </a>
-          <a class="masthead__login" href="https://app.synqdrive.eu" rel="noopener">${esc(c.nav.login)}</a>
-          ${action({ href: 'mailto:info@synqdrive.eu?subject=SynqDrive%20demo%20request', label: c.nav.demo, variant: 'primary' })}
+          <a class="masthead__login" href="${site.links.app}" rel="noopener">${esc(c.nav.login)}</a>
+          ${action({ href: site.links.demo, label: c.nav.demo, variant: 'primary' })}
           <button
             type="button"
             class="masthead__toggle"
@@ -83,12 +122,11 @@ export function header(c, other) {
 
       <div class="drawer" id="mobile-nav" data-nav-panel hidden>
         <ul class="drawer__list">
-          ${platformItems}
-          <li><a href="${c.nav.contactHref}">${esc(c.nav.contact)}</a></li>
+          ${drawerLinks}
         </ul>
         <div class="drawer__actions">
-          <a class="action action--ghost" href="https://app.synqdrive.eu" rel="noopener">${esc(c.nav.login)}</a>
-          ${action({ href: 'mailto:info@synqdrive.eu?subject=SynqDrive%20demo%20request', label: c.nav.demo, variant: 'primary' })}
+          <a class="action action--ghost" href="${site.links.app}" rel="noopener">${esc(c.nav.login)}</a>
+          ${action({ href: site.links.demo, label: c.nav.demo, variant: 'primary' })}
           <a class="drawer__locale" href="${other.dir}" hreflang="${other.htmlLang}" lang="${other.htmlLang}">
             ${icon('globe')}<span>${esc(other.meta.localeName)}</span>
           </a>

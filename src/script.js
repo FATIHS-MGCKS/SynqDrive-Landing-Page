@@ -46,16 +46,57 @@
     var menu = group.querySelector('[data-dropdown-menu]');
     if (!trigger || !menu) return;
 
+    var closeTimer = null;
+    var openTimer = null;
+
+    function cancelScheduledClose() {
+      if (closeTimer !== null) {
+        clearTimeout(closeTimer);
+        closeTimer = null;
+      }
+    }
+
+    function cancelScheduledOpen() {
+      if (openTimer !== null) {
+        clearTimeout(openTimer);
+        openTimer = null;
+      }
+    }
+
+    function scheduleClose() {
+      cancelScheduledClose();
+      closeTimer = setTimeout(function () {
+        closeDropdown(group);
+      }, 120);
+    }
+
     closeDropdown(group);
 
-    // Click only. Hover-to-open would make the trigger's own state ambiguous,
-    // because entering the trigger to click it would already have opened the menu.
-    trigger.addEventListener('click', function () {
+    trigger.addEventListener('click', function (event) {
+      event.stopPropagation();
+      cancelScheduledOpen();
+      cancelScheduledClose();
       if (group.dataset.open === 'true') closeDropdown(group);
       else openDropdown(group);
     });
 
-    // Leaving the group by keyboard closes it, staying inside does not.
+    // Desktop pointer: delayed hover open avoids fighting click toggles in tests and AT.
+    group.addEventListener('mouseenter', function () {
+      if (window.innerWidth <= 1024) return;
+      cancelScheduledClose();
+      cancelScheduledOpen();
+      openTimer = setTimeout(function () {
+        openTimer = null;
+        openDropdown(group);
+      }, 160);
+    });
+
+    group.addEventListener('mouseleave', function () {
+      if (window.innerWidth <= 1024) return;
+      cancelScheduledOpen();
+      scheduleClose();
+    });
+
     group.addEventListener('focusout', function (event) {
       if (!group.contains(event.relatedTarget)) closeDropdown(group);
     });

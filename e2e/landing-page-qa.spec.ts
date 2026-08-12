@@ -26,6 +26,45 @@ const SECTION_IDS = [
   'contact',
 ];
 
+const PLATFORM_NAV = {
+  de: {
+    trigger: 'Plattform',
+    mainLabel: 'Hauptnavigation',
+    overview: 'Plattform-Überblick',
+    links: [
+      { label: 'Plattform-Überblick', href: '#platform' },
+      { label: 'Vernetzte Fahrzeugintelligenz', href: '#vehicle-intelligence' },
+      { label: 'KI-Orchestrierung', href: '#ai-orchestration' },
+      { label: 'Workflow-Automatisierung', href: '#workflow-automation' },
+      { label: 'Kundenkommunikation', href: '#communication' },
+      { label: 'Integrationen & Erweiterung', href: '#integrations' },
+    ],
+    deferred: ['Lösungen', 'Ressourcen', 'Preise'],
+    login: 'Anmelden',
+    demo: 'Demo anfragen',
+  },
+  en: {
+    trigger: 'Platform',
+    mainLabel: 'Main navigation',
+    overview: 'Platform Overview',
+    links: [
+      { label: 'Platform Overview', href: '#platform' },
+      { label: 'Connected Vehicle Intelligence', href: '#vehicle-intelligence' },
+      { label: 'AI Orchestration', href: '#ai-orchestration' },
+      { label: 'Workflow Automation', href: '#workflow-automation' },
+      { label: 'Customer Communication', href: '#communication' },
+      { label: 'Integrations & Extension', href: '#integrations' },
+    ],
+    deferred: ['Solutions', 'Resources', 'Pricing'],
+    login: 'Log in',
+    demo: 'Book a demo',
+  },
+} as const;
+
+const DESKTOP_HEADER_WIDTHS = [1100, 1280, 1366, 1440, 1920];
+
+const NAV_SCREENSHOT_WIDTHS = [1100, 1280, 1440, 1920] as const;
+
 async function collectProblems(page: Page) {
   const consoleErrors: string[] = [];
   const failedRequests: string[] = [];
@@ -82,6 +121,16 @@ async function waitForImagery(page: Page) {
       { timeout: 20_000, message: 'images still decoding at screenshot time' },
     )
     .toBe(0);
+}
+
+async function shootHeader(page: Page, name: string) {
+  await fs.mkdir(OUT, { recursive: true });
+  const header = page.locator('.masthead');
+  await expect(header).toBeVisible();
+  await header.screenshot({
+    path: path.join(OUT, `${LABEL}${name}.png`),
+    animations: 'disabled',
+  });
 }
 
 async function shoot(page: Page, name: string) {
@@ -263,11 +312,22 @@ test.describe('public landing page', () => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/', { waitUntil: 'load' });
 
-    const trigger = page.getByRole('button', { name: /Plattform/ });
+    const trigger = page.getByRole('button', { name: 'Plattform' });
+    const menu = page.locator('#platform-menu');
     const menuItem = page.getByRole('link', { name: 'Vernetzte Fahrzeugintelligenz' }).first();
 
     await expect(trigger).toHaveAttribute('aria-expanded', 'false');
     await trigger.click();
+    await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+    await expect(menu).toBeVisible();
+    await expect(menuItem).toBeVisible();
+
+    const triggerBox = await trigger.boundingBox();
+    const itemBox = await menuItem.boundingBox();
+    expect(triggerBox).toBeTruthy();
+    expect(itemBox).toBeTruthy();
+    await page.mouse.move(triggerBox!.x + triggerBox!.width / 2, triggerBox!.y + triggerBox!.height / 2);
+    await page.mouse.move(itemBox!.x + 8, itemBox!.y + 8, { steps: 12 });
     await expect(trigger).toHaveAttribute('aria-expanded', 'true');
     await expect(menuItem).toBeVisible();
 
@@ -279,6 +339,66 @@ test.describe('public landing page', () => {
     await expect(page).toHaveURL(/#vehicle-intelligence$/);
     await expect(trigger).toHaveAttribute('aria-expanded', 'false');
   });
+
+  for (const locale of ['de', 'en'] as const) {
+    const spec = PLATFORM_NAV[locale];
+    const url = locale === 'de' ? '/' : '/en/';
+
+    test(`desktop navigation policy (${locale})`, async ({ page }) => {
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.goto(url, { waitUntil: 'load' });
+
+      const mainnav = page.locator('.mainnav');
+      await expect(mainnav).toHaveAttribute('aria-label', spec.mainLabel);
+      await expect(page.getByRole('button', { name: spec.trigger })).toBeVisible();
+      await expect(mainnav.getByRole('link', { name: /Kontakt|Contact/i })).toHaveCount(0);
+
+      for (const deferred of spec.deferred) {
+        await expect(mainnav.getByRole('link', { name: deferred })).toHaveCount(0);
+        await expect(mainnav.getByRole('button', { name: deferred })).toHaveCount(0);
+      }
+
+      const trigger = page.getByRole('button', { name: spec.trigger });
+      await trigger.click();
+      await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+
+      await expect(page.locator('.nav-panel__overview[href="#platform"]')).toHaveCount(1);
+      await expect(page.locator('.nav-panel__footer-link[href="#platform"]')).toHaveCount(1);
+
+      for (const link of spec.links.filter((entry) => entry.href !== '#platform')) {
+        const anchor = page.locator(`.nav-panel__link[href="${link.href}"]`);
+        await expect(anchor, link.label).toHaveCount(1);
+        await expect(page.locator(link.href)).toHaveCount(1);
+      }
+
+      await page.mouse.click(8, 8);
+      await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+
+      await expect(page.locator('.masthead__login')).toHaveAttribute('href', 'https://app.synqdrive.eu');
+      await expect(page.locator('.masthead__actions .action--primary')).toHaveAttribute(
+        'href',
+        /^mailto:info@synqdrive\.eu/,
+      );
+      await expect(page.getByRole('link', { name: spec.demo }).first()).toHaveAttribute(
+        'href',
+        /^mailto:info@synqdrive\.eu/,
+      );
+    });
+
+    test(`desktop header has no overflow (${locale})`, async ({ page }) => {
+      for (const width of DESKTOP_HEADER_WIDTHS) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(url, { waitUntil: 'load' });
+
+        const overflow = await page.evaluate(() => ({
+          scrollWidth: document.documentElement.scrollWidth,
+          clientWidth: document.documentElement.clientWidth,
+        }));
+
+        expect(overflow.scrollWidth, `${width}px`).toBeLessThanOrEqual(overflow.clientWidth + 1);
+      }
+    });
+  }
 
   test('mobile drawer opens, navigates and closes', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
@@ -292,7 +412,7 @@ test.describe('public landing page', () => {
     await expect(page.locator('[data-nav-panel]')).toBeVisible();
     await expect(toggle).toHaveAttribute('aria-expanded', 'true');
 
-    await page.locator('[data-nav-panel]').getByRole('link', { name: 'Integrationen' }).click();
+    await page.locator('[data-nav-panel]').getByRole('link', { name: 'Integrationen & Erweiterung' }).click();
     await expect(page.locator('[data-nav-panel]')).toBeHidden();
     await expect(page).toHaveURL(/#integrations$/);
   });
@@ -329,6 +449,19 @@ test.describe('public landing page', () => {
     );
 
     expect(shift).toBeLessThan(0.1);
+  });
+
+  test('captures P1.3 desktop navigation screenshots', async ({ page }) => {
+    for (const width of NAV_SCREENSHOT_WIDTHS) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/', { waitUntil: 'load' });
+      await shootHeader(page, `p13-nav-${width}-de-closed`);
+
+      await page.getByRole('button', { name: 'Plattform' }).click();
+      await expect(page.locator('#platform-menu')).toBeVisible();
+      await shootHeader(page, `p13-nav-${width}-de-open`);
+      await page.keyboard.press('Escape');
+    }
   });
 
   test('captures reference screenshots', async ({ page }) => {

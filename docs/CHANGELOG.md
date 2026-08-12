@@ -8,6 +8,30 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+## Desktop Platform navigation (P1.3) — 2026-08-12
+
+**Phase:** P1.3 — Desktop navigation  
+**Audit:** [`docs/audits/landing-page-phase-1.3-desktop-navigation-2026-08.md`](audits/landing-page-phase-1.3-desktop-navigation-2026-08.md)
+
+### Implemented
+
+- Desktop header exposes **Plattform / Platform** as the sole active product top-level category
+- Platform dropdown with six grouped homepage anchors, descriptions, and overview row (DEC-004)
+- **Contact removed** from primary desktop navigation (remains in CTA and footer)
+- Solutions, Resources, and Pricing **not exposed** (deferred)
+- Central navigation data model in `content/site.mjs` (`nav.platformMenu`, `flattenPlatformMenu()`)
+- Disclosure navigation semantics (DEC-010): locale-correct `aria-label`, `aria-expanded`, `aria-controls`
+- Header login/demo URLs from `SITE.links`
+- Desktop pointer interaction: delayed hover open, click toggle, bridge gap, outside click and Escape close
+
+### Not changed (explicit)
+
+- Mobile drawer layout (P1.4)
+- Landing-page sections, footer structure, product images
+- Production deployment
+
+---
+
 ## Navigation & Website Governance v2 — 2026-08-12
 
 **Phase:** P1.2 — Governance, IA decisions, and product image policy  

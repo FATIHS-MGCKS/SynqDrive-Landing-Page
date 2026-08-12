@@ -92,25 +92,31 @@ the page does not read as six repeated text-beside-screenshot rows.
 
 ### Navigation
 
-**Current production (pre–P1.3):** Platform dropdown (Overview, Connected vehicle intelligence, AI and automation, Integrations), Contact top-level, locale switch, Log in, Book a demo. Mobile uses a drawer.
+**Desktop (P1.3, current):** Single top-level **Platform** disclosure with a grouped panel (~560px): overview row, three capability groups (Intelligence, Automation, Platform), six anchor links with descriptions, optional footer discover link. Right cluster: locale switch, Log in, Demo CTA. **Contact removed** from primary desktop nav.
+
+**Mobile (pre–P1.4):** Existing drawer retained; link list derived from the same `nav.platformMenu` model via `flattenPlatformMenu()`. Full mobile redesign scheduled for P1.4.
 
 **Ratified target IA (DEC-003):** Platform · Solutions · Resources · Pricing.
 
-**Staged activation (DEC-004, binding from P1.2):**
+**Staged activation (DEC-004):**
 
 | Category | Status |
 |---|---|
-| Platform — six homepage anchors | **Active** — to be implemented in P1.3 |
+| Platform — six homepage anchors | **Active** (desktop P1.3) |
 | Solutions | **Deferred** until destination pages exist |
 | Resources | **Deferred** until destination pages exist |
 | Pricing | **Deferred** until destination page exists |
-| Contact as primary top-level | **Removed in P1.3** — remains via CTA, footer, future Resources |
+| Contact as primary top-level | **Removed** — CTA, footer, future Resources |
 
-Platform anchors (locale-correct): `#platform`, `#vehicle-intelligence`, `#ai-orchestration`, `#workflow-automation`, `#communication`, `#integrations`.
+Platform anchors: `#platform`, `#vehicle-intelligence`, `#ai-orchestration`, `#workflow-automation`, `#communication`, `#integrations`.
 
-No placeholder URLs, fake routes, or empty dropdowns (DEC-008).
+Data model: `content/site.mjs` → `nav.platformMenu` (overview, groups[], footerLink), `nav.deferred` (labels only, not rendered), `flattenPlatformMenu()` for mobile flat list.
 
-**Accessibility (DEC-010):** Desktop nav uses disclosure buttons with normal links — not ARIA application menus. Arrow-key menu navigation is not required.
+Markup: `src/sections.mjs` → `header()`, `renderPlatformPanel()`. Styles: `.nav-panel*` in `src/styles.css`. Behaviour: `src/script.js` disclosure + delayed hover.
+
+Breakpoint: desktop nav hidden at `max-width: 1024px` (unchanged; verified at 1100–1920px).
+
+**Accessibility (DEC-010):** Disclosure buttons with normal links — no ARIA menu roles. Arrow-key menu navigation not required.
 
 ### Language
 
@@ -302,9 +308,8 @@ screenshots are byte-identical to the locally approved build.
 
 ## Known remaining points
 
-- **P1.3:** Expand Platform dropdown to six anchors; remove Contact from primary desktop top-level nav.
-- **P1.4:** Mobile navigation rebuild per DEC-007.
-- Solutions, Resources, and Pricing top-level navigation remain deferred until real destination pages exist (DEC-004) — approved in future IA, not permanently omitted.
+- **P1.4:** Mobile navigation rebuild per DEC-007 (grouped drawer, optional modal semantics).
+- Solutions, Resources, and Pricing top-level navigation remain deferred until real destination pages exist (DEC-004).
 - Taxi & Mobility may become a future Solutions page; it does not imply generally available Taxi Dispatch (DEC-009).
 - The product visuals are English on both locales. German screenshot variants deferred.
 - Both calls to action open a prefilled mail draft to `info@synqdrive.eu`.

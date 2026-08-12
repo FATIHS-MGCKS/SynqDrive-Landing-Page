@@ -35,6 +35,17 @@ const SECTION_IDS = {
   contact: 'contact',
 };
 
+/** Flat link list for mobile drawer until P1.4 consumes the full menu model. */
+export function flattenPlatformMenu(platformMenu) {
+  const links = [{ label: platformMenu.overview.label, href: platformMenu.overview.href }];
+  for (const group of platformMenu.groups) {
+    for (const item of group.items) {
+      links.push({ label: item.label, href: item.href });
+    }
+  }
+  return links;
+}
+
 /**
  * Product visuals — manually curated, committed under assets/.
  * Policy: assets/product/README.md and DEC-006 in docs/DECISIONS.md.
@@ -104,19 +115,70 @@ const en = {
   },
   nav: {
     home: 'SynqDrive home',
+    mainLabel: 'Main navigation',
     openMenu: 'Open menu',
     closeMenu: 'Close menu',
     platform: 'Platform',
-    platformItems: [
-      { label: 'Overview', href: `#${SECTION_IDS.platform}` },
-      { label: 'Connected vehicle intelligence', href: `#${SECTION_IDS.vehicle}` },
-      { label: 'AI and automation', href: `#${SECTION_IDS.ai}` },
-      { label: 'Integrations', href: `#${SECTION_IDS.integrations}` },
-    ],
-    contact: 'Contact',
-    contactHref: `#${SECTION_IDS.contact}`,
     login: 'Log in',
     demo: 'Book a demo',
+    platformMenu: {
+      overview: {
+        label: 'Platform Overview',
+        description: 'One system for the entire operation.',
+        href: `#${SECTION_IDS.platform}`,
+      },
+      groups: [
+        {
+          title: 'Intelligence',
+          items: [
+            {
+              label: 'Connected Vehicle Intelligence',
+              description: 'Vehicle data, condition, trips and operational context.',
+              href: `#${SECTION_IDS.vehicle}`,
+            },
+            {
+              label: 'AI Orchestration',
+              description: 'Understand context, generate recommendations and coordinate actions.',
+              href: `#${SECTION_IDS.ai}`,
+            },
+          ],
+        },
+        {
+          title: 'Automation',
+          items: [
+            {
+              label: 'Workflow Automation',
+              description: 'Connect events, conditions and actions.',
+              href: `#${SECTION_IDS.workflow}`,
+            },
+            {
+              label: 'Customer Communication',
+              description: 'Communication with customer, booking and vehicle context.',
+              href: `#${SECTION_IDS.communication}`,
+            },
+          ],
+        },
+        {
+          title: 'Platform',
+          items: [
+            {
+              label: 'Integrations & Extension',
+              description: 'APIs, webhooks and flexible platform extension.',
+              href: `#${SECTION_IDS.integrations}`,
+            },
+          ],
+        },
+      ],
+      footerLink: {
+        label: 'See the platform',
+        href: `#${SECTION_IDS.platform}`,
+      },
+    },
+    deferred: {
+      solutions: 'Solutions',
+      resources: 'Resources',
+      pricing: 'Pricing',
+    },
   },
   hero: {
     eyebrow: 'Fleet and rental operations platform',
@@ -323,19 +385,70 @@ const de = {
   },
   nav: {
     home: 'SynqDrive Startseite',
+    mainLabel: 'Hauptnavigation',
     openMenu: 'Menü öffnen',
     closeMenu: 'Menü schließen',
     platform: 'Plattform',
-    platformItems: [
-      { label: 'Überblick', href: `#${SECTION_IDS.platform}` },
-      { label: 'Vernetzte Fahrzeugintelligenz', href: `#${SECTION_IDS.vehicle}` },
-      { label: 'KI und Automatisierung', href: `#${SECTION_IDS.ai}` },
-      { label: 'Integrationen', href: `#${SECTION_IDS.integrations}` },
-    ],
-    contact: 'Kontakt',
-    contactHref: `#${SECTION_IDS.contact}`,
     login: 'Anmelden',
     demo: 'Demo anfragen',
+    platformMenu: {
+      overview: {
+        label: 'Plattform-Überblick',
+        description: 'Ein System für den gesamten Betrieb.',
+        href: `#${SECTION_IDS.platform}`,
+      },
+      groups: [
+        {
+          title: 'Intelligenz',
+          items: [
+            {
+              label: 'Vernetzte Fahrzeugintelligenz',
+              description: 'Fahrzeugdaten, Zustand, Fahrten und operativer Kontext.',
+              href: `#${SECTION_IDS.vehicle}`,
+            },
+            {
+              label: 'KI-Orchestrierung',
+              description: 'Kontext verstehen, Empfehlungen erzeugen und Aktionen koordinieren.',
+              href: `#${SECTION_IDS.ai}`,
+            },
+          ],
+        },
+        {
+          title: 'Automatisierung',
+          items: [
+            {
+              label: 'Workflow-Automatisierung',
+              description: 'Ereignisse, Bedingungen und Aktionen miteinander verbinden.',
+              href: `#${SECTION_IDS.workflow}`,
+            },
+            {
+              label: 'Kundenkommunikation',
+              description: 'Kommunikation mit Kunden-, Buchungs- und Fahrzeugkontext.',
+              href: `#${SECTION_IDS.communication}`,
+            },
+          ],
+        },
+        {
+          title: 'Plattform',
+          items: [
+            {
+              label: 'Integrationen & Erweiterung',
+              description: 'APIs, Webhooks und flexible Plattform-Erweiterung.',
+              href: `#${SECTION_IDS.integrations}`,
+            },
+          ],
+        },
+      ],
+      footerLink: {
+        label: 'Plattform entdecken',
+        href: `#${SECTION_IDS.platform}`,
+      },
+    },
+    deferred: {
+      solutions: 'Lösungen',
+      resources: 'Ressourcen',
+      pricing: 'Preise',
+    },
   },
   hero: {
     eyebrow: 'Plattform für Flotten- und Vermietbetrieb',

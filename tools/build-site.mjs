@@ -75,7 +75,7 @@ function document(locale) {
   const canonical = `${SITE.origin}${locale.dir}`;
 
   const body = [
-    header(locale, other),
+    header(locale, other, SITE),
     `<main id="main">`,
     hero(locale),
     unified(locale),
