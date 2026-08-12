@@ -10,6 +10,14 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+## Phase 1 production deployment (P1.6) — 2026-08-12
+
+**Audit:** [`docs/audits/landing-page-phase-1.6-production-deployment-2026-08.md`](audits/landing-page-phase-1.6-production-deployment-2026-08.md)
+
+Deployed Phase-1 navigation (desktop Platform disclosure + mobile modal) to `https://synqdrive.eu`. Runtime artefact matches release candidate `c77dc76`. Build performed from repository HEAD `ff235ea`. Product application at `app.synqdrive.eu` unaffected.
+
+---
+
 ## Release documentation consistency (P1.5.1) — 2026-08-12
 
 **Phase:** P1.5.1 — Post-review documentation alignment  

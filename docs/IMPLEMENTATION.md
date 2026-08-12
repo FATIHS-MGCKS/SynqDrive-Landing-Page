@@ -3,10 +3,10 @@
 **Date:** 2026-08-11 (original report); Phase-1 navigation updates through P1.5  
 **Production URL:** <https://synqdrive.eu> (German), <https://synqdrive.eu/en/> (English)
 
-> **Current Phase-1 release candidate:** `c77dc76`  
-> **P1.5 status:** READY FOR P1.6  
-> **Production deployment of this RC:** NOT YET PERFORMED  
-> Live production still reflects the pre–Phase-1 navigation baseline until P1.6 deploys this candidate.
+> **Current Phase-1 production deployment (P1.6):** `c77dc76` runtime — deployed **2026-08-12T12:58:22Z**  
+> **Build repository HEAD:** `ff235ea` (documentation-only commits after RC; no runtime delta)  
+> **P1.5 status:** PASS — deployed to Production in P1.6  
+> **Rollback reference:** pre-P1.6 production fingerprint documented in [`docs/audits/landing-page-phase-1.6-production-deployment-2026-08.md`](audits/landing-page-phase-1.6-production-deployment-2026-08.md); historical coming-soon snapshot in `rollback/coming-soon-2026-08-11/`
 
 > **Note on paths.** This report was written while the site still lived inside the SynqDrive
 > product repository, before it was extracted into this standalone repository. Paths such as
@@ -329,8 +329,8 @@ screenshots are byte-identical to the locally approved build.
 
 ## Known remaining points
 
-- **P1.6:** Production deployment and live acceptance of release candidate `c77dc76` — **pending**.
-- **Phase 2:** Mobile page composition (hero and sections below header) — **pending** (post-P1.6).
+- **P1.6:** Production deployment and live acceptance — **complete** (2026-08-12). See P1.6 audit.
+- **Phase 2:** Mobile page composition (hero and sections below header) — **pending**.
 - Solutions, Resources, and Pricing top-level navigation remain deferred until real destination pages exist (DEC-004).
 - Taxi & Mobility may become a future Solutions page; it does not imply generally available Taxi Dispatch (DEC-009).
 - The product visuals are English on both locales. German screenshot variants deferred.
