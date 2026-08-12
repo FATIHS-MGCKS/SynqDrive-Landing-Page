@@ -1405,6 +1405,12 @@ test.describe('public landing page', () => {
         !!proof &&
         (media.compareDocumentPosition(proof) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
 
+      const introRect = rect(intro);
+      const introProofGap =
+        introRect && proofRect
+          ? Math.round((proofRect.top - introRect.bottom) * 10) / 10
+          : null;
+
       return {
         scrollWidth: document.documentElement.scrollWidth,
         clientWidth: document.documentElement.clientWidth,
@@ -1416,6 +1422,8 @@ test.describe('public landing page', () => {
         frameLeft: frameRect?.left ?? 0,
         frameRight: frameRect?.right ?? 0,
         proofTop: proofRect?.top ?? 0,
+        introBottom: introRect?.bottom ?? 0,
+        introProofGap,
         mediaTop: mediaRect?.top ?? 0,
         frameBeforeProof: frameRect && proofRect ? frameRect.top < proofRect.top : false,
         introBeforeMedia,
@@ -1485,7 +1493,60 @@ test.describe('public landing page', () => {
       expect(state.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(state.clientWidth + 1);
       expect(state.desktopMediaColumn, `${width}px desktop media column`).toBe(true);
       expect(state.frameWidth, `${width}px desktop frame width`).toBeGreaterThan(0);
+      expect(state.introProofGap, `${width}px intro-proof gap`).not.toBeNull();
+      expect(state.introProofGap!, `${width}px intro-proof gap min`).toBeGreaterThanOrEqual(30);
+      expect(state.introProofGap!, `${width}px intro-proof gap max`).toBeLessThanOrEqual(44);
     }
+  });
+
+  test('P2.3.1 hero desktop intro-proof spacing', async ({ page }) => {
+    for (const width of P23_DESKTOP_WIDTHS) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const state = await readHeroComposition(page);
+      expect(state.introProofGap, `${width}px intro-proof spacing`).not.toBeNull();
+      expect(state.introProofGap!, `${width}px avoids double spacing`).toBeLessThan(60);
+      expect(state.introProofGap!, `${width}px canonical stack-gap-loose`).toBeGreaterThanOrEqual(30);
+      expect(state.introProofGap!, `${width}px canonical stack-gap-loose`).toBeLessThanOrEqual(44);
+    }
+  });
+
+  test('P2.3.1 hero mobile frame position regression', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'load' });
+    await settle(page);
+
+    const state = await readHeroComposition(page);
+    expect(state.frameTop, '390px frame top').toBeGreaterThanOrEqual(500);
+    expect(state.frameTop, '390px frame top').toBeLessThanOrEqual(525);
+    expect(state.frameBeforeProof, '390px product before proof').toBe(true);
+  });
+
+  test('P2.3.1 EN hero H1 measurement at 430px', async ({ page }) => {
+    await page.setViewportSize({ width: 430, height: 844 });
+    await page.goto('/en/', { waitUntil: 'load' });
+    await settle(page);
+
+    const h1 = await page.evaluate(() => {
+      const el = document.querySelector('.hero h1');
+      if (!el) return null;
+      const styles = getComputedStyle(el);
+      const lineHeight = parseFloat(styles.lineHeight);
+      const height = el.getBoundingClientRect().height;
+      return {
+        height: Math.round(height),
+        lineCount: lineHeight > 0 ? Math.round(height / lineHeight) : 0,
+        fontSize: styles.fontSize,
+        lineHeight: styles.lineHeight,
+      };
+    });
+
+    expect(h1).not.toBeNull();
+    expect(h1!.height).toBeGreaterThanOrEqual(60);
+    expect(h1!.height).toBeLessThanOrEqual(70);
+    expect(h1!.lineCount, 'EN H1 rendered lines at 430px').toBe(2);
   });
 
   test('P2.3 hero landscape sanity', async ({ page }) => {
@@ -1536,6 +1597,16 @@ test.describe('public landing page', () => {
       await shoot(page, `p23-${locale}-${width}x${height}-viewport`);
       await page.locator('.hero').screenshot({
         path: path.join(OUT, `${LABEL}p23-hero-${locale}-${width}.png`),
+        animations: 'disabled',
+      });
+    }
+
+    for (const width of P23_DESKTOP_WIDTHS) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+      await page.locator('.hero').screenshot({
+        path: path.join(OUT, `${LABEL}p23-hero-de-desktop-${width}.png`),
         animations: 'disabled',
       });
     }
