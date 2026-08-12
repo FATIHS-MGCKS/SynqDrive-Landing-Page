@@ -565,7 +565,7 @@ Containers, Cards table, Localization, Section 02 — Platform, Section 07 — I
 
 | Item | Change |
 |---|---|
-| Finding severities | **Unchanged** — CRITICAL **0**, HIGH **10**, MEDIUM **9**, LOW **5** |
+| Finding severities | At P2.1.1 time, diagnosis severities unchanged (Platform remains **HIGH**); count totals superseded by P2.1.2 normalization |
 | Platform severity | Remains **HIGH** with corrected root cause |
 | Platform scorecard | Scores unchanged; brief updated to “four stacked cards before screenshot” |
 | Product Visual Matrix | **Unchanged** — Platform remains class **C** (manual crop optional); no new manual assets added |
@@ -595,4 +595,4 @@ Containers, Cards table, Localization, Section 02 — Platform, Section 07 — I
 | Implementation | **No website code, content, images, navigation, or Production configuration changed** |
 | Deployment | **Production not deployed** |
 
-**P2.1.2 correction commit:** *(recorded on commit)*
+**P2.1.2 correction commit:** `307002c`
