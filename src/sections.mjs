@@ -191,8 +191,10 @@ export function hero(c) {
   const h = c.hero;
   const proof = h.proof.map((line) => `<li>${esc(line)}</li>`).join('');
 
-  return `<section class="hero layout-split layout-split--copy-first" aria-labelledby="hero-title">
-      <div class="hero__copy">
+  /* Mobile source order: intro → product → proof. Desktop grid keeps intro + proof
+     in the copy column and the product frame in the right column. */
+  return `<section class="hero layout-split" aria-labelledby="hero-title">
+      <div class="hero__intro">
         <p class="eyebrow" data-reveal>${esc(h.eyebrow)}</p>
         <h1 id="hero-title" data-reveal>${esc(h.title)}</h1>
         <p class="hero__body" data-reveal>${esc(h.body)}</p>
@@ -200,7 +202,6 @@ export function hero(c) {
           ${action({ href: 'mailto:info@synqdrive.eu?subject=SynqDrive%20demo%20request', label: h.primary, variant: 'primary' })}
           ${action({ href: `#${c.unified.id}`, label: h.secondary, variant: 'secondary' })}
         </div>
-        <ul class="hero__proof" data-reveal>${proof}</ul>
       </div>
       <div class="hero__media" data-reveal>
         ${productFrame({
@@ -210,6 +211,7 @@ export function hero(c) {
           sizes: HERO_SIZES,
         })}
       </div>
+      <ul class="hero__proof" data-reveal>${proof}</ul>
     </section>`;
 }
 

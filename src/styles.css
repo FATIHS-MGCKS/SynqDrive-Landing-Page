@@ -894,13 +894,19 @@ html[data-nav-scroll-lock='true'] {
   display: grid;
   grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
   align-items: center;
-  gap: 56px;
+  column-gap: 56px;
+  row-gap: 0;
   padding-block: 96px 120px;
+}
+
+.hero__intro {
+  grid-column: 1;
+  grid-row: 1;
 }
 
 /* Upper bound is set by the German headline: "Betriebssystem" has to sit on one
    line inside the copy column at the widest layout. */
-.hero__copy h1 {
+.hero__intro h1 {
   font-size: var(--type-display);
   letter-spacing: -0.03em;
 }
@@ -923,6 +929,8 @@ html[data-nav-scroll-lock='true'] {
 /* Three short statements, set as a quiet rule-separated list rather than icon
    cards, so the hero keeps one visual focus. */
 .hero__proof {
+  grid-column: 1;
+  grid-row: 2;
   margin-top: var(--stack-gap-loose);
   border-top: 1px solid var(--hairline);
 }
@@ -942,6 +950,9 @@ html[data-nav-scroll-lock='true'] {
    product enough presence, and bleeding past the gutter creates page-level
    horizontal scroll on every viewport wider than the shell. */
 .hero__media {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  align-self: center;
   min-width: 0;
 }
 
@@ -1626,8 +1637,27 @@ html[data-nav-scroll-lock='true'] {
 
   .hero {
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--stack-copy-visual);
-    padding-block: clamp(48px, 8vw, 64px) clamp(56px, 10vw, 88px);
+    gap: var(--stack-gap-loose);
+    padding-block: clamp(40px, 7vw, 56px) clamp(48px, 8vw, 72px);
+  }
+
+  .hero__intro,
+  .hero__media,
+  .hero__proof {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .hero__intro .eyebrow {
+    margin-bottom: 16px;
+  }
+
+  .hero__actions {
+    margin-top: var(--stack-gap);
+  }
+
+  .hero__proof {
+    margin-top: 0;
   }
 
   .hero__body,
@@ -1745,6 +1775,17 @@ html[data-nav-scroll-lock='true'] {
 
   .eyebrow {
     margin-bottom: 16px;
+  }
+
+  .hero {
+    gap: var(--stack-gap);
+    padding-block: clamp(32px, 6vw, 44px) clamp(36px, 6vw, 52px);
+  }
+
+  .hero__proof li {
+    padding: 8px 0;
+    font-size: 13.5px;
+    line-height: 1.45;
   }
 
   .notes {
