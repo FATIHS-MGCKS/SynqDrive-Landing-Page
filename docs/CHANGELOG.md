@@ -10,6 +10,23 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+## Production readiness gate (P1.5) — 2026-08-12
+
+**Phase:** P1.5 — Integration audit & production readiness  
+**Audit:** [`docs/audits/landing-page-phase-1.5-production-readiness-2026-08.md`](audits/landing-page-phase-1.5-production-readiness-2026-08.md)
+
+### Result
+
+**PASS** — Ready for P1.6 production deployment (deployment not performed in P1.5).
+
+### Minor corrections during gate
+
+- Scroll-lock drift safeguard when `pendingScrollY` stale after pointer interaction
+- Documentation accuracy (AGENTS.md QA commands, IMPLEMENTATION.md script size)
+- P1.5 release-candidate screenshot test (33 Chromium tests total)
+
+---
+
 ## Mobile modal semantics fix (P1.4.1) — 2026-08-12
 
 **Phase:** P1.4.1 — Mobile modal focus boundary & Safari hardening  

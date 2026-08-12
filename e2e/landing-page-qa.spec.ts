@@ -911,6 +911,66 @@ test.describe('public landing page', () => {
     }
   });
 
+  test('captures P1.5 release candidate screenshots', async ({ page }) => {
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/', { waitUntil: 'load' });
+    await shootHeader(page, 'p15-rc-1440-de-closed');
+    await page.getByRole('button', { name: 'Plattform' }).click();
+    await shootHeader(page, 'p15-rc-1440-de-platform-open');
+    await page.keyboard.press('Escape');
+
+    await page.setViewportSize({ width: 1920, height: 1080 });
+    await page.goto('/', { waitUntil: 'load' });
+    await page.getByRole('button', { name: 'Plattform' }).click();
+    await shootHeader(page, 'p15-rc-1920-de-platform-open');
+    await page.keyboard.press('Escape');
+
+    for (const [width, height, suffix] of [
+      [390, 844, '390'],
+      [430, 932, '430'],
+      [320, 700, '320'],
+    ] as const) {
+      await page.setViewportSize({ width, height });
+      await page.goto('/', { waitUntil: 'load' });
+      await shootHeader(page, `p15-rc-${suffix}-de-closed`);
+      await page.getByRole('button', { name: 'Menü öffnen' }).click();
+      await page.locator('[data-nav-panel]').screenshot({
+        path: path.join(OUT, `${LABEL}p15-rc-${suffix}-de-open.png`),
+        animations: 'disabled',
+      });
+      await page.keyboard.press('Escape');
+    }
+
+    await page.setViewportSize({ width: 1024, height: 1366 });
+    await page.goto('/', { waitUntil: 'load' });
+    await page.getByRole('button', { name: 'Menü öffnen' }).click();
+    await page.locator('[data-nav-panel]').screenshot({
+      path: path.join(OUT, `${LABEL}p15-rc-1024-de-open.png`),
+      animations: 'disabled',
+    });
+    await page.keyboard.press('Escape');
+
+    await page.setViewportSize({ width: 1100, height: 900 });
+    await page.goto('/', { waitUntil: 'load' });
+    await page.getByRole('button', { name: 'Plattform' }).click();
+    await shootHeader(page, 'p15-rc-1100-de-platform-open');
+    await page.keyboard.press('Escape');
+
+    for (const [width, height, name] of [
+      [844, 390, '844x390'],
+      [932, 430, '932x430'],
+    ] as const) {
+      await page.setViewportSize({ width, height });
+      await page.goto('/', { waitUntil: 'load' });
+      await page.getByRole('button', { name: 'Menü öffnen' }).click();
+      await page.locator('[data-nav-panel]').screenshot({
+        path: path.join(OUT, `${LABEL}p15-rc-${name}-landscape-open.png`),
+        animations: 'disabled',
+      });
+      await page.keyboard.press('Escape');
+    }
+  });
+
   test('captures reference screenshots', async ({ page }) => {
     for (const [name, width, height] of [
       ['desktop-1440-de', 1440, 900],

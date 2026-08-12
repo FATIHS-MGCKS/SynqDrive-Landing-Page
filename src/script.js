@@ -162,6 +162,9 @@
   function lockPageScroll() {
     if (scrollLockActive) return;
     savedScrollY = pendingScrollY !== null ? pendingScrollY : readScrollY();
+    if (pendingScrollY !== null && Math.abs(savedScrollY - readScrollY()) > 48) {
+      savedScrollY = readScrollY();
+    }
     pendingScrollY = null;
     scrollLockActive = true;
     document.documentElement.dataset.navScrollLock = 'true';

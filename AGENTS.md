@@ -114,7 +114,8 @@ Before merge or deployment:
 npm ci
 npm run build
 npm run serve    # separate terminal
-npm run qa       # 11 checks
+npm run qa       # Chromium Playwright suite (navigation + structure)
+npm run qa:webkit  # WebKit mobile-navigation smoke
 ```
 
 Use `npm run qa:prod` only after explicit deploy approval (P1.6).

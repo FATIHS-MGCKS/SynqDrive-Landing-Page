@@ -69,7 +69,7 @@ landingpage/
   rollback/               snapshot of the previous live site
 ```
 
-The shipped artefact is static HTML, CSS and one 6 kB script. Both locales render from the same
+The shipped artefact is static HTML, CSS and one ~11 kB script (mobile modal + desktop disclosure). Both locales render from the same
 templates and the same content model, so they cannot drift. The page carries no framework
 runtime, which is why the product's React components could not be reused directly; the visual
 language, the brand tokens and the icon set are shared instead, and the icons are extracted from
@@ -208,10 +208,10 @@ missed:
 
 | Viewport | Images | CSS | HTML | Fonts | JS | Total |
 |----------|--------|-----|------|-------|-----|-------|
-| Desktop 1440 | 337 kB | 28 kB | 27 kB | 24 kB | 6 kB | 423 kB |
-| Mobile 390 | 230 kB | 28 kB | 27 kB | 24 kB | 6 kB | 316 kB |
+| Desktop 1440 | 337 kB | 35 kB | 33 kB | 24 kB | 11 kB | 440 kB |
+| Mobile 390 | 230 kB | 35 kB | 33 kB | 24 kB | 11 kB | 333 kB |
 
-No framework, no animation library, one 6 kB script. The hero image is preloaded and eagerly
+No framework, no animation library, one ~11 kB script. The hero image is preloaded and eagerly
 decoded, everything below the fold is lazy, and `srcset` means the narrow viewport pulls the
 half-width variants rather than the desktop ones. Fonts are two self-hosted Manrope subsets,
 preloaded. Cumulative layout shift measured under 0.1 because every image carries intrinsic
