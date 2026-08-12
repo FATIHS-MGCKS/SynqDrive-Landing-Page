@@ -1020,7 +1020,8 @@ test.describe('public landing page', () => {
 
   async function readStackSpacing(page: Page) {
     return page.evaluate(() => {
-      const platformHead = document.querySelector('#platform .brief__head');
+      const platformIntro = document.querySelector('#platform .brief__intro');
+      const platformGrid = document.querySelector('#platform .capability-grid');
       const platformMedia = document.querySelector('#platform .stack__media');
       const workflowHead = document.querySelector('#workflow-automation .section-head');
       const workflowChain = document.querySelector('#workflow-automation .chain');
@@ -1036,8 +1037,25 @@ test.describe('public landing page', () => {
         return Math.round((bottom - top) * 10) / 10;
       };
 
+      const platformHeadBottom = () => {
+        if (!platformIntro || !platformMedia) return null;
+        if (window.matchMedia('(min-width: 1025px)').matches && platformGrid) {
+          return Math.max(
+            platformIntro.getBoundingClientRect().bottom,
+            platformGrid.getBoundingClientRect().bottom,
+          );
+        }
+        return platformIntro.getBoundingClientRect().bottom;
+      };
+
+      const platformHeadToMedia = (() => {
+        const bottom = platformHeadBottom();
+        if (bottom === null || !platformMedia) return null;
+        return Math.round((platformMedia.getBoundingClientRect().top - bottom) * 10) / 10;
+      })();
+
       return {
-        platformHeadToMedia: gap(platformHead, platformMedia),
+        platformHeadToMedia,
         workflowHeadToChain: gap(workflowHead, workflowChain),
         workflowChainToMedia: gap(workflowChain, workflowMedia),
         platformMediaMarginTop: platformMediaStyles
@@ -1607,6 +1625,242 @@ test.describe('public landing page', () => {
       await settle(page);
       await page.locator('.hero').screenshot({
         path: path.join(OUT, `${LABEL}p23-hero-de-desktop-${width}.png`),
+        animations: 'disabled',
+      });
+    }
+  });
+
+  const P24_PHONE_WIDTHS = [320, 360, 375, 390, 393, 414, 430, 480] as const;
+  const P24_TABLET_WIDTHS = [600, 768, 820, 1024] as const;
+  const P24_DESKTOP_WIDTHS = [1100, 1280, 1440, 1920] as const;
+  const P24_LANDSCAPE = [
+    [667, 375],
+    [844, 390],
+    [932, 430],
+  ] as const;
+
+  async function readPlatformComposition(page: Page) {
+    return page.evaluate(() => {
+      const section = document.getElementById('platform');
+      const intro = section?.querySelector('.brief__intro');
+      const media = section?.querySelector('.stack__media');
+      const grid = section?.querySelector('.capability-grid');
+      const frame = section?.querySelector('.stack__media .frame--product');
+      const capabilities = section?.querySelectorAll('.capability');
+      const sectionRect = section?.getBoundingClientRect();
+      const frameRect = frame?.getBoundingClientRect();
+      const introRect = intro?.getBoundingClientRect();
+      const mediaRect = media?.getBoundingClientRect();
+      const gridRect = grid?.getBoundingClientRect();
+
+      const fullCardCount = Array.from(capabilities ?? []).filter((el) => {
+        const styles = getComputedStyle(el);
+        return (
+          parseFloat(styles.borderTopWidth) > 0 &&
+          styles.backgroundColor !== 'rgba(0, 0, 0, 0)' &&
+          styles.backgroundColor !== 'transparent'
+        );
+      }).length;
+
+      const introBeforeMedia =
+        !!intro &&
+        !!media &&
+        (intro.compareDocumentPosition(media) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+      const mediaBeforeGrid =
+        !!media &&
+        !!grid &&
+        (media.compareDocumentPosition(grid) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+
+      const introToMedia =
+        introRect && mediaRect
+          ? Math.round((mediaRect.top - introRect.bottom) * 10) / 10
+          : null;
+      const mediaToGrid =
+        mediaRect && gridRect ? Math.round((gridRect.top - mediaRect.bottom) * 10) / 10 : null;
+
+      return {
+        scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth,
+        sectionHeight: sectionRect?.height ?? 0,
+        frameTopRel: sectionRect && frameRect ? frameRect.top - sectionRect.top : null,
+        frameWidth: frameRect?.width ?? 0,
+        capabilityCount: capabilities?.length ?? 0,
+        fullCardCount,
+        introBeforeMedia,
+        mediaBeforeGrid,
+        introToMedia,
+        mediaToGrid,
+        mediaMarginTop: media ? parseFloat(getComputedStyle(media).marginTop) : null,
+        desktopTwoColCards:
+          window.matchMedia('(min-width: 1025px)').matches && grid
+            ? getComputedStyle(grid).gridTemplateColumns.includes(' ')
+            : null,
+      };
+    });
+  }
+
+  async function readVehicleComposition(page: Page) {
+    return page.evaluate(() => {
+      const section = document.getElementById('vehicle-intelligence');
+      const panel = section?.querySelector('.stage__panel');
+      const media = section?.querySelector('.stage__media');
+      const flush = section?.querySelector('.frame--flush');
+      const notes = section?.querySelectorAll('.stage__notes li');
+      const head = section?.querySelector('.section-head');
+      const panelRect = panel?.getBoundingClientRect();
+      const flushRect = flush?.getBoundingClientRect();
+      const mediaRect = media?.getBoundingClientRect();
+      const flushStyles = flush ? getComputedStyle(flush) : null;
+
+      return {
+        scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth,
+        sectionHeight: section?.getBoundingClientRect().height ?? 0,
+        headToPanel:
+          head && panel
+            ? Math.round((panel.getBoundingClientRect().top - head.getBoundingClientRect().bottom) * 10) /
+              10
+            : null,
+        noteCount: notes?.length ?? 0,
+        mediaWidth: mediaRect?.width ?? 0,
+        flushContained:
+          flushRect && mediaRect
+            ? flushRect.left >= mediaRect.left - 1 && flushRect.right <= mediaRect.right + 1
+            : false,
+        flushMarginLeft: flushStyles ? parseFloat(flushStyles.marginLeft) : null,
+        desktopTwoCol:
+          window.matchMedia('(min-width: 1025px)').matches && panel
+            ? getComputedStyle(panel).gridTemplateColumns.includes(' ')
+            : null,
+      };
+    });
+  }
+
+  for (const locale of ['de', 'en'] as const) {
+    const url = locale === 'de' ? '/' : '/en/';
+
+    test(`P2.4 platform mobile composition invariants (${locale})`, async ({ page }) => {
+      for (const width of P24_PHONE_WIDTHS) {
+        await page.setViewportSize({ width, height: 844 });
+        await page.goto(url, { waitUntil: 'load' });
+        await settle(page);
+
+        const state = await readPlatformComposition(page);
+        expect(state.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(state.clientWidth + 1);
+        expect(state.capabilityCount, `${width}px capability count`).toBe(4);
+        expect(state.introBeforeMedia, `${width}px intro before media`).toBe(true);
+        expect(state.mediaBeforeGrid, `${width}px media before capabilities`).toBe(true);
+        expect(state.frameWidth, `${width}px platform frame width`).toBeGreaterThan(0);
+        expect(state.fullCardCount, `${width}px compact mobile cards`).toBe(0);
+        expect(state.mediaMarginTop, `${width}px media margin-top`).toBe(0);
+        expect(state.introToMedia, `${width}px intro-media gap`).toBeGreaterThanOrEqual(24);
+        expect(state.introToMedia!, `${width}px intro-media gap`).toBeLessThanOrEqual(36);
+      }
+    });
+  }
+
+  test('P2.4 platform tablet desktop regression', async ({ page }) => {
+    for (const width of P24_TABLET_WIDTHS) {
+      await page.setViewportSize({ width, height: 1024 });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const state = await readPlatformComposition(page);
+      expect(state.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(state.clientWidth + 1);
+      expect(state.mediaBeforeGrid, `${width}px media before grid`).toBe(true);
+      expect(state.frameTopRel!, `${width}px earlier product`).toBeLessThan(800);
+    }
+
+    for (const width of P24_DESKTOP_WIDTHS) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const state = await readPlatformComposition(page);
+      expect(state.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(state.clientWidth + 1);
+      expect(state.desktopTwoColCards, `${width}px desktop 2-col cards`).toBe(true);
+      expect(state.fullCardCount, `${width}px desktop card surfaces`).toBe(4);
+    }
+  });
+
+  test('P2.4 vehicle mobile composition invariants', async ({ page }) => {
+    for (const width of [...P24_PHONE_WIDTHS, ...P24_TABLET_WIDTHS]) {
+      await page.setViewportSize({ width, height: 844 });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const state = await readVehicleComposition(page);
+      expect(state.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(state.clientWidth + 1);
+      expect(state.noteCount, `${width}px vehicle notes`).toBe(3);
+      expect(state.flushContained, `${width}px flush contained`).toBe(true);
+      expect(state.flushMarginLeft ?? 0, `${width}px flush bleed margin`).toBeGreaterThanOrEqual(0);
+      expect(state.mediaWidth, `${width}px stage media width`).toBeGreaterThan(0);
+    }
+  });
+
+  test('P2.4 vehicle desktop stage regression', async ({ page }) => {
+    for (const width of P24_DESKTOP_WIDTHS) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const state = await readVehicleComposition(page);
+      expect(state.desktopTwoCol, `${width}px desktop stage columns`).toBe(true);
+      expect(state.flushContained, `${width}px desktop flush contained`).toBe(true);
+    }
+  });
+
+  test('P2.4 platform product distance regression (390 DE)', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'load' });
+    await settle(page);
+
+    const state = await readPlatformComposition(page);
+    expect(state.frameTopRel!, '390px platform frame distance').toBeLessThan(500);
+    expect(state.frameTopRel!, '390px improved from baseline').toBeLessThan(962);
+  });
+
+  test('P2.4 landscape sanity', async ({ page }) => {
+    for (const [width, height] of P24_LANDSCAPE) {
+      await page.setViewportSize({ width, height });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const platform = await readPlatformComposition(page);
+      const vehicle = await readVehicleComposition(page);
+      expect(platform.scrollWidth, `${width}x${height} platform overflow`).toBeLessThanOrEqual(
+        platform.clientWidth + 1,
+      );
+      expect(vehicle.scrollWidth, `${width}x${height} vehicle overflow`).toBeLessThanOrEqual(
+        vehicle.clientWidth + 1,
+      );
+    }
+  });
+
+  test('captures P2.4 platform vehicle screenshots', async ({ page }) => {
+    const shots = [
+      ['de', '/', 320, 700],
+      ['de', '/', 375, 812],
+      ['de', '/', 390, 844],
+      ['de', '/', 430, 932],
+      ['de', '/', 768, 1024],
+      ['de', '/', 1440, 1000],
+      ['en', '/en/', 320, 700],
+      ['en', '/en/', 390, 844],
+      ['en', '/en/', 430, 932],
+      ['en', '/en/', 1440, 1000],
+    ] as const;
+
+    for (const [locale, url, width, height] of shots) {
+      await page.setViewportSize({ width, height });
+      await page.goto(url, { waitUntil: 'load' });
+      await settle(page);
+      await page.locator('#platform').screenshot({
+        path: path.join(OUT, `${LABEL}p24-platform-${locale}-${width}.png`),
+        animations: 'disabled',
+      });
+      await page.locator('#vehicle-intelligence').screenshot({
+        path: path.join(OUT, `${LABEL}p24-vehicle-${locale}-${width}.png`),
         animations: 'disabled',
       });
     }
