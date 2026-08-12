@@ -23,7 +23,7 @@ Phase 2.2 establishes a coherent mobile design system in CSS and minimal markup 
 | Branch | `cursor/global-mobile-layout-1eee` |
 | Starting SHA | `e7d6508` (P2.1.2 on `main`) |
 | Build | `npm run build` — PASS |
-| Chromium QA | **37/37** |
+| Chromium QA | **41/41** (post-P2.2.1) |
 | WebKit smoke | **2/2** |
 | Navigation | Frozen — no structural changes |
 
@@ -111,12 +111,12 @@ Hero padding at ≤1024: `clamp(48px, 8vw, 64px) clamp(56px, 10vw, 88px)` (was f
 
 - `--frame-radius: 12px` (was 16px)
 - Lighter `--frame-shadow`
-- Full-bleed width: `width: calc(100% + 2 * var(--gutter)); margin-inline: calc(-1 * var(--gutter))`
-- `.frame--flush` (vehicle stage) excluded from bleed
+- Full-bleed at ≤760px for `.frame--product:not(.frame--flush)` only (`width: calc(100% + 2 * var(--gutter)); margin-inline: calc(-1 * var(--gutter))`)
+- `.frame--flush` (vehicle stage) **must not** receive bleed — corrected in P2.2.1 (see addendum)
 
 ### Cards / Surfaces
 
-**Systemic padding reduction** on `.capability`, `.hub__tile`, `.chain__link`, `.flow` via `--surface-padding`.
+**Systemic padding reduction** on `.capability`, `.hub__tile`, `.chain__link` via `--surface-padding`. `.flow` retains its own padding (`22px 24px 24px` desktop; `18px 18px 20px` at ≤760px) — **not** tokenised in P2.2 (AI section scope P2.5).
 
 **New primitives (not applied wholesale):**
 
@@ -164,7 +164,7 @@ No 393/414/430-specific queries added.
 
 ## Phone Validation
 
-Tested widths: 320, 360, 375, 390, 430, 480 (DE + EN invariants).
+Tested widths: 320, 360, 375, 390, 393, 414, 430, 480, 600, 768, 820, 1024 (DE + EN invariants) — **expanded in P2.2.1**.
 
 ---
 
@@ -172,7 +172,7 @@ Tested widths: 320, 360, 375, 390, 430, 480 (DE + EN invariants).
 
 Tested: 768, 1024 in P2.2 invariants + desktop regression block at 1100+.
 
-**OBSERVATION:** At 768px, `--section-y: 56px` applies (760 block) — intermediate between old 76px phone and 104px tablet; intentional compression.
+**FACT:** At 768px, `--section-y: 72px` (761–1024px band from `@media (max-width: 1024px)`). The ≤760px block (56px) does **not** apply above 760px.
 
 ---
 
@@ -210,7 +210,7 @@ All Phase-1 navigation tests pass unchanged.
 | Command | Result |
 |---|---|
 | `npm run build` | PASS |
-| `npm run qa` | **37/37** Chromium |
+| `npm run qa` | **41/41** Chromium (post-P2.2.1) |
 | `npm run qa:webkit` | **2/2** WebKit smoke |
 
 New tests: P2.2 mobile layout invariants (DE/EN), desktop regression widths, P2.2 screenshot capture.
@@ -225,7 +225,7 @@ New tests: P2.2 mobile layout invariants (DE/EN), desktop regression widths, P2.
 |---|---|---|
 | Hero | **IMPROVED** | Tighter type/spacing; frame full-bleed (+32px width) — product still below fold |
 | Platform | **IMPROVED** | Reduced section padding; wider product frame |
-| Vehicle Intelligence | **NEUTRAL** | Stage panel unchanged structurally |
+| Vehicle Intelligence | **IMPROVED** | Flush frame no longer bleeds/clips inside `.stage__panel` (P2.2.1); panel geometry preserved |
 | AI Orchestration | **NEUTRAL** | Global spacing only |
 | Workflow Automation | **NEUTRAL** | Global spacing only |
 | Customer Communication | **NEUTRAL** | Global spacing only |
@@ -273,7 +273,7 @@ EN page height: 9630 → **9150px** (−480px).
 | **H-05** | **DEFERRED** | Communication crop unchanged | **P2.6** |
 | **M-01** | **DEFERRED** | Vehicle notes length unchanged | **P2.4** |
 | **M-02** | **DEFERRED** | Hub tile grid unchanged | **P2.6** |
-| **M-03** | **RESOLVED** | Mobile frame tokens + full-bleed `.frame--product` | Monitor in P2.3+ |
+| **M-03** | **PARTIAL** | Mobile frame tokens + bleed for standalone frames; flush vehicle frame corrected P2.2.1; section crops still P2.5–P2.6 | P2.3+ monitor |
 | **L-01** | **PARTIAL** | Closing padding uses global rhythm | **P2.6** polish |
 | **L-02** | **PARTIAL** | Footer links 44px min-height | **P2.6** grouping polish |
 
@@ -318,6 +318,99 @@ EN page height: 9630 → **9150px** (−480px).
 **Starting SHA:** `e7d6508`  
 **Implementation commit:** `b125093`  
 **Documentation commit:** `fefc8f1`
+
+---
+
+## Post-review system correction (P2.2.1)
+
+**Date:** 2026-08-12  
+**Scope:** Focused primitive/QA/audit correction on existing P2.2 branch — **not deployed**
+
+### 1. `.frame--flush` bleed defect
+
+**Problem:** `.frame--product` full-bleed rule at ≤760px applied to **all** product frames, including Vehicle `.frame--flush` inside `.stage__panel`, causing negative gutter margins and viewport-width expansion clipped by the panel.
+
+**Root cause:** Bleed selector targeted `.frame--product` without excluding flush stage frames.
+
+**Correction:** Bleed eligibility narrowed to:
+
+```css
+.frame--product:not(.frame--flush) { … }
+```
+
+Standalone frames (Hero, Platform, AI, Workflow, Communication) retain full-bleed. Vehicle flush frame stays panel-contained (`margin-inline: 0`; width follows `.stage__media`).
+
+### 2. Layout-stack double-spacing
+
+**Problem:** `.layout-stack` grid `gap` stacked with legacy margins:
+
+- Platform: `.brief .stack__media { margin-top: 64px / var(--stack-copy-visual) }`
+- Workflow: `.chain { margin-top: 48px }` + `.stack__media { margin-top: var(--stack-copy-visual) }`
+
+**Spacing ownership model:**
+
+| Stack | Owner | Mechanism |
+|---|---|---|
+| Platform `.brief.layout-stack` | Grid `gap` only | `.brief.layout-stack { gap: 64px }` desktop; `gap: var(--stack-copy-visual)` ≤1024; `.stack__media { margin-top: 0 }` |
+| Workflow `.layout-stack--tiered` | Tier tokens on direct children | `--stack-gap-head-chain: 48px`; `--stack-gap-chain-media: var(--stack-copy-visual)`; grid `gap: 0` |
+
+### 3. Measured stack gaps (DE, after scroll settle)
+
+| Width | Platform head → media | Workflow head → chain | Workflow chain → media |
+|---|---|---|---|
+| **390px** | **28px** | **48px** | **28px** |
+| **768px** | **32px** | **48px** | **32px** |
+| **1440px** | **64px** | **48px** | **44px** |
+
+Platform `.stack__media` computed `margin-top: 0` at all measured widths.
+
+### 4. Corrected `--section-y` bands
+
+| Range | `--section-y` |
+|---|---|
+| ≤760px | **56px** |
+| 761–1024px | **72px** |
+| 1025–1180px | **104px** |
+| >1180px | **128px** |
+
+**768px = 72px** (not 56px). Original P2.2 tablet prose was incorrect; CSS unchanged.
+
+### 5. Corrected `.flow` statement
+
+`.flow` does **not** use `--surface-padding`. It keeps dedicated padding values (see Cards/Surfaces section above).
+
+### 6. Expanded QA coverage
+
+- Viewport matrix extended: **393, 414, 600, 820** added to P2.2 invariants loop
+- New tests: product frame geometry (hero bleed + flush containment), layout-stack spacing ownership, explicit `--section-y` matrix, landscape content sanity (667×375, 844×390, 932×430)
+- Hero frame geometry asserts **left and right** edges at phone widths
+
+### 7. Vehicle reclassification
+
+After flush-frame fix, Vehicle at 320 / 390 / 430 / 768: **IMPROVED** (panel-contained flush frame; no bleed clip).
+
+### 8. M-03 status
+
+**PARTIAL** — global frame system safe for standalone + flush variants after P2.2.1; screenshot legibility per section remains P2.5–P2.6.
+
+### 9. QA counts (P2.2.1)
+
+| Command | Result |
+|---|---|
+| `npm run build` | PASS |
+| `npm run qa` | **41/41** Chromium |
+| `npm run qa:webkit` | **2/2** WebKit smoke |
+
+Phase-1 navigation tests: **unchanged / green**.
+
+### 10. Commits
+
+| Commit | Message |
+|---|---|
+| *(implementation)* | `fix(responsive): correct mobile frame and stack primitives` |
+| *(documentation)* | `docs(audit): record P2.2 system correction` |
+
+**P2.2.1 implementation commit:** *(recorded on commit)*
 
 ---
 
