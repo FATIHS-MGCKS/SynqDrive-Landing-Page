@@ -30,7 +30,7 @@ Production was **not** deployed during P1.5. P1.6 remains the controlled deploym
 |---|---|
 | Branch | `main` |
 | Navigation baseline | `b430899` (P1.4.1) |
-| P1.5 gate commit | *(after push)* |
+| P1.5 gate commit | `c77dc76` |
 | Locales | DE (`/`), EN (`/en/`) |
 | Build output | `dist/index.html`, `dist/en/index.html`, shared assets |
 
