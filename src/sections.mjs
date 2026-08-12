@@ -81,13 +81,26 @@ function renderMobileNav(c, other, site) {
         data-nav-panel
         role="dialog"
         aria-modal="true"
-        aria-label="${esc(c.nav.mainLabel)}"
+        aria-labelledby="mobile-nav-title"
         hidden
         inert
       >
+        <div class="mobilenav__topbar">
+          <a class="brand mobilenav__brand" href="${c.dir}" aria-label="${esc(c.nav.home)}">
+            <img src="/assets/synqdrive-logo.png" width="1024" height="216" alt="SynqDrive" />
+          </a>
+          <button
+            type="button"
+            class="mobilenav__close"
+            data-nav-close
+            aria-label="${esc(c.nav.closeMenu)}"
+          >
+            ${icon('x')}
+          </button>
+        </div>
         <div class="mobilenav__scroll">
           <div class="mobilenav__section">
-            <p class="mobilenav__category">${esc(c.nav.platform)}</p>
+            <p class="mobilenav__category" id="mobile-nav-title">${esc(c.nav.platform)}</p>
             <ul class="mobilenav__list">${platformLinks}</ul>
           </div>
 

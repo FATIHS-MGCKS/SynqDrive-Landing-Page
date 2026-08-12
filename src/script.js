@@ -4,7 +4,7 @@
  * No framework and no dependencies. All landing-page sections, anchors, CTAs,
  * and footer links remain readable without JavaScript. This file adds optional
  * interaction: the Platform disclosure (pointer hover, click, keyboard), the
- * mobile drawer, the sticky masthead hairline, and one reveal pass.
+ * mobile navigation modal, the sticky masthead hairline, and one reveal pass.
  */
 (function () {
   'use strict';
@@ -131,14 +131,18 @@
   /* ── Mobile navigation (modal layer) ──────────────────────────────────── */
 
   var navToggle = document.querySelector('[data-nav-toggle]');
+  var navClose = document.querySelector('[data-nav-close]');
   var navPanel = document.querySelector('[data-nav-panel]');
+  var mastheadInner = document.querySelector('.masthead__inner');
   var mainContent = document.getElementById('main');
   var siteFooter = document.querySelector('.sitefooter');
   var skipLink = document.querySelector('.skip-link');
-  var lockedScrollY = 0;
+  var pendingScrollY = null;
+  var savedScrollY = 0;
+  var scrollLockActive = false;
   var mobileBreakpoint = 1024;
 
-  var backgroundLayers = [mainContent, siteFooter, skipLink].filter(Boolean);
+  var backgroundLayers = [mastheadInner, mainContent, siteFooter, skipLink].filter(Boolean);
 
   function focusableNodes(root) {
     if (!root) return [];
@@ -147,25 +151,33 @@
         'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
       ),
     ).filter(function (node) {
-      return node.offsetParent !== null || node === navToggle;
+      return !node.closest('[hidden]') && node.getAttribute('aria-hidden') !== 'true';
     });
   }
 
+  function readScrollY() {
+    return window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
+  }
+
   function lockPageScroll() {
-    if (!lockedScrollY) {
-      lockedScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
-    }
+    if (scrollLockActive) return;
+    savedScrollY = pendingScrollY !== null ? pendingScrollY : readScrollY();
+    pendingScrollY = null;
+    scrollLockActive = true;
     document.documentElement.dataset.navScrollLock = 'true';
     document.body.style.position = 'fixed';
-    document.body.style.top = '-' + lockedScrollY + 'px';
+    document.body.style.top = '-' + savedScrollY + 'px';
     document.body.style.left = '0';
     document.body.style.right = '0';
     document.body.style.width = '100%';
   }
 
   function unlockPageScroll() {
-    var restoreY = lockedScrollY;
-    lockedScrollY = 0;
+    if (!scrollLockActive) return;
+    var restoreY = savedScrollY;
+    scrollLockActive = false;
+    savedScrollY = 0;
+    pendingScrollY = null;
     document.documentElement.removeAttribute('data-nav-scroll-lock');
     document.body.style.position = '';
     document.body.style.top = '';
@@ -176,7 +188,7 @@
     document.documentElement.scrollTop = restoreY;
     document.body.scrollTop = restoreY;
     requestAnimationFrame(function () {
-      if (Math.abs(window.scrollY - restoreY) > 2) window.scrollTo(0, restoreY);
+      if (Math.abs(readScrollY() - restoreY) > 2) window.scrollTo(0, restoreY);
     });
   }
 
@@ -202,17 +214,13 @@
 
   function openDrawer() {
     if (!masthead || !navToggle || !navPanel) return;
-    if (!lockedScrollY) {
-      lockedScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
-    }
     masthead.dataset.navOpen = 'true';
     navPanel.hidden = false;
     navPanel.removeAttribute('inert');
     navToggle.setAttribute('aria-expanded', 'true');
-    navToggle.setAttribute('aria-label', navToggle.dataset.labelClose);
     lockPageScroll();
     setBackgroundInert(true);
-    var firstTarget = navPanel.querySelector('.mobilenav__link') || navPanel;
+    var firstTarget = navPanel.querySelector('.mobilenav__link') || navClose || navPanel;
     if (firstTarget) firstTarget.focus();
     navPanel.addEventListener('keydown', trapDrawerFocus);
   }
@@ -232,13 +240,20 @@
     }
   }
 
+  function initMobileNav() {
+    if (!masthead || !navToggle || !navPanel) return;
+    masthead.dataset.navOpen = 'false';
+    navPanel.hidden = true;
+    navPanel.setAttribute('inert', '');
+    navToggle.setAttribute('aria-expanded', 'false');
+    navToggle.setAttribute('aria-label', navToggle.dataset.labelOpen);
+  }
+
   if (masthead && navToggle && navPanel) {
-    closeDrawer(false);
+    initMobileNav();
 
     navToggle.addEventListener('pointerdown', function () {
-      if (masthead.dataset.navOpen !== 'true') {
-        lockedScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
-      }
+      if (masthead.dataset.navOpen !== 'true') pendingScrollY = readScrollY();
     });
 
     navToggle.addEventListener('click', function () {
@@ -247,7 +262,14 @@
       else openDrawer();
     });
 
+    if (navClose) {
+      navClose.addEventListener('click', function () {
+        closeDrawer(true);
+      });
+    }
+
     navPanel.addEventListener('click', function (event) {
+      if (event.target.closest('[data-nav-close]')) return;
       if (event.target.closest('a')) closeDrawer(false);
     });
 

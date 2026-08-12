@@ -94,7 +94,7 @@ the page does not read as six repeated text-beside-screenshot rows.
 
 **Desktop (P1.3, current):** Single top-level **Platform** disclosure with a grouped panel (~560px): overview row, three capability groups (Intelligence, Automation, Platform), six anchor links with descriptions, optional footer discover link. Right cluster: locale switch, Log in, Demo CTA. **Contact removed** from primary desktop nav.
 
-**Mobile (P1.4):** Full-viewport modal navigation layer below the sticky header (`role="dialog"`, `aria-modal="true"`). Platform category shown expanded (six anchors from `flattenPlatformMenu()` — no accordion while only one category is active). Account block: Log in + Demo CTA. Locale block: current language marked with `aria-current`, switch link to alternate locale. Compact header: logo + menu trigger on small phones; Demo CTA in header from 481px until desktop breakpoint. Modal behaviour: `inert` on `#main`, footer, and skip link; body scroll lock with position preservation; focus trap; Escape returns focus to trigger.
+**Mobile (P1.4 / P1.4.1):** Full-viewport modal navigation layer (`role="dialog"`, `aria-modal="true"`, `aria-labelledby="mobile-nav-title"`). Structure: `.mobilenav__topbar` (brand + Close control) + `.mobilenav__scroll` (Platform links, Account, Language). Normal `.masthead__inner` sits underneath and is `inert` while open. Platform category expanded inline (six anchors from `flattenPlatformMenu()`). Modal behaviour: `inert` on `.masthead__inner`, `#main`, footer, skip link; explicit scroll-lock state (`scrollLockActive`); focus trap includes Close; Escape or Close returns focus to menu trigger.
 
 **Ratified target IA (DEC-003):** Platform · Solutions · Resources · Pricing.
 

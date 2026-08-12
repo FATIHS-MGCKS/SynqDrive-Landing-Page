@@ -503,18 +503,76 @@ svg {
 }
 
 .mobilenav {
-  --mobilenav-top: var(--masthead-h);
   position: fixed;
-  inset: var(--mobilenav-top) 0 0 0;
-  z-index: 45;
+  inset: 0;
+  z-index: 55;
   display: flex;
   flex-direction: column;
   background: var(--canvas);
-  border-top: 1px solid var(--hairline);
 }
 
 .mobilenav[hidden] {
   display: none !important;
+}
+
+.mobilenav__topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex: 0 0 auto;
+  height: var(--masthead-h);
+  padding:
+    0
+    calc(var(--gutter) + env(safe-area-inset-right, 0px))
+    0
+    calc(var(--gutter) + env(safe-area-inset-left, 0px));
+  padding-top: env(safe-area-inset-top, 0px);
+  border-bottom: 1px solid var(--hairline);
+  background: rgba(255, 255, 255, 0.86);
+  backdrop-filter: saturate(180%) blur(14px);
+}
+
+@supports not (backdrop-filter: blur(1px)) {
+  .mobilenav__topbar {
+    background: #fff;
+  }
+}
+
+.mobilenav__brand {
+  min-height: 44px;
+}
+
+.mobilenav__brand img {
+  width: auto;
+  height: 22px;
+}
+
+.mobilenav__close {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  margin: 0 -6px 0 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  background: transparent;
+  color: var(--ink);
+  cursor: pointer;
+  flex: 0 0 auto;
+  transition: background-color 160ms var(--ease);
+}
+
+.mobilenav__close:hover,
+.mobilenav__close:focus-visible {
+  background: rgba(17, 24, 39, 0.04);
+}
+
+.mobilenav__close svg {
+  width: 22px;
+  height: 22px;
 }
 
 .mobilenav__scroll {
@@ -524,7 +582,7 @@ svg {
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   padding:
-    calc(12px + env(safe-area-inset-top, 0px))
+    12px
     calc(var(--gutter) + env(safe-area-inset-right, 0px))
     calc(20px + env(safe-area-inset-bottom, 0px))
     calc(var(--gutter) + env(safe-area-inset-left, 0px));
@@ -602,7 +660,7 @@ svg {
 .mobilenav__locale-current {
   display: inline-flex;
   align-items: center;
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 14px;
   border-radius: var(--radius);
   background: rgba(17, 24, 39, 0.05);
@@ -615,7 +673,7 @@ svg {
 .mobilenav__locale-link {
   display: inline-flex;
   align-items: center;
-  min-height: 40px;
+  min-height: 44px;
   padding: 0 14px;
   border-radius: var(--radius);
   color: var(--ink-soft);
@@ -1442,9 +1500,8 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .mobilenav {
-    --mobilenav-top: var(--masthead-h);
-    min-height: calc(100vh - var(--mobilenav-top));
-    min-height: calc(100dvh - var(--mobilenav-top));
+    min-height: 100vh;
+    min-height: 100dvh;
   }
 
   .hero {

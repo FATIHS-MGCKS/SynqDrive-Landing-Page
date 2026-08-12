@@ -233,4 +233,60 @@ No landing-section CSS was modified except shared header/mobilenav rules decoupl
 
 ---
 
+---
+
+## Post-review modal semantics correction (P1.4.1) — 2026-08-12
+
+External review accepted P1.4 design and IA. Corrective patch for modal boundary semantics, focus trap completeness, scroll-lock lifecycle, and QA hardening.
+
+### Modal-boundary issue
+
+P1.4 placed `role="dialog"` on `#mobile-nav` while the visible header (logo, menu/close toggle, optional Demo CTA) remained outside the dialog. The Close control was not inside the focus trap; keyboard users could not reach it via Tab.
+
+### Fix — complete modal shell
+
+`#mobile-nav` now covers the full viewport and includes:
+
+```
+.mobilenav__topbar   → brand + [data-nav-close] Close
+.mobilenav__scroll  → Platform / Account / Language (unchanged IA)
+```
+
+Normal `.masthead__inner` remains underneath, visually matched by the modal top bar, and is **`inert`** while open.
+
+### Background inert
+
+While open: `inert` on `.masthead__inner`, `#main`, `.sitefooter`, `.skip-link`. Dialog panel not inert. Restored on close.
+
+### Scroll-lock lifecycle
+
+Replaced init-time `closeDrawer(false)` → spurious `unlockPageScroll()` with idempotent `initMobileNav()` and explicit `scrollLockActive` boolean. `unlockPageScroll()` no-ops unless a lock was active. Scroll Y captured on menu `pointerdown` before open.
+
+### New / expanded tests (Chromium)
+
+| Test | Purpose |
+|---|---|
+| Deep-link scroll preservation (DE/EN) | `/#vehicle-intelligence` not reset on init |
+| Landscape panel reachability | 844×390, 932×430 — scroll `.mobilenav__scroll`, verify Login/Demo/locale/Close |
+| Touch targets when open | All modal controls ≥44px |
+| Breakpoint edge 1024–1100 | Exactly one nav model, no overflow |
+| Resize 1024→1100 with modal open | Closes, clears lock/inert, desktop nav usable |
+| Keyboard Shift+Tab → Close | Close inside focus loop; Enter on Close closes |
+
+**Chromium QA:** 32/32 pass (`npm run qa`)
+
+### WebKit smoke
+
+Added `npm run qa:webkit` with `e2e/mobile-nav-webkit.spec.ts` (Playwright WebKit). After installing WebKit system libraries: **2/2 pass** — scroll lock, Escape close, scroll restore, anchor navigation, landscape internal scroll. Playwright WebKit reports fixed-modal controls as outside viewport after body scroll-lock; smoke test documents programmatic/keyboard close where needed (real Safari tap targets remain in modal layer).
+
+### Breakpoint
+
+1024px retained; edge matrix 1024–1100 confirms clean transition.
+
+### Commit SHA
+
+*(recorded after push)*
+
+---
+
 *End of Phase 1.4 report.*

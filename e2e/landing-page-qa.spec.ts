@@ -104,6 +104,8 @@ const MOBILE_LANDSCAPE_SHOTS = [
 
 const MOBILE_BREAKPOINT_WIDTHS = [320, 360, 375, 390, 393, 414, 430, 480, 600, 768, 820, 900, 960, 1024, 1100];
 
+const MOBILE_BREAKPOINT_EDGE = [1024, 1025, 1040, 1060, 1080, 1099, 1100] as const;
+
 async function collectProblems(page: Page) {
   const consoleErrors: string[] = [];
   const failedRequests: string[] = [];
@@ -518,8 +520,9 @@ test.describe('public landing page', () => {
     await expect(panel).toBeVisible();
     await expect(panel).toHaveAttribute('role', 'dialog');
     await expect(panel).toHaveAttribute('aria-modal', 'true');
+    await expect(panel).toHaveAttribute('aria-labelledby', 'mobile-nav-title');
     await expect(toggle).toHaveAttribute('aria-expanded', 'true');
-    await expect(toggle).toHaveAttribute('aria-label', 'Menü schließen');
+    await expect(page.locator('.masthead__inner')).toHaveAttribute('inert', '');
 
     await panel.getByRole('link', { name: 'Integrationen & Erweiterung' }).click();
     await expect(panel).toBeHidden();
@@ -544,6 +547,7 @@ test.describe('public landing page', () => {
 
       await toggle.click();
       await expect(panel.getByText(mobile.platformCategory, { exact: true })).toBeVisible();
+      await expect(panel.getByRole('button', { name: mobile.closeMenu })).toBeVisible();
       await expect(panel.getByRole('link', { name: spec.login })).toHaveAttribute(
         'href',
         'https://app.synqdrive.eu',
@@ -578,6 +582,7 @@ test.describe('public landing page', () => {
 
       const toggle = page.locator('[data-nav-toggle]');
       const panel = page.locator('[data-nav-panel]');
+      const close = panel.locator('[data-nav-close]');
 
       await toggle.focus();
       await page.keyboard.press('Tab');
@@ -591,10 +596,15 @@ test.describe('public landing page', () => {
       await expect(panel).toBeVisible();
       await expect(panel).not.toHaveAttribute('inert');
       await expect(toggle).toHaveAttribute('aria-expanded', 'true');
-      await expect(toggle).toHaveAttribute('aria-label', mobile.closeMenu);
       await expect(page.locator(':focus')).toHaveClass(/mobilenav__link/);
 
-      const focusables = panel.locator('a[href]');
+      await page.keyboard.press('Shift+Tab');
+      await expect(close).toBeFocused();
+
+      await page.keyboard.press('Tab');
+      await expect(page.locator(':focus')).toHaveClass(/mobilenav__link/);
+
+      const focusables = panel.locator('a[href], button:not([disabled])');
       const focusableCount = await focusables.count();
       for (let index = 1; index < focusableCount; index += 1) {
         await page.keyboard.press('Tab');
@@ -604,14 +614,83 @@ test.describe('public landing page', () => {
       }
 
       await page.keyboard.press('Tab');
-      await expect(page.locator(':focus')).toHaveClass(/mobilenav__link/);
+      await expect(page.locator(':focus')).toHaveClass(/mobilenav__link|mobilenav__brand/);
 
-      await page.keyboard.press('Escape');
+      await close.focus();
+      await page.keyboard.press('Enter');
       await expect(panel).toBeHidden();
       await expect(panel).toHaveAttribute('inert', '');
       await expect(toggle).toBeFocused();
     });
   }
+
+  for (const locale of ['de', 'en'] as const) {
+    const url = locale === 'de' ? '/#vehicle-intelligence' : '/en/#vehicle-intelligence';
+
+    test(`mobile navigation preserves deep-link scroll (${locale})`, async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto(url, { waitUntil: 'load' });
+      await page.waitForTimeout(200);
+
+      const scrollY = await page.evaluate(() => window.scrollY);
+      expect(scrollY).toBeGreaterThan(200);
+      await expect(page.locator('[data-nav-panel]')).toBeHidden();
+    });
+  }
+
+  test('mobile navigation landscape panel reachability', async ({ page }) => {
+    for (const [width, height, loginLabel, demoLabel, localeLabel] of [
+      [844, 390, 'Anmelden', 'Demo anfragen', 'English'],
+      [932, 430, 'Anmelden', 'Demo anfragen', 'English'],
+    ] as const) {
+      await page.setViewportSize({ width, height });
+      await page.goto('/', { waitUntil: 'load' });
+      await page.getByRole('button', { name: 'Menü öffnen' }).click();
+
+      const panel = page.locator('[data-nav-panel]');
+      await expect(panel).toBeVisible();
+      await expect(page.locator('html')).toHaveAttribute('data-nav-scroll-lock', 'true');
+
+      const scrollEl = panel.locator('.mobilenav__scroll');
+      await scrollEl.evaluate((node) => {
+        node.scrollTop = node.scrollHeight;
+      });
+      expect(await scrollEl.evaluate((node) => node.scrollTop)).toBeGreaterThan(0);
+
+      await expect(panel.getByRole('link', { name: loginLabel })).toBeVisible();
+      await expect(panel.getByRole('link', { name: demoLabel })).toBeVisible();
+      await expect(panel.getByRole('link', { name: localeLabel })).toBeVisible();
+      await expect(panel.getByRole('button', { name: 'Menü schließen' })).toBeVisible();
+      await expect(panel.getByRole('link', { name: loginLabel })).toBeInViewport();
+
+      const pageScroll = await page.evaluate(() => window.scrollY);
+      await page.mouse.wheel(0, 300);
+      expect(await page.evaluate(() => window.scrollY)).toBe(pageScroll);
+
+      await panel.getByRole('button', { name: 'Menü schließen' }).click();
+      await expect(panel).toBeHidden();
+    }
+  });
+
+  test('mobile navigation touch targets when open', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'load' });
+    await page.getByRole('button', { name: 'Menü öffnen' }).click();
+
+    const small = await page.locator('[data-nav-panel]').evaluate((panel) =>
+      Array.prototype.slice
+        .call(panel.querySelectorAll('a, button'))
+        .filter((node) => {
+          const rect = node.getBoundingClientRect();
+          return rect.width > 0 && rect.height > 0 && rect.height < 44;
+        })
+        .map(
+          (node) =>
+            `${node.tagName.toLowerCase()}.${node.className}: ${Math.round(node.getBoundingClientRect().height)}px`,
+        ),
+    );
+    expect(small, small.join('\n')).toEqual([]);
+  });
 
   test('mobile navigation locks background scroll and preserves position', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
@@ -626,6 +705,7 @@ test.describe('public landing page', () => {
     await expect(page.locator('[data-nav-panel]')).toBeVisible();
     await expect(page.locator('html')).toHaveAttribute('data-nav-scroll-lock', 'true');
     await expect(page.locator('#main')).toHaveAttribute('inert', '');
+    await expect(page.locator('.masthead__inner')).toHaveAttribute('inert', '');
 
     const lockedScroll = await page.evaluate(() => {
       const top = document.body.style.top;
@@ -663,6 +743,64 @@ test.describe('public landing page', () => {
     await expect(page.locator('[data-nav-panel]')).toBeVisible();
     await page.keyboard.press('Escape');
     await expect(toggle).toBeFocused();
+    await expect(page.locator('[data-nav-panel]')).toBeHidden();
+  });
+
+  test('mobile navigation breakpoint edge transition', async ({ page }) => {
+    await page.goto('/', { waitUntil: 'load' });
+
+    for (const width of MOBILE_BREAKPOINT_EDGE) {
+      await page.setViewportSize({ width, height: 844 });
+      const state = await page.evaluate(() => ({
+        toggleVisible: Boolean(
+          document.querySelector('[data-nav-toggle]') &&
+            window.getComputedStyle(document.querySelector('[data-nav-toggle]') as Element).display !== 'none',
+        ),
+        mainnavVisible: Boolean(
+          document.querySelector('.mainnav') &&
+            window.getComputedStyle(document.querySelector('.mainnav') as Element).display !== 'none',
+        ),
+        overflow: document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+      }));
+
+      if (width <= 1024) {
+        expect(state.toggleVisible, `${width}px toggle`).toBe(true);
+        expect(state.mainnavVisible, `${width}px mainnav`).toBe(false);
+      } else {
+        expect(state.toggleVisible, `${width}px toggle`).toBe(false);
+        expect(state.mainnavVisible, `${width}px mainnav`).toBe(true);
+      }
+      expect(state.overflow, `${width}px overflow`).toBe(true);
+    }
+  });
+
+  test('mobile navigation closes cleanly on resize to desktop', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 844 });
+    await page.goto('/', { waitUntil: 'load' });
+    await page.evaluate(() => window.scrollTo(0, 800));
+    await page.waitForTimeout(100);
+    const scrollBefore = await page.evaluate(() => window.scrollY);
+    expect(scrollBefore).toBeGreaterThan(200);
+
+    await page.locator('[data-nav-toggle]').click();
+    await expect(page.locator('[data-nav-panel]')).toBeVisible();
+    await expect(page.locator('html')).toHaveAttribute('data-nav-scroll-lock', 'true');
+
+    await page.setViewportSize({ width: 1100, height: 900 });
+    await expect(page.locator('[data-nav-panel]')).toBeHidden();
+    await expect(page.locator('html')).not.toHaveAttribute('data-nav-scroll-lock');
+    await expect(page.locator('#main')).not.toHaveAttribute('inert');
+    await expect(page.locator('.masthead__inner')).not.toHaveAttribute('inert');
+    await expect(page.getByRole('button', { name: 'Plattform' })).toBeVisible();
+
+    await expect
+      .poll(() => page.evaluate(() => window.scrollY), { timeout: 3000 })
+      .toBeGreaterThan(200);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.locator('[data-nav-toggle]').click();
+    await expect(page.locator('[data-nav-panel]')).toBeVisible();
+    await page.keyboard.press('Escape');
     await expect(page.locator('[data-nav-panel]')).toBeHidden();
   });
 

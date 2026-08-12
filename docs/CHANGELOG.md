@@ -10,6 +10,30 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+## Mobile modal semantics fix (P1.4.1) — 2026-08-12
+
+**Phase:** P1.4.1 — Mobile modal focus boundary & Safari hardening  
+**Audit addendum:** [`docs/audits/landing-page-phase-1.4-mobile-navigation-2026-08.md`](audits/landing-page-phase-1.4-mobile-navigation-2026-08.md) (Post-review section)
+
+### Fixed
+
+- Modal top bar (brand + Close) moved inside `#mobile-nav` dialog boundary
+- Close control included in focus trap; Shift+Tab from first link reaches Close
+- `.masthead__inner` inert while modal open (header controls blocked)
+- Idempotent scroll-lock lifecycle (`scrollLockActive`; no spurious init scroll restore)
+
+### Added
+
+- Deep-link, landscape reachability, breakpoint-edge, resize, touch-target, WebKit smoke tests
+
+### Not changed (explicit)
+
+- P1.4 IA, visual design, 1024px breakpoint
+- Desktop P1.3 navigation
+- Production deployment
+
+---
+
 ## Mobile navigation rebuild (P1.4) — 2026-08-12
 
 **Phase:** P1.4 — Mobile navigation  
