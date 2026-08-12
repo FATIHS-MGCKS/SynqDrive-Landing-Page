@@ -397,7 +397,7 @@ Phase 2.2 introduces a shared responsive foundation in `src/styles.css` without 
 
 ### QA
 
-- Chromium: **37/37** (33 Phase-1 + 4 P2.2 structural tests)
+- Chromium: **41/41** (33 Phase-1 + 8 P2.2 structural tests)
 - WebKit smoke: **2/2**
 - P2.2 screenshots: `qa/p22-*` (gitignored)
 
@@ -422,7 +422,8 @@ P2.3 restructures Hero markup and CSS only — no navigation, asset, or downstre
 
 ### QA
 
-- Chromium: **50/50** (47 prior + 3 P2.3.1 hero tests)
+- Chromium: **50/50**
 - WebKit smoke: **2/2**
-- P2.3 screenshots: `qa/p23-*` (gitignored)
+- H-01: **RESOLVED**
+- Production: **NOT DEPLOYED**
 - 390×844 DE frame top: **508px** (P2.2 **716px**)

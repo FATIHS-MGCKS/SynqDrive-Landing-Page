@@ -387,4 +387,22 @@ New coverage: desktop intro → proof spacing invariants, 390px mobile frame pos
 ### P2.3.1 commit SHA
 
 **Implementation commit:** `1455b55`  
-**Documentation commit:** *(recorded after commit)*
+**Documentation commit:** `35b58db`  
+**SHA-record follow-up:** `fe9526f`
+
+---
+
+## P2.3 FINAL TECHNICAL STATE
+
+- Hero mobile composition: **PASS**
+- Desktop intro → proof spacing: **36px** at 1100 / 1280 / 1440 / 1920
+- 390×844 DE frame top: **508px**
+- EN 430 H1: **63px / 2 lines**
+- Chromium: **50/50**
+- WebKit: **2/2**
+- H-01: **RESOLVED**
+- Navigation changed: **NO**
+- Product Images changed: **NO**
+- Other sections redesigned: **NO**
+- Production deployed: **NO**
+- P2.4 started: **NO**
