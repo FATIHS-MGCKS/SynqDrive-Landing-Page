@@ -191,7 +191,7 @@ export function hero(c) {
   const h = c.hero;
   const proof = h.proof.map((line) => `<li>${esc(line)}</li>`).join('');
 
-  return `<section class="hero" aria-labelledby="hero-title">
+  return `<section class="hero layout-split layout-split--copy-first" aria-labelledby="hero-title">
       <div class="hero__copy">
         <p class="eyebrow" data-reveal>${esc(h.eyebrow)}</p>
         <h1 id="hero-title" data-reveal>${esc(h.title)}</h1>
@@ -225,7 +225,7 @@ export function unified(c) {
     )
     .join('');
 
-  return `<section class="section brief" id="${s.id}" aria-labelledby="${s.id}-title">
+  return `<section class="section brief layout-stack" id="${s.id}" aria-labelledby="${s.id}-title">
       <div class="brief__head">
         ${sectionHead({ eyebrow: s.eyebrow, title: s.title, body: s.body, id: s.id })}
         <ul class="capability-grid">${cards}</ul>
@@ -291,7 +291,7 @@ export function ai(c) {
   // Copy first in the DOM even though this section renders mirrored: stacked on
   // a phone the reader must meet the heading before the screenshot. The mirror
   // is a desktop-only column swap, done in CSS.
-  return `<section class="section split split--mirror" id="${s.id}" aria-labelledby="${s.id}-title">
+  return `<section class="section split split--mirror layout-split layout-split--copy-first" id="${s.id}" aria-labelledby="${s.id}-title">
       <div class="split__copy">
         ${sectionHead({ eyebrow: s.eyebrow, title: s.title, body: s.body, id: s.id })}
         <div class="flow" data-reveal>
@@ -317,7 +317,7 @@ export function workflow(c) {
     )
     .join('');
 
-  return `<section class="section stack" id="${s.id}" aria-labelledby="${s.id}-title">
+  return `<section class="section stack layout-stack" id="${s.id}" aria-labelledby="${s.id}-title">
       ${sectionHead({ eyebrow: s.eyebrow, title: s.title, body: s.body, id: s.id })}
       <div class="chain">
         <p class="chain__label">${esc(s.chainLabel)}</p>
@@ -340,7 +340,7 @@ export function communication(c) {
     )
     .join('');
 
-  return `<section class="section split" id="${s.id}" aria-labelledby="${s.id}-title">
+  return `<section class="section split layout-split layout-split--copy-first" id="${s.id}" aria-labelledby="${s.id}-title">
       <div class="split__copy">
         ${sectionHead({ eyebrow: s.eyebrow, title: s.title, body: s.body, id: s.id })}
         <ul class="notes notes--divided" data-reveal>${points}</ul>
