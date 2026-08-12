@@ -350,7 +350,7 @@ screenshots are byte-identical to the locally approved build.
 - Both calls to action open a prefilled mail draft to `info@synqdrive.eu`.
 - `www.synqdrive.eu` redirects to apex (301 since P1.6 deploy); canonical tag handles duplicate content.
 
-## Mobile layout system (P2.2 — local, not deployed)
+## Mobile layout system (P2.2 — merged to main)
 
 **Audit:** [`docs/audits/landing-page-phase-2.2-global-mobile-layout-system-2026-08.md`](audits/landing-page-phase-2.2-global-mobile-layout-system-2026-08.md)
 
@@ -422,7 +422,7 @@ P2.3 restructures Hero markup and CSS only — no navigation, asset, or downstre
 
 ### QA
 
-- Chromium: **47/47** (41 prior + 6 P2.3 hero tests)
+- Chromium: **50/50** (47 prior + 3 P2.3.1 hero tests)
 - WebKit smoke: **2/2**
 - P2.3 screenshots: `qa/p23-*` (gitignored)
 - 390×844 DE frame top: **508px** (P2.2 **716px**)

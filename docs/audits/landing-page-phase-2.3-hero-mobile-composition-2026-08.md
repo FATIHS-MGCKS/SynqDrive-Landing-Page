@@ -300,3 +300,91 @@ Optional (non-blocking): if future polish targets shorter Hero scroll depth, a m
 **Starting SHA:** `a4cb32e`  
 **Implementation commit:** `984e8e1`  
 **Documentation commit:** `bb82d5c`
+
+---
+
+## Post-review desktop spacing correction (P2.3.1)
+
+**Date:** 2026-08-12  
+**Scope:** Desktop Hero intro → proof spacing only — mobile composition unchanged
+
+### 1. Desktop double-spacing defect
+
+After P2.3, `.hero` used `gap: 56px` (row + column) while `.hero__proof` retained `margin-top: var(--stack-gap-loose)` (36px desktop). With intro on grid row 1 and proof on row 2, the intro → proof separation became **~92px** (56px row gap + 36px margin) instead of the accepted **~36px**.
+
+### 2. Root cause
+
+Two spacing owners on the same vertical relationship: grid row gap and proof margin-top.
+
+### 3. Final spacing owner
+
+Desktop Hero grid now uses:
+
+```css
+column-gap: 56px;
+row-gap: 0;
+```
+
+`.hero__proof { margin-top: var(--stack-gap-loose); }` remains the sole owner of intro → proof separation. Mobile (≤1024px) retains `gap: var(--stack-gap-loose)` and `.hero__proof { margin-top: 0; }` — unchanged from accepted P2.3.
+
+### 4. Measured desktop Intro → Proof gaps (DE)
+
+| Width | Intro → Proof |
+|---|---|
+| 1100 | **36px** |
+| 1280 | **36px** |
+| 1440 | **36px** |
+| 1920 | **36px** |
+
+### 5. Mobile regression result
+
+**PASS** — composition order remains intro → media → proof at all phone/tablet widths in the P2.3 matrix. No mobile CSS changed.
+
+### 6. 390px Hero Product Frame position after fix
+
+**508px** top (unchanged from accepted P2.3; QA tolerance 500–525px). Desktop row-gap correction does not affect ≤1024px Hero rules.
+
+### 7. Corrected EN H1 measurement (430×844)
+
+| Field | P2.3 audit (incorrect) | Corrected |
+|---|---|---|
+| H1 block height | 63px (3 lines) | **63px** |
+| Rendered lines | 3 | **2** |
+| font-size | — | **28.96px** |
+| line-height | — | **31.28px** |
+
+Typography unchanged — audit line count corrected only.
+
+### 8. Accessibility (responsive semantic tradeoff)
+
+**Mobile:** Visual order and source order are identical — intro → media → proof.
+
+**Desktop:** CSS grid visually groups intro + proof in the left column and media in the right column. Source order remains intro → media → proof (intentional mobile-first semantic tradeoff). Desktop visual grouping does not match source sequence; this is documented and accepted.
+
+### 9. Final QA
+
+| Gate | Result |
+|---|---|
+| Chromium | **50/50** |
+| WebKit smoke | **2/2** |
+
+New coverage: desktop intro → proof spacing invariants, 390px mobile frame position regression, EN H1 measurement at 430px, desktop Hero screenshots (1100–1920).
+
+### 10. Scope confirmation
+
+| Item | Changed |
+|---|---|
+| Navigation | **NO** |
+| Product images / assets | **NO** |
+| Other sections | **NO** |
+| Production | **NO** |
+
+### Finding status (unchanged)
+
+- **H-01:** **RESOLVED**
+- **G-02 / G-03 / M-03:** global **PARTIAL** (Hero contribution unchanged)
+
+### P2.3.1 commit SHA
+
+**Implementation commit:** *(recorded after commit)*  
+**Documentation commit:** *(recorded after commit)*

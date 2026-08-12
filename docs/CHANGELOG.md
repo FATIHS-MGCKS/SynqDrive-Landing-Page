@@ -14,6 +14,27 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+---
+
+## Hero desktop spacing correction (P2.3.1) — 2026-08-12
+
+**Phase:** P2.3.1 — Desktop Hero intro → proof spacing correction (Draft PR #3; **not deployed**)
+
+### Fixed
+
+- Desktop Hero double spacing (~92px) between intro and proof — restored single owner via `column-gap: 56px; row-gap: 0;` with proof `margin-top: var(--stack-gap-loose)`
+
+### Not changed
+
+- P2.3 mobile Hero composition, navigation, assets, other sections, Production
+
+### Verified (local)
+
+- Chromium **50/50**; WebKit **2/2**
+- Desktop intro → proof: **36px** at 1100–1920
+
+---
+
 ## Hero mobile composition (P2.3) — 2026-08-12
 
 **Phase:** P2.3 — Hero mobile composition (local only; **not deployed**)  
@@ -33,7 +54,7 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 ### Verified (local)
 
 - `npm run build` — pass
-- Chromium QA **47/47**; WebKit smoke **2/2**
+- Chromium QA **50/50**; WebKit smoke **2/2**
 - H-01 **RESOLVED**; G-02/G-03/M-03 improved in Hero only (global **PARTIAL**)
 - 390×844 DE Hero frame top: **508px** (P2.2 **716px**)
 
