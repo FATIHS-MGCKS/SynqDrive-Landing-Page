@@ -317,7 +317,7 @@ export function workflow(c) {
     )
     .join('');
 
-  return `<section class="section stack layout-stack" id="${s.id}" aria-labelledby="${s.id}-title">
+  return `<section class="section stack layout-stack layout-stack--tiered" id="${s.id}" aria-labelledby="${s.id}-title">
       ${sectionHead({ eyebrow: s.eyebrow, title: s.title, body: s.body, id: s.id })}
       <div class="chain">
         <p class="chain__label">${esc(s.chainLabel)}</p>

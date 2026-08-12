@@ -89,6 +89,10 @@
   --stack-gap-loose: 36px;
   --stack-copy-visual: 44px;
 
+  /* Workflow stack tier gaps */
+  --stack-gap-head-chain: 48px;
+  --stack-gap-chain-media: var(--stack-copy-visual);
+
   /* Product frame */
   --frame-radius: var(--radius-frame);
   --frame-shadow: var(--shadow-frame);
@@ -964,6 +968,19 @@ html[data-nav-scroll-lock='true'] {
   gap: var(--stack-copy-visual);
 }
 
+/* Workflow: tiered head → chain → media spacing owned by the stack modifier. */
+.layout-stack--tiered {
+  gap: 0;
+}
+
+.layout-stack--tiered > .chain {
+  margin-top: var(--stack-gap-head-chain);
+}
+
+.layout-stack--tiered > .stack__media {
+  margin-top: var(--stack-gap-chain-media);
+}
+
 .layout-measure {
   max-width: min(var(--measure-copy), 100%);
 }
@@ -1028,8 +1045,10 @@ html[data-nav-scroll-lock='true'] {
   margin-top: 6px;
 }
 
-.brief .stack__media {
-  margin-top: 64px;
+/* Vertical gap between brief head and product visual is owned by .brief.layout-stack. */
+
+.brief.layout-stack {
+  gap: 64px;
 }
 
 .capability-grid {
@@ -1239,10 +1258,6 @@ html[data-nav-scroll-lock='true'] {
   max-width: var(--measure-wide);
 }
 
-.chain {
-  margin-top: 48px;
-}
-
 .chain__list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1283,9 +1298,7 @@ html[data-nav-scroll-lock='true'] {
   line-height: 1.55;
 }
 
-.stack__media {
-  margin-top: var(--stack-copy-visual);
-}
+/* Gap before workflow product visual is owned by .layout-stack--tiered. */
 
 /* ── Integration hub ─────────────────────────────────────────────────────── */
 
@@ -1633,8 +1646,8 @@ html[data-nav-scroll-lock='true'] {
     margin-top: 0;
   }
 
-  .brief .stack__media {
-    margin-top: var(--stack-copy-visual);
+  .brief.layout-stack {
+    gap: var(--stack-copy-visual);
   }
 
   .split--mirror .split__media {
@@ -1710,7 +1723,7 @@ html[data-nav-scroll-lock='true'] {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  .frame--product {
+  .frame--product:not(.frame--flush) {
     width: calc(100% + 2 * var(--gutter));
     max-width: calc(100% + 2 * var(--gutter));
     margin-inline: calc(-1 * var(--gutter));
