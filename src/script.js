@@ -1,9 +1,10 @@
 /**
  * Progressive enhancement for the public SynqDrive landing page.
  *
- * No framework and no dependencies. Everything here is optional: the page reads
- * and navigates fully without JavaScript, so this file only adds the platform
- * dropdown, the mobile drawer, the sticky masthead hairline and one reveal pass.
+ * No framework and no dependencies. All landing-page sections, anchors, CTAs,
+ * and footer links remain readable without JavaScript. This file adds optional
+ * interaction: the Platform disclosure (pointer hover, click, keyboard), the
+ * mobile drawer, the sticky masthead hairline, and one reveal pass.
  */
 (function () {
   'use strict';
@@ -29,7 +30,9 @@
   function closeDropdown(group) {
     group.dataset.open = 'false';
     var trigger = group.querySelector('[data-dropdown-trigger]');
+    var menu = group.querySelector('[data-dropdown-menu]');
     if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    if (menu) menu.setAttribute('inert', '');
   }
 
   function openDropdown(group) {
@@ -38,7 +41,9 @@
     });
     group.dataset.open = 'true';
     var trigger = group.querySelector('[data-dropdown-trigger]');
+    var menu = group.querySelector('[data-dropdown-menu]');
     if (trigger) trigger.setAttribute('aria-expanded', 'true');
+    if (menu) menu.removeAttribute('inert');
   }
 
   dropdowns.forEach(function (group) {

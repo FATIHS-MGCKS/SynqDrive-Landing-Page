@@ -308,6 +308,71 @@ test.describe('public landing page', () => {
     });
   }
 
+  for (const locale of ['de', 'en'] as const) {
+    const spec = PLATFORM_NAV[locale];
+    const url = locale === 'de' ? '/' : '/en/';
+
+    test(`platform dropdown keyboard tab order (${locale})`, async ({ page }) => {
+      await page.setViewportSize({ width: 1440, height: 900 });
+      await page.goto(url, { waitUntil: 'load' });
+
+      const trigger = page.getByRole('button', { name: spec.trigger });
+      const menu = page.locator('#platform-menu');
+
+      await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+      await expect(menu).toHaveAttribute('inert', '');
+
+      await trigger.focus();
+      await page.keyboard.press('Tab');
+
+      const afterClosedTab = await page.evaluate(() => {
+        const active = document.activeElement as HTMLElement | null;
+        return {
+          inPanel: Boolean(active?.closest('#platform-menu')),
+          className: active?.className ?? '',
+        };
+      });
+      expect(afterClosedTab.inPanel).toBe(false);
+      expect(afterClosedTab.className).toMatch(/locale-switch/);
+
+      await trigger.focus();
+      await page.keyboard.press('Enter');
+      await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+      await expect(menu).not.toHaveAttribute('inert');
+
+      await page.keyboard.press('Tab');
+      await expect(page.locator(':focus')).toHaveClass(/nav-panel__overview/);
+
+      const panelLinkCount = await menu.locator('a').count();
+      for (let index = 1; index < panelLinkCount; index += 1) {
+        await page.keyboard.press('Tab');
+        await expect(page.locator(':focus')).toHaveAttribute('href', /.+/);
+        expect(await page.evaluate(() => Boolean(document.activeElement?.closest('#platform-menu')))).toBe(
+          true,
+        );
+      }
+
+      await page.keyboard.press('Tab');
+      const afterPanelTab = await page.evaluate(() => {
+        const active = document.activeElement as HTMLElement | null;
+        return {
+          inPanel: Boolean(active?.closest('#platform-menu')),
+          className: active?.className ?? '',
+        };
+      });
+      expect(afterPanelTab.inPanel).toBe(false);
+      expect(afterPanelTab.className).toMatch(/locale-switch/);
+
+      await trigger.focus();
+      await page.keyboard.press('Enter');
+      await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+      await page.keyboard.press('Escape');
+      await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+      await expect(menu).toHaveAttribute('inert', '');
+      await expect(trigger).toBeFocused();
+    });
+  }
+
   test('platform dropdown works by pointer and keyboard', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
     await page.goto('/', { waitUntil: 'load' });

@@ -193,9 +193,12 @@ as "Kundenkommunikation" at 320px.
 Semantic sectioning with one `h1` and no skipped heading level, skip link, visible focus states,
 `aria-expanded` on the dropdown and drawer triggers, alt text on every image, touch targets at
 32px or larger at 375px, and `prefers-reduced-motion` handled with a specificity that outweighs
-the reveal state so the enter transform never applies at all. The page is fully readable with
-JavaScript disabled: the reveal styles are scoped to a `.js` class set inline in the head, with a
-timer that removes it again if `script.js` never arrives.
+the reveal state so the enter transform never applies at all. All landing-page sections, in-page
+anchors, CTAs, and footer links remain readable without JavaScript. The reveal styles are scoped
+to a `.js` class set inline in the head, with a timer that removes it again if `script.js` never
+arrives. **Platform disclosure** (desktop dropdown) and the **mobile drawer** require JavaScript;
+without it, use in-page anchors, footer links, or the skip link. Closed dropdown panels use the
+`inert` attribute so hidden links are removed from the tab order (P1.3.1).
 
 ## Performance
 

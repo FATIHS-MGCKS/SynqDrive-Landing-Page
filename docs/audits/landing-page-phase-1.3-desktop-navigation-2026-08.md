@@ -191,4 +191,63 @@ Manual review: hierarchy readable, panel aligned to trigger, no clipping at 1100
 
 ---
 
+## Post-review accessibility correction (P1.3.1) — 2026-08-12
+
+External review accepted P1.3 information architecture and visual implementation. One accessibility defect and one progressive-enhancement documentation inconsistency were corrected. No IA or visual redesign.
+
+### Defect: hidden panel links in tab order
+
+**Symptom:** Closed `.nav-panel` was visually hidden via `opacity`, `transform`, and `pointer-events: none`, but descendant links remained in the document tab order. Keyboard users could tab from the Platform trigger into invisible panel links.
+
+**Root cause:** CSS visibility/interaction hiding does not remove elements from sequential focus navigation.
+
+**Fix:** Set the `inert` attribute on `#platform-menu` while the disclosure is closed (default in markup; toggled in `openDropdown()` / `closeDropdown()`). Open state removes `inert` so native Tab order is trigger → overview → capability links → footer link → next header control. Escape closes and returns focus to the trigger (unchanged). Opacity/transform animation and pointer hover behaviour preserved.
+
+### Progressive-enhancement decision
+
+**Issue:** `src/script.js` header comment claimed the page “navigates fully without JavaScript”, but the Platform dropdown depends on JS for `data-open` and the mobile drawer depends on JS for `hidden` toggling.
+
+**Decision:** Correct documentation rather than add a parallel no-JS navigation surface. Rationale: a robust CSS-only disclosure would still leave the mobile drawer JS-dependent; duplicating nav without a second source of truth would add maintenance cost with limited benefit on a marketing page whose sections and footer already expose all anchors. **Without JS:** all page content remains readable; use in-page anchors, footer, and skip link. **With JS:** unchanged desktop disclosure and mobile drawer.
+
+Updated: `src/script.js` header comment, `docs/IMPLEMENTATION.md` Accessibility section.
+
+### New keyboard tests
+
+Added E2E tests `platform dropdown keyboard tab order (de|en)` verifying:
+
+- Closed: Tab from Platform trigger skips panel links (focus reaches locale switch); `aria-expanded=false`; `inert` present on panel
+- Open: Enter activates disclosure; Tab traverses overview, capability links, and footer link; Tab exits to locale switch; Escape closes and refocuses trigger; `aria-expanded=true` while open
+
+All existing P1.3 regression tests retained (pointer hover, click, outside click, Escape, anchor navigation, DE/EN policy, header overflow 1100–1920px, deferred nav absent, Contact absent, login/demo URLs).
+
+### Test results
+
+```
+npm run build   — pass
+npm run qa      — 18/18 pass (16 existing + 2 keyboard tab-order tests)
+```
+
+### Files changed (P1.3.1)
+
+| File | Change |
+|---|---|
+| `src/sections.mjs` | Default `inert` on `#platform-menu` |
+| `src/script.js` | Toggle `inert` on open/close; progressive-enhancement comment |
+| `e2e/landing-page-qa.spec.ts` | DE/EN keyboard tab-order tests |
+| `docs/CHANGELOG.md` | P1.3.1 entry |
+| `docs/IMPLEMENTATION.md` | Accessibility / no-JS scope |
+| `docs/audits/landing-page-phase-1.3-desktop-navigation-2026-08.md` | This section |
+
+### Commit SHA
+
+*(recorded after push to `main`)*
+
+### Explicit non-actions
+
+- P1.4 **not** started
+- Production **not** deployed
+- No IA, visual, mobile, section, or product-image changes
+
+---
+
 *End of Phase 1.3 report.*

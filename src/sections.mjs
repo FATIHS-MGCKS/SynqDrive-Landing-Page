@@ -54,7 +54,7 @@ function renderPlatformPanel(c) {
         </div>`
     : '';
 
-  return `<div class="nav-panel" id="platform-menu" data-dropdown-menu>
+  return `<div class="nav-panel" id="platform-menu" data-dropdown-menu inert>
           <a class="nav-panel__overview" href="${menu.overview.href}">
             <span class="nav-panel__overview-label">${esc(menu.overview.label)}</span>
             <span class="nav-panel__overview-desc">${esc(menu.overview.description)}</span>

@@ -8,6 +8,32 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+---
+
+## Post-review accessibility correction (P1.3.1) — 2026-08-12
+
+**Phase:** P1.3.1 — Desktop navigation keyboard accessibility  
+**Audit addendum:** [`docs/audits/landing-page-phase-1.3-desktop-navigation-2026-08.md`](audits/landing-page-phase-1.3-desktop-navigation-2026-08.md) (Post-review section)
+
+### Fixed
+
+- Closed Platform dropdown panel no longer exposes links to keyboard focus or assistive technology (`inert` while closed)
+- Escape-to-trigger focus behaviour retained; open Tab order unchanged
+- Progressive-enhancement documentation corrected: page content readable without JS; Platform disclosure and mobile drawer require JS
+
+### Added
+
+- E2E keyboard tab-order tests (DE and EN)
+
+### Not changed (explicit)
+
+- P1.3 IA, labels, panel layout, header spacing, hover timings (except accessibility fix)
+- Mobile navigation (P1.4)
+- Landing sections, product images
+- Production deployment
+
+---
+
 ## Desktop Platform navigation (P1.3) — 2026-08-12
 
 **Phase:** P1.3 — Desktop navigation  
