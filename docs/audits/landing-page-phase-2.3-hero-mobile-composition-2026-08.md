@@ -386,5 +386,5 @@ New coverage: desktop intro → proof spacing invariants, 390px mobile frame pos
 
 ### P2.3.1 commit SHA
 
-**Implementation commit:** *(recorded after commit)*  
+**Implementation commit:** `1455b55`  
 **Documentation commit:** *(recorded after commit)*
