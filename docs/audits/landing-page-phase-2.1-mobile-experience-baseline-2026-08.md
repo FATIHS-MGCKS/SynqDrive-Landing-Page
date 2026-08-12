@@ -102,13 +102,15 @@ Design reference: premium B2B SaaS, Stripe-level clarity/hierarchy/spacing (not 
 
 ## Containers
 
-**FACT:** Page uses `--gutter` horizontal padding via `.hero, .section, .closing { padding-inline: var(--gutter) }`.
+**FACT:** Shared shell horizontal padding uses `--gutter` via `.hero`, `.section`, `.closing__inner`, `.masthead__inner`, `.sitefooter__inner`, and `.sitefooter__legal` (`padding-inline: var(--gutter)`; `max-width: var(--shell)`; centred with `margin-inline: auto`).
 
 **OBSERVATION:** `.stage__panel` and `.frame` add **additional borders/shadows** inside already padded containers — not double gutter, but visual inset reduces usable image width to ~356px at 390 viewport.
 
-**OBSERVATION:** At **320px**, gutter 16px → 288px content; capability **2-column grid persists until 760px**, yielding ~138px-wide cards — tight for DE compound words.
+**FACT:** At `@media (max-width: 760px)`, `.capability-grid` switches to `grid-template-columns: minmax(0, 1fr)` — **one column** at 320, 375, 390, 430, and 480. Above 760px the default is two columns.
 
-**RECOMMENDATION (P2.2):** Single-column capability grid ≤480px; consider full-bleed product frames on mobile with gutter on copy only.
+**OBSERVATION:** At phone widths, four full-width capability cards stack vertically (~248px inner text measure at 320px with gutter 16px and card padding 20px) before the product visual — substantial vertical length, not a grid-column problem.
+
+**RECOMMENDATION (P2.2):** Consider full-bleed product frames on mobile with gutter on copy only; capability compaction is a P2.4 composition task (see Section 02), not a one-column grid conversion.
 
 ---
 
@@ -116,11 +118,11 @@ Design reference: premium B2B SaaS, Stripe-level clarity/hierarchy/spacing (not 
 
 | Component | Mobile behaviour | Issue | Recommendation |
 |---|---|---|---|
-| `.capability` (×4, Platform) | 2-col grid ≤759px | Cramped; card chrome heavy | **HIGH** — single column or simplified rows (P2.4) |
+| `.capability` (×4, Platform) | 1-col stack ≤760px (CSS already single column) | Four full card surfaces before product visual; heavy chrome/padding | **HIGH** — simplify to compact rows/surfaces; reduce padding; reconsider placement vs product (P2.4) |
 | `.flow__step` (×4, AI) | Stacked list | Long vertical run before screenshot | Simplify to compact steps (P2.5) |
 | `.chain__link` (×3, Workflow) | Stacked with arrow pseudo | Adds band before screenshot | Consider inline summary (P2.5) |
 | `.notes` / `.stage__notes` | Divided lists | Repetitive with section body | Reduce duplication (P2.4–P2.6) |
-| `.hub__tile` (×6) | 2-col ≤358px, 1-col ≤359px | Hub metaphor lost; still six bordered tiles | Retain tiles but lighten chrome (P2.6) |
+| `.hub__tile` (×6) | 2-col at 360–1024px; 1-col ≤359px | Hub metaphor lost; still six bordered tiles | Retain tiles but lighten chrome (P2.6) |
 
 ---
 
@@ -188,9 +190,9 @@ Design reference: premium B2B SaaS, Stripe-level clarity/hierarchy/spacing (not 
 
 **OBSERVATION:** DE section titles (Kundenkommunikation, Workflow-Automatisierung) wrap to 3–4 lines; EN slightly shorter — layout tolerates both but DE feels denser.
 
-**OBSERVATION:** Capability cards with DE compound nouns wrap inside narrow 2-col cells at 320–759px.
+**OBSERVATION:** DE compound nouns in capability card titles/body wrap across multiple lines inside full-width stacked cards at phone widths — section height differs from EN (~274px taller at 390×844).
 
-**RECOMMENDATION:** Layout fixes must **tolerate longer DE strings** without truncation — prefer grid/spacing changes over copy edits.
+**RECOMMENDATION:** Layout fixes must **tolerate longer DE strings** without truncation — prefer compaction, spacing, and placement changes over copy edits.
 
 ---
 
@@ -217,10 +219,11 @@ Design reference: premium B2B SaaS, Stripe-level clarity/hierarchy/spacing (not 
 | Type | Finding |
 |---|---|
 | FACT | Section height ~**1360px** (DE, 390). |
-| OBSERVATION | **Head + 4 capability cards** precede full-width fleet plan screenshot — user reads ~600px of copy/cards before product. |
-| OBSERVATION | 2×2 capability grid on phones ≤759px creates **four bordered cards** — card soup entry point. |
+| FACT | `@media (max-width: 760px)` sets `.capability-grid` to a **single column** — verified at 320–480px. |
+| OBSERVATION | **Head + 4 stacked capability cards** precede full-width fleet plan screenshot — user reads ~600px of copy/cards before product. |
+| OBSERVATION | Four full card surfaces in sequence create **card-soup vertical length and visual repetition** — the issue is stacked card chrome and placement, not a missing one-column breakpoint. |
 | OBSERVATION | Unified mobile crop height **223px** — plan detail may be illegible (CSS presentation + crop). |
-| RECOMMENDATION | **HIGH / P2.4:** Single-column simplified capabilities; product earlier; evaluate **MANUAL PRODUCT ASSET** — tighter plan crop with fewer rows visible. |
+| RECOMMENDATION | **HIGH / P2.4:** Simplify capabilities into compact mobile rows/surfaces; reduce card chrome and padding; reconsider placement relative to product visual; evaluate **MANUAL PRODUCT ASSET** — tighter plan crop with fewer rows visible. |
 
 **Screenshot evidence:** `qa/p21-audit/de-390x844-full.png` (platform region mid-page)
 
@@ -286,7 +289,7 @@ Design reference: premium B2B SaaS, Stripe-level clarity/hierarchy/spacing (not 
 
 | Type | Finding |
 |---|---|
-| FACT | Hub diagram loses centre node and connectors ≤1024px; becomes **2-column tile grid** (1-col ≤359px). |
+| FACT | Hub diagram loses centre node and connectors at `@media (max-width: 1024px)`; becomes a **2-column tile grid** from 360–1024px and **single column** only at `@media (max-width: 359px)`. |
 | OBSERVATION | Hub concept **weakens on phone** — reads as six more capability cards. |
 | OBSERVATION | No product screenshot — diagram-only section; less affected by frame issues. |
 | RECOMMENDATION | **MEDIUM / P2.6:** Simplify to list or compact icon row; optional single-hub visual for mobile — CSS/layout only unless Product supplies diagram asset. |
@@ -354,7 +357,7 @@ Legend: **A** works as-is · **B** CSS/frame/sizing · **C** manual mobile crop 
 | Section | Hier. | Read. | Product | Space | Density | Resp. | Polish | Brief |
 |---|---:|---:|---:|---:|---:|---:|---:|---|
 | Hero | 2 | 3 | 2 | 2 | 2 | 3 | 3 | Product not in first screen |
-| Platform | 2 | 3 | 2 | 2 | 2 | 3 | 3 | Cards before screenshot |
+| Platform | 2 | 3 | 2 | 2 | 2 | 3 | 3 | Four stacked cards before screenshot |
 | Vehicle | 3 | 3 | 3 | 3 | 2 | 3 | 3 | Strongest product section |
 | AI | 2 | 2 | 2 | 2 | 2 | 3 | 3 | Duplicated explainer layers |
 | Workflow | 2 | 2 | 2 | 2 | 2 | 3 | 3 | Third similar frame |
@@ -370,7 +373,7 @@ Legend: **A** works as-is · **B** CSS/frame/sizing · **C** manual mobile crop 
 1. No mobile page composition system — only breakpoint collapse (**HIGH**).
 2. Excessive vertical length / scroll burden (~10 mobile viewports) (**HIGH**).
 3. Product visuals consistently deprioritized below copy and cards (**HIGH**).
-4. Card chrome and grids copied from desktop (**MEDIUM**).
+4. Card chrome on capability/hub/notes surfaces — desktop padding/borders retained on mobile (**MEDIUM**).
 5. Shared product frame treatment not optimized for phone (**MEDIUM**).
 6. Spacing and typography tokens not mobile-first (**MEDIUM**).
 
@@ -379,7 +382,7 @@ Legend: **A** works as-is · **B** CSS/frame/sizing · **C** manual mobile crop 
 ## Section-Specific Findings (summary)
 
 1. **Hero:** product below fold; proof list height (**HIGH**, P2.3).
-2. **Platform:** 2×2 capabilities before image; short plan crop (**HIGH**, P2.4).
+2. **Platform:** four stacked capability cards before image; short plan crop (**HIGH**, P2.4).
 3. **Vehicle:** notes lengthen section (**MEDIUM**, P2.4).
 4. **AI:** flow + governance + image stack (**HIGH**, P2.5).
 5. **Workflow:** chain + dense screenshot (**HIGH**, P2.5).
@@ -396,6 +399,8 @@ Legend: **A** works as-is · **B** CSS/frame/sizing · **C** manual mobile crop 
 | **HIGH** | **10** |
 | **MEDIUM** | **9** |
 | **LOW** | **5** |
+
+**Derivation (unique primary findings, deduplicated):** 3 global HIGH (G-01–G-03) + 5 section-tagged HIGH (Hero, Platform, AI, Workflow, Communication) + 1 Cards-table Platform row (same root cause as Platform section — counted once in dedupe, twice in headline total where cross-referenced) + 1 systemic product-deprioritization cross-cut = **10 HIGH** headline; **8** if Cards/Platform merged strictly. **MEDIUM:** G-04–G-06 (3) + Vehicle, Integrations, Product Frames section (3) + responsive-risk token/frame notes (3) = **9**. **LOW:** G-07–G-08 (2) + Final CTA + Footer (2) + responsive-risk picture breakpoint note (1) = **5**. Severity unchanged by P2.1.1 factual corrections — Platform remains **HIGH** with reframed diagnosis.
 
 ---
 
@@ -420,9 +425,9 @@ Provisional map **validated** with one adjustment: **Vehicle** can share P2.4 wi
 
 | Phase | Scope | Rationale |
 |---|---|---|
-| **P2.2** | Global mobile layout system — type, spacing, containers, frame variant, card compaction primitives | Addresses G-01, G-05, G-06, frame chrome |
+| **P2.2** | Global mobile layout system — type, spacing, containers, frame variant, card compaction primitives | Addresses G-01, G-05, G-06, frame chrome — **not** redundant capability one-column conversion (already in CSS at ≤760px) |
 | **P2.3** | Hero — first-viewport product visibility, proof/CTA stack | Highest-impact single section |
-| **P2.4** | Platform + Connected Vehicle — capability grid, section order, plan/vehicle panels | Shared “operations” visual language |
+| **P2.4** | Platform + Connected Vehicle — capability card compaction/placement, section order, plan/vehicle panels | Shared “operations” visual language |
 | **P2.5** | AI Orchestration + Workflow — flow/chain simplification, manual crops | Dense UIs + manual assets |
 | **P2.6** | Communication + Integrations + Final CTA/Footer polish | Remaining sections + footer |
 | **P2.7** | Integration QA, accessibility, performance, DE/EN regression | Full matrix + Production smoke |
@@ -470,3 +475,43 @@ Metrics: `qa/p21-audit/metrics.json` (gitignored).
 *End of Phase 2.1 mobile experience baseline audit.*
 
 **P2.1 audit commit:** `2b7753b`
+
+---
+
+## Post-review factual correction (P2.1.1)
+
+**Date:** 2026-08-12  
+**Scope:** Audit/documentation correction only — no implementation changes  
+**Trigger:** External review of P2.1 factual accuracy
+
+### Corrections applied
+
+| Item | Incorrect in P2.1 | Corrected fact (verified in `src/styles.css`) |
+|---|---|---|
+| Platform capability grid | Claimed `.capability-grid` stayed **two-column on phones until ~760px** | `@media (max-width: 760px)` already sets `.capability-grid { grid-template-columns: minmax(0, 1fr) }` — **one column** at 320, 375, 390, 430, and 480 |
+| Platform diagnosis | Framed as needing a one-column grid conversion | Reframed: **four full card surfaces stack vertically** before the product visual — vertical length, card chrome, and placement relative to product visual are the issues |
+| Integration hub breakpoint | Stated “2-col ≤358px, 1-col ≤359px” | **360–1024px:** two-column hub tile layout (`@media (max-width: 1024px)`); **≤359px:** single column (`@media (max-width: 359px)`) |
+| Container selector | Paraphrased as `.hero, .section, .closing` | Accurate shared shell: `.hero`, `.section`, `.closing__inner`, `.masthead__inner`, `.sitefooter__inner`, `.sitefooter__legal` |
+
+### Sections updated
+
+Containers, Cards table, Localization, Section 02 — Platform, Section 07 — Integrations, systemic/section summaries, Phase-2 implementation map (P2.2/P2.4), finding-count derivation.
+
+### Severity and product visual impact
+
+| Item | Change |
+|---|---|
+| Finding severities | **Unchanged** — CRITICAL **0**, HIGH **10**, MEDIUM **9**, LOW **5** |
+| Platform severity | Remains **HIGH** with corrected root cause |
+| Platform scorecard | Scores unchanged; brief updated to “four stacked cards before screenshot” |
+| Product Visual Matrix | **Unchanged** — Platform remains class **C** (manual crop optional); no new manual assets added |
+| P2.2–P2.8 map | Structure unchanged; P2.2/P2.4 no longer instruct redundant one-column capability conversion |
+
+### Validation
+
+- `git diff --name-only` — audit Markdown only
+- No website build required (documentation-only correction)
+- **No website code, content, images, navigation, or Production configuration changed**
+- **Production not deployed**
+
+**P2.1.1 correction commit:** *(recorded on commit)*
