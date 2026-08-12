@@ -148,3 +148,5 @@ No intended change to navigation, layout, copy, images, or JavaScript behaviour.
 ---
 
 *End of Phase 1.6.1 production hygiene audit.*
+
+**P1.6.1 documentation commit:** `5273925`
