@@ -3,10 +3,10 @@
 **Date:** 2026-08-11 (original report); Phase-1 navigation updates through P1.5  
 **Production URL:** <https://synqdrive.eu> (German), <https://synqdrive.eu/en/> (English)
 
-> **Current Phase-1 production deployment (P1.6):** `c77dc76` runtime — deployed **2026-08-12T12:58:22Z**  
-> **Build repository HEAD:** `ff235ea` (documentation-only commits after RC; no runtime delta)  
-> **P1.5 status:** PASS — deployed to Production in P1.6  
-> **Rollback reference:** pre-P1.6 production fingerprint documented in [`docs/audits/landing-page-phase-1.6-production-deployment-2026-08.md`](audits/landing-page-phase-1.6-production-deployment-2026-08.md); historical coming-soon snapshot in `rollback/coming-soon-2026-08-11/`
+> **Current Production (P1.6.1):** Sanitized static artefact — runtime unchanged from `c77dc76`; deployed **2026-08-12T14:46:48Z**  
+> **Build commit deployed:** `feacb47` (filtered asset copy + dist verification)  
+> **Previous P1.6 deploy:** **2026-08-12T12:58:22Z** — see [`docs/audits/landing-page-phase-1.6-production-deployment-2026-08.md`](audits/landing-page-phase-1.6-production-deployment-2026-08.md)  
+> **Rollback:** `rollback/synqdrive.eu-pre-p1.6.1-20260812_144442.tar.gz` (local; gitignored) + [`rollback/README.md`](../rollback/README.md)
 
 > **Note on paths.** This report was written while the site still lived inside the SynqDrive
 > product repository, before it was extracted into this standalone repository. Paths such as
@@ -122,6 +122,16 @@ Markup: `src/sections.mjs` → `header()`, `renderPlatformPanel()`, `renderMobil
 Breakpoint: desktop nav at `min-width: 1025px` (CSS `max-width: 1024px` for mobile). Verified 320–1024 mobile-only, 1100–1920 desktop-only, no collision at transition widths.
 
 **Accessibility (DEC-010):** Disclosure buttons with normal links — no ARIA menu roles. Arrow-key menu navigation not required.
+
+### Public static artefact policy (P1.6.1)
+
+`dist/` must contain only files required by the public website. Repository governance and documentation stay in-repo only.
+
+- **Build:** `tools/build-site.mjs` copies `assets/` via filtered recursive copy (`tools/public-artefact-policy.mjs`) — excludes `.md`, `README*`, hidden paths, and repository metadata.
+- **Verification:** `npm run build` runs `tools/verify-dist-artefact.mjs` after generation; fails if forbidden files appear in `dist/`.
+- **Rollback rule:** Before each Production deploy, keep a timestamped archive under `rollback/` (see `rollback/README.md`) or a verified package + manifest. Hostinger static deploy API exposes no file-level deployment-version restore for this vhost.
+
+P1.6.1 removed `assets/product/README.md` from the public docroot (was leaked by blind recursive copy). Website runtime files (`index.html`, `script.js`, `styles.css`, images) unchanged from P1.6.
 
 ### Language
 
@@ -329,10 +339,10 @@ screenshots are byte-identical to the locally approved build.
 
 ## Known remaining points
 
-- **P1.6:** Production deployment and live acceptance — **complete** (2026-08-12). See P1.6 audit.
+- **P1.6 / P1.6.1:** Production deployment, live acceptance, and artefact hygiene — **complete** (2026-08-12).
 - **Phase 2:** Mobile page composition (hero and sections below header) — **pending**.
 - Solutions, Resources, and Pricing top-level navigation remain deferred until real destination pages exist (DEC-004).
 - Taxi & Mobility may become a future Solutions page; it does not imply generally available Taxi Dispatch (DEC-009).
 - The product visuals are English on both locales. German screenshot variants deferred.
 - Both calls to action open a prefilled mail draft to `info@synqdrive.eu`.
-- `www.synqdrive.eu` does not redirect to the apex, as above.
+- `www.synqdrive.eu` redirects to apex (301 since P1.6 deploy); canonical tag handles duplicate content.

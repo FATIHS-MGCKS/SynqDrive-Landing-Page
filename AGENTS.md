@@ -126,6 +126,10 @@ Production deployment only after explicit phase approval and successful quality 
 
 Deploy target: Hostinger vhost for `synqdrive.eu` only. Never touch `app.synqdrive.eu` routing or VPS release paths.
 
+Repository-internal documentation and governance files must not be included in public Production artefacts unless explicitly intended as public content. The build verifies `dist/` after every `npm run build`.
+
+Before each Production deploy, ensure a rollback artefact exists (see `rollback/README.md`).
+
 ## Never do
 
 - Create a second design-system truth

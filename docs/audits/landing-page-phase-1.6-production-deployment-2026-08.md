@@ -218,3 +218,26 @@ Phase-1 complete. Phase 2 not started.
 *End of Phase 1.6 production deployment audit.*
 
 **P1.6 documentation commit:** `f3e2a58`
+
+---
+
+## Post-review Production hygiene correction (P1.6.1)
+
+**Date:** 2026-08-12  
+**Full audit:** [`landing-page-phase-1.6.1-production-hygiene-2026-08.md`](landing-page-phase-1.6.1-production-hygiene-2026-08.md)
+
+| Item | Outcome |
+|---|---|
+| Leak discovered | `assets/product/README.md` publicly served at `/assets/product/README.md` |
+| Root cause | Blind recursive `cp(assets → dist/assets)` in `tools/build-site.mjs` |
+| Fix | Filtered asset copy + `verify-dist-artefact.mjs` on every build (`feacb47`) |
+| Manifest delta | 30 → 29 files; runtime hashes unchanged |
+| Hostinger rollback versions | **Not available** for this static vhost — repository archives required |
+| Pre-P1.6.1 rollback artefact | `rollback/synqdrive.eu-pre-p1.6.1-20260812_144442.tar.gz` |
+| Redeploy timestamp | **2026-08-12T14:46:48Z** |
+| Former README URL | **404** post-deploy |
+| Production QA | 33 Chromium + 2 WebKit — pass (429 retry documented) |
+| App isolation | PASS — no restart |
+| Visual/navigation change | **None intended** |
+
+**PHASE 1 FINAL ACCEPTANCE: PASS**

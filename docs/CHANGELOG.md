@@ -10,6 +10,32 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+---
+
+## Production artefact hygiene (P1.6.1) — 2026-08-12
+
+**Phase:** P1.6.1 — Production hygiene & rollback hardening  
+**Audit:** [`docs/audits/landing-page-phase-1.6.1-production-hygiene-2026-08.md`](audits/landing-page-phase-1.6.1-production-hygiene-2026-08.md)
+
+### Fixed
+
+- Build no longer copies repository Markdown (`assets/product/README.md`) into public `dist/`
+- Filtered asset copy + post-build `verify-dist-artefact` guard
+- Rollback governance documented (`rollback/README.md` + pre-P1.6.1 archive)
+
+### Deployed
+
+- Sanitized static package redeployed to `https://synqdrive.eu` (build commit **`feacb47`**)
+- No intended visual, navigation, or runtime behaviour change
+
+### Verified
+
+- `https://synqdrive.eu/assets/product/README.md` → **404**
+- Production QA: 33 Chromium + 2 WebKit smoke — pass (rate-limit retry as in P1.6)
+- `app.synqdrive.eu` health unaffected
+
+---
+
 ## Phase 1 production deployment (P1.6) — 2026-08-12
 
 **Phase:** P1.6 — Production deployment & live acceptance  
