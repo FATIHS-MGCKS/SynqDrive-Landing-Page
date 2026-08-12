@@ -199,7 +199,7 @@ Markdown links verified within created docs (`docs/DECISIONS.md`, `docs/CHANGELO
 
 ## 12. Commit SHA
 
-`a653c1c98f50ee3eef59376ca6935ee58385fc87` — `docs(governance): establish website IA and asset policy`
+`f1f71fe2e5abb2f832cea1dc8603cd47772f3ea7` — `docs(governance): establish website IA and asset policy`
 
 ---
 
