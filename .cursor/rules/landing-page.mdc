@@ -1,0 +1,31 @@
+---
+description: SynqDrive landing page — highest-priority execution constraints for agents
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# SynqDrive Landing Page
+
+Read `AGENTS.md` first. Binding decisions: `docs/DECISIONS.md`. Phase context: `docs/audits/`.
+
+## Non-negotiable
+
+- **No dead links** — expose nav items only when destinations exist (DEC-004, DEC-008).
+- **Staged nav** — Platform anchors active; Solutions, Resources, Pricing deferred until real pages exist.
+- **Manual product images** — do not capture, sync, or regenerate from the Product Repository unless the user explicitly asks (`assets/product/README.md`).
+- **No invented claims** — capabilities, availability, KPIs, customers, compliance.
+- **Static architecture** — no framework migration without explicit instruction.
+- **Phase discipline** — P1.3 desktop nav, P1.4 mobile nav, P1.6 deploy only when approved.
+
+## Accessibility (desktop nav)
+
+Disclosure pattern with normal links. Not ARIA `menu` / `menuitem`. Arrow keys not required.
+
+## Before merge or deploy
+
+`npm run build` and `npm run qa` (with `npm run serve` running).
+
+## Do not duplicate
+
+Full rules live in `AGENTS.md` and `docs/DECISIONS.md`. Do not restate them at length here.

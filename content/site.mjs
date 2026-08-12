@@ -36,14 +36,15 @@ const SECTION_IDS = {
 };
 
 /**
- * Product visuals. Every file is a real screenshot of the SynqDrive frontend
- * rendered against one synthetic demo tenant (frontend/e2e/landing-demo-tenant.ts).
- */
-/**
- * Every product visual is a crop of a desktop capture, so each one also carries
- * a `mobile` crop of the same screenshot. Below 760px the page switches to it:
- * scaling a full desktop panel into a phone column renders its labels at around
- * 5px, which reads as texture rather than as a product.
+ * Product visuals — manually curated, committed under assets/.
+ * Policy: assets/product/README.md and DEC-006 in docs/DECISIONS.md.
+ *
+ * Each entry references shipped WebP files and intrinsic dimensions used by
+ * productFrame() for zero-CLS responsive rendering.
+ *
+ * Every product visual also carries a `mobile` variant. Below 760px the page
+ * switches to it via <picture>: scaling a full desktop panel into a phone column
+ * renders its labels at around 5px, which reads as texture rather than product.
  */
 const MEDIA = {
   hero: {

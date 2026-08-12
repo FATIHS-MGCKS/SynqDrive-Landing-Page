@@ -6,9 +6,21 @@
 > **Note on paths.** This report was written while the site still lived inside the SynqDrive
 > product repository, before it was extracted into this standalone repository. Paths such as
 > `landingpage/tools/build-site.mjs` and `frontend/e2e/landing-page-qa.spec.ts` therefore refer to
-> that repository. Here they are `tools/build-site.mjs` and `e2e/landing-page-qa.spec.ts`. The
-> capture harness (`landing-assets.capture.spec.ts`, `landing-demo-tenant.ts`) deliberately stayed
-> in the product repository, because it drives the real product app; see the README.
+> that repository. Here they are `tools/build-site.mjs` and `e2e/landing-page-qa.spec.ts`.
+>
+> **Historical:** An earlier product-repository screenshot capture harness
+> (`landing-assets.capture.spec.ts`, `landing-demo-tenant.ts`) existed during initial build.
+> That pipeline is **deprecated** as the current source-of-truth workflow. See DEC-006 and
+> `assets/product/README.md`.
+
+## Governance (P1.2)
+
+Binding website decisions: `docs/DECISIONS.md`  
+Agent instructions: `AGENTS.md`  
+Change log: `docs/CHANGELOG.md`  
+Phase audits: `docs/audits/`
+
+Approved phase plan: P1.1 audit → P1.2 governance → P1.3 desktop nav → P1.4 mobile nav → P1.5 integration QA → P1.6 deploy.
 
 ## Starting point
 
@@ -35,8 +47,9 @@ own artefact rather than bolted onto the product app.
   as gated, shadow-mode or coming soon is either omitted or explicitly qualified. See
   "Capability claims" below.
 - `.agents/skills/design-taste-frontend`, `.agents/skills/image-to-code`,
-  `.agents/skills/minimalist-ui`, `.agents/skills/make-interfaces-feel-better`.
+  `.agents/skills/minimalist-ui`, `.agents/skills/make-interfaces-feel-better` (product workspace).
   Dials: design variance 4, motion intensity 3, visual density 3.
+  Canonical guidance for this repo: `AGENTS.md`, `.cursor/rules/landing-page.mdc`.
 - Where `minimalist-ui` conflicted with the brand and the reference images (editorial serif,
   warm monochrome palette) the brand won. Its structural rules were kept: hairline 1px borders,
   near-zero shadows, black primary action, macro whitespace, reveal on scroll.
@@ -80,10 +93,25 @@ the page does not read as six repeated text-beside-screenshot rows.
 
 ### Navigation
 
-Platform (dropdown: Overview, Connected vehicle intelligence, AI and automation, Integrations),
-Contact, then the locale switch, Log in and Book a demo. Pricing, Solutions and Resources were
-left out because no page behind them exists yet and the brief forbids dead links; the four
-Platform entries are the four anchors that do exist. Mobile uses a drawer.
+**Current production (pre–P1.3):** Platform dropdown (Overview, Connected vehicle intelligence, AI and automation, Integrations), Contact top-level, locale switch, Log in, Book a demo. Mobile uses a drawer.
+
+**Ratified target IA (DEC-003):** Platform · Solutions · Resources · Pricing.
+
+**Staged activation (DEC-004, binding from P1.2):**
+
+| Category | Status |
+|---|---|
+| Platform — six homepage anchors | **Active** — to be implemented in P1.3 |
+| Solutions | **Deferred** until destination pages exist |
+| Resources | **Deferred** until destination pages exist |
+| Pricing | **Deferred** until destination page exists |
+| Contact as primary top-level | **Removed in P1.3** — remains via CTA, footer, future Resources |
+
+Platform anchors (locale-correct): `#platform`, `#vehicle-intelligence`, `#ai-orchestration`, `#workflow-automation`, `#communication`, `#integrations`.
+
+No placeholder URLs, fake routes, or empty dropdowns (DEC-008).
+
+**Accessibility (DEC-010):** Desktop nav uses disclosure buttons with normal links — not ARIA application menus. Arrow-key menu navigation is not required.
 
 ### Language
 
@@ -114,18 +142,16 @@ unified analytics or KPI product surface (contracts exist, product surface is pa
 percentage, uptime figure, customer name, logo or testimonial appears anywhere, because there is
 no verifiable public source for any of them.
 
-## Screenshot sources and privacy
+## Product images and privacy
 
-Every product visual is the real SynqDrive frontend, captured by
-`frontend/e2e/landing-assets.capture.spec.ts` at device scale factor 2 against one synthetic
-demo tenant defined in `frontend/e2e/landing-demo-tenant.ts`.
+**Current policy (DEC-006):** Product images are manually curated and committed under `assets/`.
+See `assets/product/README.md`. Agents must not auto-sync from the Product Repository.
 
-No production database, tenant or API was involved, so no name, phone number, email address,
-address, booking, invoice or identifier visible on the page belongs to a real person or
-organisation. Nothing is pixel-censored, because the data never existed outside the fixture.
+Images must show real SynqDrive product UI with no personal or customer data, no secrets, and
+no fabricated dashboards.
 
-`tools/build-assets.mjs` crops each capture against the width it is actually rendered at, so the
-type stays legible rather than being scaled into noise:
+`tools/build-assets.mjs` is an optional maintenance tool for re-encoding hand-prepared PNGs from
+`assets-raw/` (gitignored). Crop coordinates document how existing assets were produced:
 
 | Asset | Crop intent |
 |-------|-------------|
@@ -137,10 +163,14 @@ type stays legible rather than being scaled into noise:
 | `landing-communications` | Thread plus operational context, without the inbox list |
 | `landing-social-card` | Fixed 1200x630 JPEG for sharing platforms |
 
-The fleet plan and the workflow list are the two captures that cannot survive a phone column.
-Below 760px they switch through a `<picture>` element to `*-mobile.webp`, a tighter crop of the
-same screenshot. Width and height are emitted on the `<source>` as well as the `<img>`, so the
-art-direction switch does not cost layout stability.
+Below 760px, product visuals switch through `<picture>` to `*-mobile.webp`. Width and height are
+emitted on `<source>` and `<img>` for zero CLS.
+
+### Historical note (deprecated workflow)
+
+During initial build, visuals were captured via a product-repository harness against a synthetic
+demo tenant, then cropped with `tools/build-assets.mjs`. That pipeline is no longer the
+source-of-truth workflow. It is retained in git history and Phase 1.1 audit findings only.
 
 ## Responsive
 
@@ -222,8 +252,8 @@ not over the network.
 script in `.cursor/scripts/cloud-agent-deploy.sh` does not apply and was not used.
 
 ```bash
-node landingpage/tools/build-assets.mjs   # only when re-cropping captures
-node landingpage/tools/build-site.mjs     # writes landingpage/dist
+node tools/build-assets.mjs   # optional: re-encode hand-prepared PNGs from assets-raw/
+node tools/build-site.mjs     # writes dist/
 
 # The archive must hold the files at top level, not nested inside a dist/ folder,
 # because the deploy extracts it straight into the docroot.
@@ -273,13 +303,10 @@ screenshots are byte-identical to the locally approved build.
 
 ## Known remaining points
 
-- Pricing, Solutions and Resources navigation entries are deferred until pages exist behind them.
-- The product visuals are English on both locales. Serving German screenshots would mean a second
-  capture pass with the app in German and the demo tenant's own strings translated, then a second
-  set of assets behind the `<picture>` switch. Deferred rather than half-done; the surrounding
-  copy is fully German.
-- Both calls to action open a prefilled mail draft to `info@synqdrive.eu`, which is the only
-  contact channel the product exposes today. A demo request form would be a separate change.
+- **P1.3:** Expand Platform dropdown to six anchors; remove Contact from primary desktop top-level nav.
+- **P1.4:** Mobile navigation rebuild per DEC-007.
+- Solutions, Resources, and Pricing top-level navigation remain deferred until real destination pages exist (DEC-004) — approved in future IA, not permanently omitted.
+- Taxi & Mobility may become a future Solutions page; it does not imply generally available Taxi Dispatch (DEC-009).
+- The product visuals are English on both locales. German screenshot variants deferred.
+- Both calls to action open a prefilled mail draft to `info@synqdrive.eu`.
 - `www.synqdrive.eu` does not redirect to the apex, as above.
-- The seven WebP assets are regenerated from `landingpage/assets-raw`, which is not committed.
-  Re-run `npm run landing:capture` in `frontend/` to recreate the raw captures.

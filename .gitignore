@@ -9,8 +9,8 @@ qa/
 test-results/
 playwright-report/
 
-# Raw product captures. Produced in the SynqDrive product repository (see README)
-# and consumed by `npm run assets`; the cropped results in assets/ are committed.
+# Optional local workspace for hand-prepared PNG sources when manually re-encoding
+# assets via `npm run assets`. Not auto-synced; committed assets/ are authoritative.
 assets-raw/
 
 # Deploy archive from `npm run package`.

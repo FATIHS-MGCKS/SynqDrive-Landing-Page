@@ -1,12 +1,15 @@
 /**
- * Crops and encodes the raw product screenshots (landingpage/assets-raw) into the
- * WebP assets the landing page ships (landingpage/assets).
+ * Optional maintenance tool: crops and encodes hand-prepared PNG sources from
+ * assets-raw/ into the WebP files shipped under assets/.
  *
- * Raw captures come from e2e/landing-assets.capture.spec.ts, rendered with
- * deviceScaleFactor 2, so every crop below is expressed in CSS pixels of the
- * captured viewport and doubled here.
+ * Current policy (DEC-006): product images are manually curated in this repo.
+ * Agents must not run this tool or replace assets unless explicitly instructed.
+ * This script is NOT an automatic Product Repository screenshot pipeline.
  *
- * Usage: node landingpage/tools/build-assets.mjs
+ * Crop coordinates below document how existing committed assets were produced.
+ * deviceScaleFactor 2 convention: crop rects are CSS pixels, encoded width doubled.
+ *
+ * Usage: npm run assets   (requires ffmpeg and files in assets-raw/)
  */
 import { execFile } from 'node:child_process';
 import { mkdir, readdir, stat } from 'node:fs/promises';

@@ -463,6 +463,17 @@ Legend: ✅ exists today · ⚠️ section exists, nav entry missing · ❌ no r
 
 ## 15. Implementation Map — Phase 1.2 to 1.6
 
+> **Post-review clarification (2026-08-12, P1.2):** This section was an **audit-time proposal** for sequencing technical work. It is **non-normative**. The **approved phase plan** that governs all future work is:
+>
+> - P1.1 — Baseline Audit
+> - P1.2 — Governance, IA Decisions & Product Image Policy
+> - P1.3 — Desktop Navigation
+> - P1.4 — Mobile Navigation
+> - P1.5 — Integration Audit & Quality Gate
+> - P1.6 — Production Deployment & Live Acceptance
+>
+> See `docs/DECISIONS.md`, `docs/CHANGELOG.md`, and `AGENTS.md`.
+
 ### Phase 1.2 — IA decisions and content model
 
 **Goal:** Hierarchical nav data; resolved route policy for all ❌ targets.
@@ -621,6 +632,30 @@ From Phase 1.1 brief — **recommendation for P1.4**, not current state:
 - Not a visual copy of Stripe
 
 Current implementation: single simple dropdown panel (`min-width: 272px`, link-only rows) — below this bar.
+
+---
+
+## Post-review clarification (2026-08-12)
+
+Added after Phase 1.1 approval and Phase 1.2 governance work. **Historical findings above are unchanged**; this section records ratified corrections only.
+
+### 1. Approved phase numbering
+
+The implementation map in §15 proposed a different P1.2–P1.6 breakdown (content model in P1.2, CSS in P1.4, etc.). That numbering was **non-normative**. The binding sequence is documented in `AGENTS.md`, `docs/DECISIONS.md`, and `docs/CHANGELOG.md`:
+
+P1.1 audit → P1.2 governance → P1.3 desktop navigation → P1.4 mobile navigation → P1.5 integration QA → P1.6 deploy.
+
+### 2. Taxi & Mobility is not a blocker
+
+Phase 1.1 blocker **B5** and risk **R2** treated „Taxi & Mobilität" as conflicting with product scope because Taxi Dispatch is not generally available. **Corrected (DEC-009):** Taxi & Mobility is a future **Solutions** content item. It must not claim generally available Taxi Dispatch or unreleased capabilities, but it is **not** a navigation implementation blocker.
+
+### 3. Accessibility — disclosure navigation, not ARIA menus
+
+Phase 1.1 gap **A3** listed missing arrow-key menu navigation as an enhancement. **Corrected (DEC-010):** Desktop navigation should use **disclosure navigation with normal links**. Arrow-key navigation and `role="menu"` / `menuitem` are **not required** unless the implementation intentionally adopts an ARIA application menu pattern. Stripe-like quality does not mandate application-menu semantics.
+
+### 4. Route policy resolved in P1.2
+
+Phase 1.1 open blocker **B1** (seven destinations without routes) is resolved by **staged navigation (DEC-004):** only Platform anchors are active now; Solutions, Resources, and Pricing remain deferred until real pages exist. See `docs/DECISIONS.md`.
 
 ---
 
