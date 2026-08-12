@@ -285,7 +285,7 @@ Added `npm run qa:webkit` with `e2e/mobile-nav-webkit.spec.ts` (Playwright WebKi
 
 ### Commit SHA
 
-*(recorded after push)*
+`b430899` — `fix(navigation): correct mobile modal focus boundary`
 
 ---
 
