@@ -303,3 +303,5 @@ No **BLOCKER** or **HIGH** items.
 | P1.6 | **Not started** |
 
 Original P1.5 findings above are unchanged; this addendum records the documentation correction only.
+
+**P1.5.1 documentation commit:** `0ef6414`
