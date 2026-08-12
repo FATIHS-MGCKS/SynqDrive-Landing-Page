@@ -118,7 +118,7 @@ Design reference: premium B2B SaaS, Stripe-level clarity/hierarchy/spacing (not 
 
 | Component | Mobile behaviour | Issue | Recommendation |
 |---|---|---|---|
-| `.capability` (×4, Platform) | 1-col stack ≤760px (CSS already single column) | Four full card surfaces before product visual; heavy chrome/padding | **HIGH** — simplify to compact rows/surfaces; reduce padding; reconsider placement vs product (P2.4) |
+| `.capability` (×4, Platform) | 1-col stack ≤760px (CSS already single column) | Four full card surfaces before product visual; heavy chrome/padding | See **H-02** — simplify to compact rows/surfaces; reduce padding; reconsider placement vs product (P2.4) |
 | `.flow__step` (×4, AI) | Stacked list | Long vertical run before screenshot | Simplify to compact steps (P2.5) |
 | `.chain__link` (×3, Workflow) | Stacked with arrow pseudo | Adds band before screenshot | Consider inline summary (P2.5) |
 | `.notes` / `.stage__notes` | Divided lists | Repetitive with section body | Reduce duplication (P2.4–P2.6) |
@@ -127,6 +127,8 @@ Design reference: premium B2B SaaS, Stripe-level clarity/hierarchy/spacing (not 
 ---
 
 ## Product Frames
+
+**Finding ID:** **M-03** (shared `.frame` treatment)
 
 **FACT:** Shared `.frame` — 1px border, radius, shadow; `.frame--flush` inside vehicle stage panel.
 
@@ -198,6 +200,8 @@ Design reference: premium B2B SaaS, Stripe-level clarity/hierarchy/spacing (not 
 
 ## Section 01 — Hero
 
+**Finding ID:** **H-01**
+
 **Scores:** hierarchy **2** · readability **3** · product clarity **2** · spacing **2** · density **2** · responsiveness **3** · polish **3**
 
 | Type | Finding |
@@ -206,13 +210,15 @@ Design reference: premium B2B SaaS, Stripe-level clarity/hierarchy/spacing (not 
 | FACT | 390×844: **~5%** of product frame visible; 430×932: **~45%** visible. |
 | OBSERVATION | Reads as **marketing copy block**, then proof list, then product — not product-led mobile hero. |
 | OBSERVATION | Mobile crop (`landing-hero-operations-mobile.webp`) is used correctly when loaded. |
-| RECOMMENDATION | **HIGH / SYSTEMIC + SECTION:** Reduce hero preamble; move or shorten proof; bring product into first viewport on ≥375px; consider tighter hero padding (P2.3). |
+| RECOMMENDATION | **HIGH / H-01 / P2.3:** Reduce hero preamble; move or shorten proof; bring product into first viewport on ≥375px; consider tighter hero padding. |
 
 **Screenshot evidence:** `qa/p21-audit/de-320x700-full.png`, `de-390x844-full.png`
 
 ---
 
 ## Section 02 — Platform (One system for the entire operation)
+
+**Finding ID:** **H-02**
 
 **Scores:** hierarchy **2** · readability **3** · product clarity **2** · spacing **2** · density **2** · responsiveness **3** · polish **3**
 
@@ -223,13 +229,15 @@ Design reference: premium B2B SaaS, Stripe-level clarity/hierarchy/spacing (not 
 | OBSERVATION | **Head + 4 stacked capability cards** precede full-width fleet plan screenshot — user reads ~600px of copy/cards before product. |
 | OBSERVATION | Four full card surfaces in sequence create **card-soup vertical length and visual repetition** — the issue is stacked card chrome and placement, not a missing one-column breakpoint. |
 | OBSERVATION | Unified mobile crop height **223px** — plan detail may be illegible (CSS presentation + crop). |
-| RECOMMENDATION | **HIGH / P2.4:** Simplify capabilities into compact mobile rows/surfaces; reduce card chrome and padding; reconsider placement relative to product visual; evaluate **MANUAL PRODUCT ASSET** — tighter plan crop with fewer rows visible. |
+| RECOMMENDATION | **HIGH / H-02 / P2.4:** Simplify capabilities into compact mobile rows/surfaces; reduce card chrome and padding; reconsider placement relative to product visual; evaluate **MANUAL PRODUCT ASSET** — tighter plan crop with fewer rows visible. |
 
 **Screenshot evidence:** `qa/p21-audit/de-390x844-full.png` (platform region mid-page)
 
 ---
 
 ## Section 03 — Connected Vehicle Intelligence
+
+**Finding ID:** **M-01**
 
 **Scores:** hierarchy **3** · readability **3** · product clarity **3** · spacing **3** · density **2** · responsiveness **3** · polish **3**
 
@@ -238,11 +246,13 @@ Design reference: premium B2B SaaS, Stripe-level clarity/hierarchy/spacing (not 
 | FACT | Stage panel stacks **visual then notes** on mobile; mobile crop used (`landing-connected-vehicle-mobile.webp`). |
 | OBSERVATION | Frame height **~487px** — largest mobile product block; vehicle rows readable at 356px width. |
 | OBSERVATION | Three note blocks below image add scroll after strong visual — acceptable but lengthens section (~1345px). |
-| RECOMMENDATION | **MEDIUM / P2.4:** Consider inline notes or collapsible summary; asset likely **works as-is (A)** with composition tweaks. |
+| RECOMMENDATION | **MEDIUM / M-01 / P2.4:** Consider inline notes or collapsible summary; asset likely **works as-is (A)** with composition tweaks. |
 
 ---
 
 ## Section 04 — AI Orchestration
+
+**Finding ID:** **H-03**
 
 **Scores:** hierarchy **2** · readability **2** · product clarity **2** · spacing **2** · density **2** · responsiveness **3** · polish **3**
 
@@ -251,13 +261,15 @@ Design reference: premium B2B SaaS, Stripe-level clarity/hierarchy/spacing (not 
 | FACT | Section ~**1393px**; includes section head, **4 flow steps**, **governance notes list**, then screenshot. |
 | OBSERVATION | Flow rail + notes **duplicate** the explanatory role of section body — desktop pattern stacked wholesale. |
 | OBSERVATION | Mobile crop exists but chat UI text at 356px width is **marginally readable** — borderline for “communicates product.” |
-| RECOMMENDATION | **HIGH / P2.5:** Compress flow representation for mobile; **MANUAL PRODUCT ASSET RECOMMENDED** — crop focusing on one exchange + sources panel. |
+| RECOMMENDATION | **HIGH / H-03 / P2.5:** Compress flow representation for mobile; **MANUAL PRODUCT ASSET RECOMMENDED** — crop focusing on one exchange + sources panel. |
 
 **Screenshot evidence:** `qa/p21-audit/de-430x932-full.png`
 
 ---
 
 ## Section 05 — Workflow Automation
+
+**Finding ID:** **H-04**
 
 **Scores:** hierarchy **2** · readability **2** · product clarity **2** · spacing **2** · density **2** · responsiveness **3** · polish **3**
 
@@ -266,11 +278,13 @@ Design reference: premium B2B SaaS, Stripe-level clarity/hierarchy/spacing (not 
 | FACT | Chain band (Trigger/Condition/Action) + full-width automation list screenshot (~**1224px** section). |
 | OBSERVATION | Third full-width framed screenshot in sequence — **visual repetition fatigue**. |
 | OBSERVATION | Automation table text in mobile crop likely **below readable threshold** at phone width. |
-| RECOMMENDATION | **HIGH / P2.5:** **MANUAL PRODUCT ASSET RECOMMENDED** — single automation row/detail crop; simplify chain on mobile. |
+| RECOMMENDATION | **HIGH / H-04 / P2.5:** **MANUAL PRODUCT ASSET RECOMMENDED** — single automation row/detail crop; simplify chain on mobile. |
 
 ---
 
 ## Section 06 — Connected Customer Communication
+
+**Finding ID:** **H-05**
 
 **Scores:** hierarchy **2** · readability **3** · product clarity **2** · spacing **2** · density **2** · responsiveness **3** · polish **3**
 
@@ -279,11 +293,13 @@ Design reference: premium B2B SaaS, Stripe-level clarity/hierarchy/spacing (not 
 | FACT | Split → copy + divided notes → conversation screenshot. |
 | OBSERVATION | Similar composition to AI/workflow — **does not feel visually distinct** despite different content. |
 | OBSERVATION | Thread + context sidebar in one mobile crop — **context panel text likely unreadable**. |
-| RECOMMENDATION | **HIGH / P2.6:** **MANUAL PRODUCT ASSET RECOMMENDED** — thread-first vertical crop; reduce notes duplication. |
+| RECOMMENDATION | **HIGH / H-05 / P2.6:** **MANUAL PRODUCT ASSET RECOMMENDED** — thread-first vertical crop; reduce notes duplication. |
 
 ---
 
 ## Section 07 — Integrations & Extension
+
+**Finding ID:** **M-02**
 
 **Scores:** hierarchy **3** · readability **3** · product clarity **2** · spacing **3** · density **2** · responsiveness **3** · polish **3**
 
@@ -292,11 +308,13 @@ Design reference: premium B2B SaaS, Stripe-level clarity/hierarchy/spacing (not 
 | FACT | Hub diagram loses centre node and connectors at `@media (max-width: 1024px)`; becomes a **2-column tile grid** from 360–1024px and **single column** only at `@media (max-width: 359px)`. |
 | OBSERVATION | Hub concept **weakens on phone** — reads as six more capability cards. |
 | OBSERVATION | No product screenshot — diagram-only section; less affected by frame issues. |
-| RECOMMENDATION | **MEDIUM / P2.6:** Simplify to list or compact icon row; optional single-hub visual for mobile — CSS/layout only unless Product supplies diagram asset. |
+| RECOMMENDATION | **MEDIUM / M-02 / P2.6:** Simplify to list or compact icon row; optional single-hub visual for mobile — CSS/layout only unless Product supplies diagram asset. |
 
 ---
 
 ## Final CTA
+
+**Finding ID:** **L-01**
 
 **Scores:** hierarchy **3** · readability **3** · product clarity n/a · spacing **3** · density **3** · responsiveness **3** · polish **3**
 
@@ -304,11 +322,13 @@ Design reference: premium B2B SaaS, Stripe-level clarity/hierarchy/spacing (not 
 |---|---|
 | OBSERVATION | Clear headline + primary/ghost actions; full-width buttons ≤420px. |
 | OBSERVATION | **Third “demo” CTA pattern** after hero and mobile nav — acceptable but repetitive. |
-| RECOMMENDATION | **LOW / P2.6:** Minor spacing polish only. |
+| RECOMMENDATION | **LOW / L-01 / P2.6:** Minor spacing polish only. |
 
 ---
 
 ## Footer
+
+**Finding ID:** **L-02**
 
 **Scores:** hierarchy **3** · readability **3** · spacing **3** · density **2** · responsiveness **3** · polish **3**
 
@@ -316,7 +336,7 @@ Design reference: premium B2B SaaS, Stripe-level clarity/hierarchy/spacing (not 
 |---|---|
 | OBSERVATION | Stacks cleanly; anchor links usable; legal row compact. |
 | OBSERVATION | Footer columns add **~200px+** after long page — acceptable closure. |
-| RECOMMENDATION | **LOW / P2.6:** Touch target and grouping polish per task scope. |
+| RECOMMENDATION | **LOW / L-02 / P2.6:** Touch target and grouping polish per task scope. |
 
 ---
 
@@ -370,43 +390,87 @@ Legend: **A** works as-is · **B** CSS/frame/sizing · **C** manual mobile crop 
 
 ## Systemic Findings (summary)
 
-1. No mobile page composition system — only breakpoint collapse (**HIGH**).
-2. Excessive vertical length / scroll burden (~10 mobile viewports) (**HIGH**).
-3. Product visuals consistently deprioritized below copy and cards (**HIGH**).
-4. Card chrome on capability/hub/notes surfaces — desktop padding/borders retained on mobile (**MEDIUM**).
-5. Shared product frame treatment not optimized for phone (**MEDIUM**).
-6. Spacing and typography tokens not mobile-first (**MEDIUM**).
+Cross-references to unique IDs in [Finding counts](#finding-counts) — not additional findings.
+
+1. **G-01** — No mobile page composition system; only breakpoint collapse.
+2. **G-02** — Excessive vertical length / scroll burden (~10 mobile viewports).
+3. **G-03** — Product visuals consistently deprioritized below copy and cards.
+4. **G-04** — Card chrome on capability/hub/notes surfaces — desktop padding/borders retained on mobile.
+5. **M-03** — Shared product frame treatment not optimized for phone.
+6. **G-05**, **G-06** — Spacing and typography tokens not mobile-first.
 
 ---
 
 ## Section-Specific Findings (summary)
 
-1. **Hero:** product below fold; proof list height (**HIGH**, P2.3).
-2. **Platform:** four stacked capability cards before image; short plan crop (**HIGH**, P2.4).
-3. **Vehicle:** notes lengthen section (**MEDIUM**, P2.4).
-4. **AI:** flow + governance + image stack (**HIGH**, P2.5).
-5. **Workflow:** chain + dense screenshot (**HIGH**, P2.5).
-6. **Communication:** sidebar in crop (**HIGH**, P2.6).
-7. **Integrations:** hub → tile grid (**MEDIUM**, P2.6).
+Cross-references to unique IDs in [Finding counts](#finding-counts) — not additional findings.
+
+1. **H-01** Hero — product below fold; proof list height (P2.3).
+2. **H-02** Platform — four stacked capability cards before image; short plan crop (P2.4).
+3. **M-01** Vehicle — notes lengthen section (P2.4).
+4. **H-03** AI — flow + governance + image stack (P2.5).
+5. **H-04** Workflow — chain + dense screenshot (P2.5).
+6. **H-05** Communication — sidebar in crop (P2.6).
+7. **M-02** Integrations — hub → tile grid (P2.6).
 
 ---
 
 ## Finding counts
 
-| Severity | Count |
+Each independent root finding is counted **exactly once**. Cards-table rows, section summaries, and the Responsive Risk Map are cross-references only — they do not increase totals. Risk-map **Risk** columns describe desktop regression risk during implementation, not baseline defect severity.
+
+| Severity | Unique findings |
 |---|---|
 | **CRITICAL** | **0** |
-| **HIGH** | **10** |
-| **MEDIUM** | **9** |
-| **LOW** | **5** |
+| **HIGH** | **8** |
+| **MEDIUM** | **6** |
+| **LOW** | **4** |
+| **Total** | **18** |
 
-**Derivation (unique primary findings, deduplicated):** 3 global HIGH (G-01–G-03) + 5 section-tagged HIGH (Hero, Platform, AI, Workflow, Communication) + 1 Cards-table Platform row (same root cause as Platform section — counted once in dedupe, twice in headline total where cross-referenced) + 1 systemic product-deprioritization cross-cut = **10 HIGH** headline; **8** if Cards/Platform merged strictly. **MEDIUM:** G-04–G-06 (3) + Vehicle, Integrations, Product Frames section (3) + responsive-risk token/frame notes (3) = **9**. **LOW:** G-07–G-08 (2) + Final CTA + Footer (2) + responsive-risk picture breakpoint note (1) = **5**. Severity unchanged by P2.1.1 factual corrections — Platform remains **HIGH** with reframed diagnosis.
+### CRITICAL (0)
+
+*(none)*
+
+### HIGH (8)
+
+| ID | Finding |
+|---|---|
+| **G-01** | No deliberate mobile composition system — single-column stack of desktop patterns |
+| **G-02** | Excessive mobile vertical length (~9.6–9.9k px scroll on phone) |
+| **G-03** | Product visuals systematically deprioritized below copy/card blocks |
+| **H-01** | Hero — product below first viewport; proof list adds preamble height |
+| **H-02** | Platform — four stacked capability cards before product visual; plan crop legibility |
+| **H-03** | AI Orchestration — flow steps + governance notes stack before screenshot; marginal UI legibility |
+| **H-04** | Workflow Automation — chain band + dense automation screenshot |
+| **H-05** | Customer Communication — thread/context sidebar unreadable in mobile crop |
+
+### MEDIUM (6)
+
+| ID | Finding |
+|---|---|
+| **G-04** | Capability/hub/notes cards retain desktop card chrome on narrow widths |
+| **G-05** | No distinct mobile type scale — hero H1 consumes excessive viewport height |
+| **G-06** | Spacing tokens desktop-calibrated, not a mobile rhythm system |
+| **M-01** | Connected Vehicle — notes below image lengthen section |
+| **M-02** | Integrations — hub metaphor lost in two-column tile grid |
+| **M-03** | Shared product frame chrome not optimized for phone |
+
+### LOW (4)
+
+| ID | Finding |
+|---|---|
+| **G-07** | Mobile `<picture>` crop pipeline present but composition undermines legibility |
+| **G-08** | Horizontal overflow none detected — technical responsiveness passes; visual quality does not |
+| **L-01** | Final CTA — minor spacing polish |
+| **L-02** | Footer — touch target and grouping polish |
 
 ---
 
 ## Responsive Risk Map (desktop regression)
 
-Changes in P2.2+ must isolate mobile rules to avoid affecting accepted desktop (1100–1920):
+Changes in P2.2+ must isolate mobile rules to avoid affecting accepted desktop (1100–1920).
+
+**Note:** The **Risk** column below rates desktop regression risk during future implementation — not baseline defect severity. These items are **excluded** from [Finding counts](#finding-counts).
 
 | Shared surface | Risk | Mitigation |
 |---|---|---|
@@ -425,7 +489,7 @@ Provisional map **validated** with one adjustment: **Vehicle** can share P2.4 wi
 
 | Phase | Scope | Rationale |
 |---|---|---|
-| **P2.2** | Global mobile layout system — type, spacing, containers, frame variant, card compaction primitives | Addresses G-01, G-05, G-06, frame chrome — **not** redundant capability one-column conversion (already in CSS at ≤760px) |
+| **P2.2** | Global mobile layout system — type, spacing, containers, frame variant, card compaction primitives | Addresses G-01, G-05, G-06, M-03 — **not** redundant capability one-column conversion (already in CSS at ≤760px) |
 | **P2.3** | Hero — first-viewport product visibility, proof/CTA stack | Highest-impact single section |
 | **P2.4** | Platform + Connected Vehicle — capability card compaction/placement, section order, plan/vehicle panels | Shared “operations” visual language |
 | **P2.5** | AI Orchestration + Workflow — flow/chain simplification, manual crops | Dense UIs + manual assets |
@@ -515,3 +579,20 @@ Containers, Cards table, Localization, Section 02 — Platform, Section 07 — I
 - **Production not deployed**
 
 **P2.1.1 correction commit:** `e316f88`
+
+### Finding count normalization (P2.1.2)
+
+**Date:** 2026-08-12  
+**Scope:** Audit/documentation accounting correction only
+
+| Item | Detail |
+|---|---|
+| Prior issue | P2.1.1 **Finding counts** mixed unique root findings with cross-references (Cards-table Platform row, section summaries, Responsive Risk Map entries), producing contradictory “deduplicated” text alongside HIGH **10** |
+| Correction | Counts normalized to **one ID = one finding**; official totals: CRITICAL **0**, HIGH **8**, MEDIUM **6**, LOW **4** (18 total) |
+| Stable IDs | Global **G-01–G-08**; section **H-01–H-05**, **M-01–M-02**, **L-01–L-02**; product frames **M-03** |
+| Risk map | Responsive Risk Map **Risk** column excluded from defect totals — implementation regression risk only |
+| Diagnosis | Platform diagnosis, Product Visual Matrix, scorecard, P2.2–P2.8 map, and manual asset list **unchanged** |
+| Implementation | **No website code, content, images, navigation, or Production configuration changed** |
+| Deployment | **Production not deployed** |
+
+**P2.1.2 correction commit:** *(recorded on commit)*
