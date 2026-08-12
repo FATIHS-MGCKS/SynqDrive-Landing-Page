@@ -3,7 +3,8 @@
 The public marketing site for SynqDrive, live at **<https://synqdrive.eu>** (German) and
 **<https://synqdrive.eu/en/>** (English).
 
-Static HTML, CSS and one 6 kB progressive-enhancement script. No framework runtime, no API calls,
+Static HTML, CSS and a small framework-free progressive-enhancement script (~11 kB). No framework
+runtime, no API calls,
 no tracking. The site cannot reach tenant data, which is why it is kept out of the product
 repository and away from the product's deployment path.
 
@@ -14,7 +15,8 @@ npm install
 npx playwright install chromium   # once, for the QA suite
 npm run build      # renders dist/
 npm run serve      # serves dist/ on http://127.0.0.1:4321
-npm run qa         # 11 QA checks against the local build (needs serve running)
+npm run qa         # Chromium Playwright QA suite (needs serve running)
+npm run qa:webkit  # WebKit mobile-navigation smoke suite
 ```
 
 `npm run assets` additionally needs `ffmpeg` on the PATH. A plain build does not.
@@ -27,7 +29,9 @@ content/site.mjs        One content model per locale. All copy, links and media 
 src/sections.mjs        One template function per section.
 src/primitives.mjs      productFrame, sectionHead, action, icon, HTML escaping.
 src/styles.css          Design language, responsive rules, motion.
-src/script.js           Progressive enhancement only. The page is complete without it.
+src/script.js           Progressive enhancement only. All marketing content remains readable without
+                        JavaScript; standard links and CTAs stay available. Desktop Platform
+                        disclosure and mobile navigation are JavaScript-enhanced interactive controls.
 src/icons.generated.mjs Lucide paths, generated. Do not edit by hand.
 tools/build-site.mjs    Renders dist/, robots.txt and sitemap.xml for both locales.
 tools/build-assets.mjs  Optional local re-encode from assets-raw/ (manual maintenance only).
@@ -66,9 +70,11 @@ Non-normative history: `docs/CHANGELOG.md` and `docs/audits/`.
 
 Long-term target top-level: **Platform · Solutions · Resources · Pricing**.
 
-**Active now (P1.3 will implement):** Platform dropdown with six homepage anchors only.
+**Implemented (P1.3 desktop, P1.4 mobile):** Platform is the only active public product navigation
+category — desktop disclosure panel and mobile modal with six homepage anchors.
 
-**Deferred until real destination pages exist:** Solutions, Resources, Pricing. No placeholder URLs, fake routes, or empty dropdowns.
+**Deferred until real destination pages exist (DEC-004):** Solutions, Resources, Pricing. No
+placeholder URLs, fake routes, or empty dropdowns.
 
 Contact is not a permanent primary top-level item. It remains accessible through the closing CTA, footer, and future Resources navigation.
 
@@ -118,7 +124,9 @@ deploy extracts it straight into the docroot. `npm run package` already does thi
 npm run qa:prod
 ```
 
-Runs the same 11 checks against the live site. Also confirm the product surface was untouched:
+Runs the current Chromium landing-page QA suite against <https://synqdrive.eu>. For WebKit
+production smoke when P1.6 requires it, set `LANDING_QA_BASE_URL=https://synqdrive.eu` with
+`npm run qa:webkit` if supported. Also confirm the product surface was untouched:
 `https://app.synqdrive.eu/api/v1/health` should still report `{"status":"ok"}` with an uptime that
 predates the deploy.
 
@@ -130,13 +138,14 @@ same vhost. Nothing else changes, so no DNS, certificate or proxy state has to b
 
 ## What the QA suite covers
 
-Per locale: metadata and canonical tags, heading order, alt text and intrinsic dimensions on every
-image, internal anchors and external hosts, lazy images resolving rather than 404ing, no element
-left at its pre-reveal opacity, console errors, failed requests, horizontal overflow at nine widths
-from 320 to 1920px, and touch target sizes. Plus the dropdown by pointer and keyboard, the mobile
-drawer, the locale switch and cumulative layout shift.
+`npm run qa` — Chromium Playwright suite: per-locale metadata, heading order, image alt and
+dimensions, anchors and external hosts, lazy images, reveal opacity, console errors, failed
+requests, horizontal overflow at nine viewport widths, touch targets, desktop Platform disclosure
+(pointer and keyboard), mobile navigation modal, locale switch, and cumulative layout shift.
 
-Set `LANDING_QA_BASE_URL` to point the suite at any origin, and `LANDING_QA_LABEL` to keep its
+`npm run qa:webkit` — WebKit smoke for mobile navigation open/close semantics.
+
+Set `LANDING_QA_BASE_URL` to point either suite at any origin, and `LANDING_QA_LABEL` to keep
 screenshots separate from a local run.
 
 ## Conventions

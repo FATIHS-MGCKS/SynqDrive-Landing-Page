@@ -280,3 +280,26 @@ No **BLOCKER** or **HIGH** items.
 ---
 
 *End of Phase 1.5 production readiness gate.*
+
+---
+
+## Post-review documentation consistency correction (P1.5.1)
+
+**Date:** 2026-08-12  
+**Scope:** Documentation only — no runtime code, CSS, JavaScript, test behaviour, product images, or Production deployment.
+
+| Item | Outcome |
+|---|---|
+| Technical P1.5 PASS | **Unchanged** — release candidate `c77dc76` remains approved |
+| External review finding | Stale README and IMPLEMENTATION language misrepresented current Phase-1 state |
+| README script size | Corrected to ~11 kB / framework-free wording |
+| README JS requirement | Corrected — content readable without JS; Platform disclosure and mobile nav are JS-enhanced |
+| README QA count | Removed hardcoded "11 checks"; documents `npm run qa`, `npm run qa:webkit`, `npm run qa:prod` |
+| README phase status | P1.3/P1.4 implemented; Platform only active category; Solutions/Resources/Pricing deferred |
+| IMPLEMENTATION historical Production | Section labelled **Historical pre-Phase-1 production baseline** (`1415ea74`, 11-test QA) |
+| IMPLEMENTATION known remaining | P1.4 outstanding removed; P1.6 deployment and Phase 2 mobile composition noted as pending |
+| Runtime changes | **None** |
+| Production deployment | **None** |
+| P1.6 | **Not started** |
+
+Original P1.5 findings above are unchanged; this addendum records the documentation correction only.

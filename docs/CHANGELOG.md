@@ -10,6 +10,27 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+## Release documentation consistency (P1.5.1) — 2026-08-12
+
+**Phase:** P1.5.1 — Post-review documentation alignment  
+**Scope:** Documentation only — no runtime, CSS, JS, test, or deployment changes.
+
+### Corrected
+
+- README script size (~11 kB), JavaScript/no-JS wording, QA command descriptions (removed hardcoded "11 checks")
+- README phase status (P1.3/P1.4 implemented; Platform only active category)
+- `docs/IMPLEMENTATION.md` current-state marker (`c77dc76`, P1.5 ready, P1.6 not deployed)
+- Historical pre-Phase-1 production baseline clearly labelled (commit `1415ea74`, original 11-test QA)
+- Known remaining points updated (P1.4 complete; P1.6 and Phase 2 pending)
+
+### Unchanged
+
+- Technical P1.5 PASS result
+- Shipped behaviour and release candidate `c77dc76`
+- No Production deployment
+
+---
+
 ## Production readiness gate (P1.5) — 2026-08-12
 
 **Phase:** P1.5 — Integration audit & production readiness  

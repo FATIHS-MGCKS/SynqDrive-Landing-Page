@@ -1,7 +1,12 @@
 # Public landing page — production implementation
 
-**Date:** 2026-08-11
+**Date:** 2026-08-11 (original report); Phase-1 navigation updates through P1.5  
 **Production URL:** <https://synqdrive.eu> (German), <https://synqdrive.eu/en/> (English)
+
+> **Current Phase-1 release candidate:** `c77dc76`  
+> **P1.5 status:** READY FOR P1.6  
+> **Production deployment of this RC:** NOT YET PERFORMED  
+> Live production still reflects the pre–Phase-1 navigation baseline until P1.6 deploys this candidate.
 
 > **Note on paths.** This report was written while the site still lived inside the SynqDrive
 > product repository, before it was extracted into this standalone repository. Paths such as
@@ -196,7 +201,8 @@ Semantic sectioning with one `h1` and no skipped heading level, skip link, visib
 the reveal state so the enter transform never applies at all. All landing-page sections, in-page
 anchors, CTAs, and footer links remain readable without JavaScript. The reveal styles are scoped
 to a `.js` class set inline in the head, with a timer that removes it again if `script.js` never
-arrives. **Platform disclosure** (desktop dropdown) and the **mobile drawer** require JavaScript;
+arrives. **Platform disclosure** (desktop dropdown) and the **mobile navigation modal** require
+JavaScript;
 without it, use in-page anchors, footer links, or the skip link. Closed dropdown panels use the
 `inert` attribute so hidden links are removed from the tab order (P1.3.1).
 
@@ -227,6 +233,11 @@ metric, customer name, logo or testimonial appears anywhere on the page.
 
 ## Tests
 
+> **Historical (original product-repository import gate).** The table and narrative below record
+> integration checks from when this site lived inside the SynqDrive product repository. They are
+> **not** the current Phase-1 QA gate. Current QA in this repository: `npm run qa` (Chromium
+> Playwright suite) and `npm run qa:webkit` (WebKit mobile-navigation smoke).
+
 | Gate | Result |
 |------|--------|
 | `npx tsc -b` (frontend) | pass |
@@ -244,7 +255,7 @@ this work and are not masked by it.
 order, alt text and intrinsic dimensions on every image, internal anchors and external hosts,
 lazy images resolving rather than 404ing, no element left at its pre-reveal opacity, console
 errors, failed requests, horizontal overflow at nine widths, and touch target sizes. Plus the
-dropdown by pointer and keyboard, the mobile drawer, the locale switch and cumulative layout
+dropdown by pointer and keyboard, the mobile navigation modal, the locale switch and cumulative layout
 shift.
 
 The screenshot step waits for every image to report `complete` with a non-zero `naturalWidth`
@@ -253,7 +264,14 @@ deployed origin a lazy image could still be in flight and got captured as an emp
 correct page looked broken in the screenshot. A fixed settle delay was enough on localhost and
 not over the network.
 
-## Deployment
+## Historical pre-Phase-1 production baseline
+
+> **This section records the earlier Production deployment before current Phase-1 navigation work.**
+> It is **NOT** the current release candidate. The current Phase-1 release candidate is **`c77dc76`**
+> (P1.5 PASS — ready for P1.6). **P1.6 has not yet deployed that release candidate.** Live
+> production at the time of writing still serves the pre–Phase-1 navigation baseline.
+
+## Deployment (historical)
 
 `synqdrive.eu` is a main vhost on Hostinger shared hosting (LiteSpeed, hPanel), docroot
 `/home/u700268787/domains/synqdrive.eu/public_html`. It is not on the VPS, so the VPS release
@@ -281,7 +299,7 @@ the product process was never restarted and the VPS was never involved.
 That behaviour predates this work; duplicate content is handled by the canonical tag. Adding a
 redirect would mean changing working hosting configuration and was left alone.
 
-## Rollback
+## Rollback (historical)
 
 `landingpage/rollback/coming-soon-2026-08-11/` holds the complete previous site, captured from
 production immediately before the deploy. Restoring it is the same operation as deploying:
@@ -297,7 +315,7 @@ hazard between that branch and this one.
 Commit deployed: `1415ea74`, the voice assistant copy correction. Later commits on this branch
 touch only the QA suite and documentation and do not change the shipped artefact.
 
-## Acceptance
+## Acceptance (historical — 11-test QA at commit `1415ea74`)
 
 Checked live on <https://synqdrive.eu>: 200 on the apex and on `/en/`, `/en` redirecting 301 to
 `/en/`, HTTP redirecting 301 to HTTPS, a Let's Encrypt certificate for `CN=synqdrive.eu` valid to
@@ -311,7 +329,8 @@ screenshots are byte-identical to the locally approved build.
 
 ## Known remaining points
 
-- **P1.4:** Mobile navigation rebuild per DEC-007 (grouped drawer, optional modal semantics).
+- **P1.6:** Production deployment and live acceptance of release candidate `c77dc76` — **pending**.
+- **Phase 2:** Mobile page composition (hero and sections below header) — **pending** (post-P1.6).
 - Solutions, Resources, and Pricing top-level navigation remain deferred until real destination pages exist (DEC-004).
 - Taxi & Mobility may become a future Solutions page; it does not imply generally available Taxi Dispatch (DEC-009).
 - The product visuals are English on both locales. German screenshot variants deferred.
