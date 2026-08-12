@@ -254,4 +254,4 @@ Hero → Platform → Vehicle rhythm reviewed: Platform product arrives earlier;
 
 **Starting SHA:** `d1c6531`  
 **Implementation commit:** `5f7ae7d`  
-**Documentation commit:** `e9639eb`
+**Documentation commit:** `f8617ee`
