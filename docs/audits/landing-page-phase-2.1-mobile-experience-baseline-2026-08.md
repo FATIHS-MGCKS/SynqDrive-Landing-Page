@@ -468,3 +468,5 @@ Metrics: `qa/p21-audit/metrics.json` (gitignored).
 ---
 
 *End of Phase 2.1 mobile experience baseline audit.*
+
+**P2.1 audit commit:** `2b7753b`
