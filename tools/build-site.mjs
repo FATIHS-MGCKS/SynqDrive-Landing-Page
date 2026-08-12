@@ -14,9 +14,11 @@
  *
  * Usage: node landingpage/tools/build-site.mjs
  */
-import { cp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
+import { cp, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
+
+import { isPublicStaticFile } from './public-artefact-policy.mjs';
 
 import { SITE, locales } from '../content/site.mjs';
 import {
@@ -185,6 +187,25 @@ ${urls}
 `;
 }
 
+async function copyPublicAssets(srcDir, destDir, relativeBase = '') {
+  await mkdir(destDir, { recursive: true });
+  const entries = await readdir(srcDir, { withFileTypes: true });
+
+  for (const entry of entries) {
+    const relativePath = relativeBase ? `${relativeBase}/${entry.name}` : entry.name;
+    if (!isPublicStaticFile(relativePath)) continue;
+
+    const src = path.join(srcDir, entry.name);
+    const dest = path.join(destDir, entry.name);
+
+    if (entry.isDirectory()) {
+      await copyPublicAssets(src, dest, relativePath);
+    } else if (entry.isFile()) {
+      await cp(src, dest);
+    }
+  }
+}
+
 async function main() {
   await rm(DIST, { recursive: true, force: true });
   await mkdir(DIST, { recursive: true });
@@ -197,7 +218,7 @@ async function main() {
 
   await cp(path.join(SRC, 'styles.css'), path.join(DIST, 'styles.css'));
   await cp(path.join(SRC, 'script.js'), path.join(DIST, 'script.js'));
-  await cp(path.join(ROOT, 'assets'), path.join(DIST, 'assets'), { recursive: true });
+  await copyPublicAssets(path.join(ROOT, 'assets'), path.join(DIST, 'assets'));
   await writeFile(path.join(DIST, 'robots.txt'), robots(), 'utf8');
   await writeFile(path.join(DIST, 'sitemap.xml'), sitemap(), 'utf8');
 
