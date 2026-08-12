@@ -178,7 +178,7 @@ Manual review: hierarchy readable, panel aligned to trigger, no clipping at 1100
 
 ## 12. Commit SHA
 
-Recorded at commit time of `feat(navigation): rebuild desktop platform navigation`.
+`ee856e58386a889816fc76440cb1aea36d8a6536` — `feat(navigation): rebuild desktop platform navigation`
 
 ---
 
