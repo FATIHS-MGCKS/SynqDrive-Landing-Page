@@ -12,6 +12,43 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+## Global mobile layout system (P2.2) — 2026-08-12
+
+**Phase:** P2.2 — Global mobile layout system (local only; **not deployed**)  
+**Audit:** [`docs/audits/landing-page-phase-2.2-global-mobile-layout-system-2026-08.md`](audits/landing-page-phase-2.2-global-mobile-layout-system-2026-08.md)
+
+### Added
+
+- Shared mobile typography, spacing, measure, frame, and surface tokens in `src/styles.css`
+- Layout primitives: `.layout-split`, `.layout-stack`, `.layout-measure`
+- Surface variants: `.surface`, `.surface--compact`, `.surface--plain`
+- Product frame class `.frame--product` with mobile full-bleed presentation (≤760px)
+- P2.2 structural QA tests (overflow, gutter range, frame width, CTA height, desktop regression)
+
+### Changed
+
+- Section vertical padding reduced on phone/tablet (`--section-y`: 76→56px at ≤760px)
+- Fluid gutter replaces stepped 16/20px overrides
+- Hero/section typography uses tokenized scale with tighter mobile caps
+- Card/surface padding reduced systemically on phone (`--surface-padding`: 20→16px)
+- Footer interactive targets increased to 44px min-height
+
+### Not changed
+
+- Phase-1 navigation (desktop + mobile modal)
+- Product image files and crops
+- Section-specific composition (hero proof, capability placement, AI flow) — deferred P2.3–P2.6
+- Production (`synqdrive.eu`)
+
+### Verified (local)
+
+- `npm run build` — pass
+- Chromium QA **37/37**; WebKit smoke **2/2**
+- DE page height at 390×844: **9455px** (P2.1 baseline **9904px**)
+- Hero product frame width at 390px: **390px** (P2.1 **358px**)
+
+---
+
 ## Production artefact hygiene (P1.6.1) — 2026-08-12
 
 **Phase:** P1.6.1 — Production hygiene & rollback hardening  

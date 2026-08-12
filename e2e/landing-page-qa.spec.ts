@@ -987,4 +987,384 @@ test.describe('public landing page', () => {
     await settle(page);
     await shoot(page, 'desktop-1440-en');
   });
+
+  const P22_LAYOUT_WIDTHS = [
+    320, 360, 375, 390, 393, 414, 430, 480, 600, 768, 820, 1024,
+  ] as const;
+  const P22_FRAME_WIDTHS = [320, 390, 430, 760] as const;
+  const P22_LANDSCAPE_SHOTS = [
+    [667, 375],
+    [844, 390],
+    [932, 430],
+  ] as const;
+  const P22_DESKTOP_WIDTHS = [1100, 1280, 1440, 1920] as const;
+  const P22_SECTION_Y_WIDTHS = [
+    [320, 56],
+    [390, 56],
+    [760, 56],
+    [768, 72],
+    [820, 72],
+    [1024, 72],
+    [1100, 104],
+    [1180, 104],
+    [1280, 128],
+    [1440, 128],
+  ] as const;
+
+  function expectedSectionY(width: number) {
+    if (width <= 760) return 56;
+    if (width <= 1024) return 72;
+    if (width <= 1180) return 104;
+    return 128;
+  }
+
+  async function readStackSpacing(page: Page) {
+    return page.evaluate(() => {
+      const platformHead = document.querySelector('#platform .brief__head');
+      const platformMedia = document.querySelector('#platform .stack__media');
+      const workflowHead = document.querySelector('#workflow-automation .section-head');
+      const workflowChain = document.querySelector('#workflow-automation .chain');
+      const workflowMedia = document.querySelector('#workflow-automation .stack__media');
+      const platformMediaStyles = platformMedia ? getComputedStyle(platformMedia) : null;
+      const workflowChainStyles = workflowChain ? getComputedStyle(workflowChain) : null;
+      const workflowMediaStyles = workflowMedia ? getComputedStyle(workflowMedia) : null;
+
+      const gap = (topEl: Element | null, bottomEl: Element | null) => {
+        if (!topEl || !bottomEl) return null;
+        const top = topEl.getBoundingClientRect().bottom;
+        const bottom = bottomEl.getBoundingClientRect().top;
+        return Math.round((bottom - top) * 10) / 10;
+      };
+
+      return {
+        platformHeadToMedia: gap(platformHead, platformMedia),
+        workflowHeadToChain: gap(workflowHead, workflowChain),
+        workflowChainToMedia: gap(workflowChain, workflowMedia),
+        platformMediaMarginTop: platformMediaStyles
+          ? parseFloat(platformMediaStyles.marginTop)
+          : null,
+        workflowChainMarginTop: workflowChainStyles
+          ? parseFloat(workflowChainStyles.marginTop)
+          : null,
+        workflowMediaMarginTop: workflowMediaStyles
+          ? parseFloat(workflowMediaStyles.marginTop)
+          : null,
+      };
+    });
+  }
+
+  for (const locale of ['de', 'en'] as const) {
+    const url = locale === 'de' ? '/' : '/en/';
+
+    test(`P2.2 mobile layout invariants (${locale})`, async ({ page }) => {
+      for (const width of P22_LAYOUT_WIDTHS) {
+        await page.setViewportSize({ width, height: 844 });
+        await page.goto(url, { waitUntil: 'load' });
+        await settle(page);
+
+        const layout = await page.evaluate(() => {
+          const root = document.documentElement;
+          const styles = getComputedStyle(root);
+          const shell = document.querySelector('.hero');
+          const shellStyles = shell ? getComputedStyle(shell) : null;
+          const heroFrame = document.querySelector('.hero__media .frame--product');
+          const heroFrameRect = heroFrame?.getBoundingClientRect();
+          const primary = document.querySelector('.hero .action--primary');
+          const primaryRect = primary?.getBoundingClientRect();
+          const heroPicture = document.querySelector('.hero picture source[media]');
+          return {
+            scrollWidth: root.scrollWidth,
+            clientWidth: root.clientWidth,
+            gutterPx: shellStyles ? parseFloat(shellStyles.paddingInlineStart) : 0,
+            sectionY: parseFloat(styles.getPropertyValue('--section-y')),
+            typeDisplay: styles.getPropertyValue('--type-display').trim(),
+            frameWidth: heroFrameRect?.width ?? 0,
+            frameLeft: heroFrameRect?.left ?? 0,
+            frameRight: heroFrameRect?.right ?? 0,
+            primaryHeight: primaryRect?.height ?? 0,
+            hasProductFrameClass: Boolean(document.querySelector('.frame--product')),
+            hasLayoutSplit: Boolean(document.querySelector('.layout-split')),
+            mobileSourceMedia: heroPicture?.getAttribute('media') ?? null,
+          };
+        });
+
+        expect(layout.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(layout.clientWidth + 1);
+        expect(layout.hasProductFrameClass, `${width}px frame--product`).toBe(true);
+        expect(layout.hasLayoutSplit, `${width}px layout-split`).toBe(true);
+        expect(layout.gutterPx, `${width}px gutter range`).toBeGreaterThanOrEqual(15);
+        expect(layout.gutterPx, `${width}px gutter range`).toBeLessThanOrEqual(25);
+        expect(layout.sectionY, `${width}px section-y token`).toBe(expectedSectionY(width));
+        expect(layout.typeDisplay, `${width}px type-display token`).toBeTruthy();
+        expect(layout.frameWidth, `${width}px product frame width`).toBeGreaterThan(0);
+        expect(layout.frameLeft, `${width}px hero frame left`).toBeGreaterThanOrEqual(-1);
+        expect(layout.frameRight, `${width}px hero frame right`).toBeLessThanOrEqual(width + 1);
+        expect(layout.primaryHeight, `${width}px CTA height`).toBeGreaterThanOrEqual(44);
+
+        if (width <= 760) {
+          expect(layout.mobileSourceMedia, `${width}px hero mobile source`).toContain('760px');
+          expect(layout.frameLeft, `${width}px hero bleed left`).toBeLessThanOrEqual(1);
+          expect(layout.frameRight, `${width}px hero bleed right`).toBeGreaterThanOrEqual(width - 1);
+        }
+      }
+    });
+  }
+
+  test('P2.2 product frame geometry', async ({ page }) => {
+    for (const width of P22_FRAME_WIDTHS) {
+      await page.setViewportSize({ width, height: 844 });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const geometry = await page.evaluate(() => {
+        const heroFrame = document.querySelector('.hero__media .frame--product:not(.frame--flush)');
+        const heroStyles = heroFrame ? getComputedStyle(heroFrame) : null;
+        const heroRect = heroFrame?.getBoundingClientRect();
+        const flushFrame = document.querySelector('.stage__media .frame--flush');
+        const flushStyles = flushFrame ? getComputedStyle(flushFrame) : null;
+        const flushRect = flushFrame?.getBoundingClientRect();
+        const stageMedia = document.querySelector('.stage__media');
+        const stageRect = stageMedia?.getBoundingClientRect();
+        return {
+          scrollWidth: document.documentElement.scrollWidth,
+          clientWidth: document.documentElement.clientWidth,
+          hero: {
+            marginLeft: heroStyles ? parseFloat(heroStyles.marginLeft) : null,
+            marginRight: heroStyles ? parseFloat(heroStyles.marginRight) : null,
+            left: heroRect?.left ?? null,
+            right: heroRect?.right ?? null,
+            width: heroRect?.width ?? null,
+          },
+          flush: {
+            marginLeft: flushStyles ? parseFloat(flushStyles.marginLeft) : null,
+            marginRight: flushStyles ? parseFloat(flushStyles.marginRight) : null,
+            left: flushRect?.left ?? null,
+            right: flushRect?.right ?? null,
+            width: flushRect?.width ?? null,
+            stageLeft: stageRect?.left ?? null,
+            stageRight: stageRect?.right ?? null,
+          },
+        };
+      });
+
+      expect(geometry.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(geometry.clientWidth + 1);
+      expect(geometry.hero.marginLeft!, `${width}px hero margin-left`).toBeLessThan(0);
+      expect(geometry.hero.marginRight!, `${width}px hero margin-right`).toBeLessThan(0);
+      expect(geometry.hero.left!, `${width}px hero left edge`).toBeGreaterThanOrEqual(-1);
+      expect(geometry.hero.right!, `${width}px hero right edge`).toBeLessThanOrEqual(width + 1);
+
+      expect(geometry.flush.marginLeft!, `${width}px flush margin-left`).toBe(0);
+      expect(geometry.flush.marginRight!, `${width}px flush margin-right`).toBe(0);
+      expect(geometry.flush.left!, `${width}px flush left`).toBeGreaterThanOrEqual(
+        geometry.flush.stageLeft! - 1,
+      );
+      expect(geometry.flush.right!, `${width}px flush right`).toBeLessThanOrEqual(
+        geometry.flush.stageRight! + 1,
+      );
+      if (width <= 760) {
+        expect(geometry.flush.width!, `${width}px flush width`).toBeLessThan(width);
+      }
+    }
+  });
+
+  test('P2.2 layout-stack spacing ownership', async ({ page }) => {
+    for (const [width, height] of [
+      [390, 844],
+      [768, 1024],
+      [1440, 900],
+    ] as const) {
+      await page.setViewportSize({ width, height });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const spacing = await readStackSpacing(page);
+      expect(spacing.platformMediaMarginTop, `${width}px platform media margin`).toBe(0);
+      expect(spacing.platformHeadToMedia, `${width}px platform gap`).toBeGreaterThan(0);
+
+      if (width <= 760) {
+        expect(spacing.platformHeadToMedia!, `${width}px platform gap`).toBeGreaterThanOrEqual(24);
+        expect(spacing.platformHeadToMedia!, `${width}px platform gap`).toBeLessThanOrEqual(36);
+        expect(spacing.workflowHeadToChain!, `${width}px workflow head-chain`).toBeGreaterThanOrEqual(
+          44,
+        );
+        expect(spacing.workflowHeadToChain!, `${width}px workflow head-chain`).toBeLessThanOrEqual(52);
+        expect(
+          spacing.workflowChainToMedia!,
+          `${width}px workflow chain-media`,
+        ).toBeGreaterThanOrEqual(24);
+        expect(spacing.workflowChainToMedia!, `${width}px workflow chain-media`).toBeLessThanOrEqual(
+          36,
+        );
+      } else if (width <= 1024) {
+        expect(spacing.platformHeadToMedia!, `${width}px platform gap`).toBeGreaterThanOrEqual(28);
+        expect(spacing.platformHeadToMedia!, `${width}px platform gap`).toBeLessThanOrEqual(36);
+        expect(spacing.workflowHeadToChain!, `${width}px workflow head-chain`).toBeGreaterThanOrEqual(
+          44,
+        );
+        expect(spacing.workflowHeadToChain!, `${width}px workflow head-chain`).toBeLessThanOrEqual(52);
+        expect(
+          spacing.workflowChainToMedia!,
+          `${width}px workflow chain-media`,
+        ).toBeGreaterThanOrEqual(28);
+        expect(spacing.workflowChainToMedia!, `${width}px workflow chain-media`).toBeLessThanOrEqual(
+          36,
+        );
+      } else {
+        expect(spacing.platformHeadToMedia!, `${width}px platform gap`).toBeGreaterThanOrEqual(60);
+        expect(spacing.platformHeadToMedia!, `${width}px platform gap`).toBeLessThanOrEqual(68);
+        expect(spacing.workflowHeadToChain!, `${width}px workflow head-chain`).toBeGreaterThanOrEqual(
+          46,
+        );
+        expect(spacing.workflowHeadToChain!, `${width}px workflow head-chain`).toBeLessThanOrEqual(50);
+        expect(
+          spacing.workflowChainToMedia!,
+          `${width}px workflow chain-media`,
+        ).toBeGreaterThanOrEqual(40);
+        expect(spacing.workflowChainToMedia!, `${width}px workflow chain-media`).toBeLessThanOrEqual(
+          48,
+        );
+      }
+    }
+  });
+
+  test('P2.2 section-y token matrix', async ({ page }) => {
+    for (const [width, expected] of P22_SECTION_Y_WIDTHS) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/', { waitUntil: 'load' });
+      const sectionY = await page.evaluate(() =>
+        parseFloat(getComputedStyle(document.documentElement).getPropertyValue('--section-y')),
+      );
+      expect(sectionY, `${width}px section-y`).toBe(expected);
+    }
+  });
+
+  test('P2.2 landscape content sanity', async ({ page }) => {
+    for (const [width, height] of P22_LANDSCAPE_SHOTS) {
+      await page.setViewportSize({ width, height });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const state = await page.evaluate(() => {
+        const heroFrame = document.querySelector('.hero__media .frame--product:not(.frame--flush)');
+        const flushFrame = document.querySelector('.stage__media .frame--flush');
+        const h1 = document.querySelector('.hero h1');
+        return {
+          scrollWidth: document.documentElement.scrollWidth,
+          clientWidth: document.documentElement.clientWidth,
+          heroFrameWidth: heroFrame?.getBoundingClientRect().width ?? 0,
+          flushContained:
+            flushFrame && document.querySelector('.stage__media')
+              ? flushFrame.getBoundingClientRect().right <=
+                  document.querySelector('.stage__media')!.getBoundingClientRect().right + 1 &&
+                flushFrame.getBoundingClientRect().left >=
+                  document.querySelector('.stage__media')!.getBoundingClientRect().left - 1
+              : false,
+          h1FontSize: h1 ? parseFloat(getComputedStyle(h1).fontSize) : 0,
+        };
+      });
+
+      expect(state.scrollWidth, `${width}x${height} overflow`).toBeLessThanOrEqual(
+        state.clientWidth + 1,
+      );
+      expect(state.heroFrameWidth, `${width}x${height} hero frame`).toBeGreaterThan(0);
+      expect(state.flushContained, `${width}x${height} flush contained`).toBe(true);
+      expect(state.h1FontSize, `${width}x${height} h1 size`).toBeGreaterThanOrEqual(16);
+
+      await page.getByRole('button', { name: 'Menü öffnen' }).click();
+      await expect(page.locator('[data-nav-panel]')).toBeVisible();
+      await page.keyboard.press('Escape');
+    }
+  });
+
+  test('P2.2 desktop layout regression widths', async ({ page }) => {
+    for (const width of P22_DESKTOP_WIDTHS) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/', { waitUntil: 'load' });
+
+      const layout = await page.evaluate(() => ({
+        scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth,
+        sectionY: parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue('--section-y'),
+        ),
+        gutter: getComputedStyle(document.documentElement).getPropertyValue('--gutter').trim(),
+      }));
+
+      expect(layout.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(layout.clientWidth + 1);
+      expect(layout.sectionY, `${width}px desktop section-y`).toBe(expectedSectionY(width));
+      expect(parseFloat(layout.gutter), `${width}px desktop gutter`).toBeGreaterThanOrEqual(22);
+    }
+  });
+
+  test('captures P2.2 mobile layout screenshots', async ({ page }) => {
+    const shots = [
+      ['de', '/', 320, 700],
+      ['de', '/', 375, 812],
+      ['de', '/', 390, 844],
+      ['de', '/', 430, 932],
+      ['de', '/', 768, 1024],
+      ['en', '/en/', 320, 700],
+      ['en', '/en/', 390, 844],
+      ['en', '/en/', 430, 932],
+    ] as const;
+
+    for (const [locale, url, width, height] of shots) {
+      await page.setViewportSize({ width, height });
+      await page.goto(url, { waitUntil: 'load' });
+      await settle(page);
+      await shoot(page, `p22-${locale}-${width}x${height}-full`);
+    }
+
+    for (const [locale, url, label] of [
+      ['de', '/', 'de'],
+      ['en', '/en/', 'en'],
+    ] as const) {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto(url, { waitUntil: 'load' });
+      await settle(page);
+      await page.locator('.hero').screenshot({
+        path: path.join(OUT, `${LABEL}p22-hero-${label}-390.png`),
+        animations: 'disabled',
+      });
+      await page.locator('.frame--product').first().screenshot({
+        path: path.join(OUT, `${LABEL}p22-frame-${label}-390.png`),
+        animations: 'disabled',
+      });
+      await page.locator('#platform .capability-grid').screenshot({
+        path: path.join(OUT, `${LABEL}p22-capabilities-${label}-390.png`),
+        animations: 'disabled',
+      });
+      await page.locator('#vehicle-intelligence .stage__panel').screenshot({
+        path: path.join(OUT, `${LABEL}p22-vehicle-${label}-390.png`),
+        animations: 'disabled',
+      });
+      await page.locator('#workflow-automation').screenshot({
+        path: path.join(OUT, `${LABEL}p22-workflow-${label}-390.png`),
+        animations: 'disabled',
+      });
+    }
+
+    for (const [width, height, suffix] of [
+      [320, 700, 'vehicle-de-320'],
+      [430, 932, 'vehicle-de-430'],
+      [768, 1024, 'vehicle-de-768'],
+    ] as const) {
+      await page.setViewportSize({ width, height });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+      await page.locator('#vehicle-intelligence .stage__panel').screenshot({
+        path: path.join(OUT, `${LABEL}p22-${suffix}.png`),
+        animations: 'disabled',
+      });
+    }
+
+    await page.setViewportSize({ width: 768, height: 1024 });
+    await page.goto('/', { waitUntil: 'load' });
+    await settle(page);
+    await shoot(page, 'p22-tablet-de-768x1024');
+
+    await page.setViewportSize({ width: 1440, height: 900 });
+    await page.goto('/', { waitUntil: 'load' });
+    await settle(page);
+    await shoot(page, 'p22-desktop-de-1440');
+  });
 });

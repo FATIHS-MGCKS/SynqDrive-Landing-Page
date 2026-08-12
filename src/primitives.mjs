@@ -33,7 +33,7 @@ export function productFrame({ media, alt, sizes, priority = false, frameClass =
     ? 'loading="eager" decoding="sync" fetchpriority="high"'
     : 'loading="lazy" decoding="async"';
 
-  const classes = ['frame', frameClass].filter(Boolean).join(' ');
+  const classes = ['frame', 'frame--product', frameClass].filter(Boolean).join(' ');
 
   const img = `<img
           src="/assets/${file}.webp"
