@@ -340,9 +340,62 @@ screenshots are byte-identical to the locally approved build.
 ## Known remaining points
 
 - **P1.6 / P1.6.1:** Production deployment, live acceptance, and artefact hygiene — **complete** (2026-08-12).
-- **Phase 2:** Mobile page composition (hero and sections below header) — **pending**.
+- **P2.1:** Mobile experience baseline audit — **complete** (2026-08-12).
+- **P2.2:** Global mobile layout system — **implemented locally** (not deployed); see below and [`docs/audits/landing-page-phase-2.2-global-mobile-layout-system-2026-08.md`](audits/landing-page-phase-2.2-global-mobile-layout-system-2026-08.md).
+- **Phase 2.3–2.8:** Section-specific mobile composition — **pending**.
 - Solutions, Resources, and Pricing top-level navigation remain deferred until real destination pages exist (DEC-004).
 - Taxi & Mobility may become a future Solutions page; it does not imply generally available Taxi Dispatch (DEC-009).
 - The product visuals are English on both locales. German screenshot variants deferred.
 - Both calls to action open a prefilled mail draft to `info@synqdrive.eu`.
 - `www.synqdrive.eu` redirects to apex (301 since P1.6 deploy); canonical tag handles duplicate content.
+
+## Mobile layout system (P2.2 — local, not deployed)
+
+**Audit:** [`docs/audits/landing-page-phase-2.2-global-mobile-layout-system-2026-08.md`](audits/landing-page-phase-2.2-global-mobile-layout-system-2026-08.md)
+
+Phase 2.2 introduces a shared responsive foundation in `src/styles.css` without changing Phase-1 navigation or product image assets.
+
+### Design tokens (`:root` + mobile breakpoints)
+
+| Token group | Examples | Purpose |
+|---|---|---|
+| Typography | `--type-display`, `--type-section`, `--type-body`, `--type-small` | Coherent fluid scale; tighter caps ≤1024 / ≤760 |
+| Measure | `--measure-copy`, `--measure-copy-narrow`, `--measure-section-head` | Body/headline line length |
+| Spacing | `--space-xs` … `--space-xl`, `--stack-gap*`, `--stack-copy-visual` | Vertical rhythm between copy blocks |
+| Frame | `--frame-radius`, `--frame-shadow`, `--frame-border` | Product frame mobile variant |
+| Surface | `--surface-padding`, `--surface-radius` | Shared card/surface chrome |
+
+### Breakpoint model (behaviour changes only)
+
+| Range | Primary token shifts |
+|---|---|
+| ≤1180px | `--section-y: 104px` (existing) |
+| ≤1024px | Fluid `--gutter`, `--section-y: 72px`, mobile type caps, layout stack gaps |
+| ≤760px | `--section-y: 56px`, reduced surface padding, product frame full-bleed (`.frame--product`) |
+| ≤420px | Full-width CTA grid (existing) |
+| ≤359px | Hub single column (existing) |
+| ≥1025px | Desktop defaults preserved |
+
+### Layout primitives (markup)
+
+- `.layout-split` + `.layout-split--copy-first` / `.layout-split--mobile-visual-first` — enables intentional mobile reorder without global visual-first (Hero, AI, Communication).
+- `.layout-stack` — shared vertical stack gap (Platform brief, Workflow).
+- `.layout-measure` / `.layout-measure--narrow` — copy width helpers.
+
+### Surface primitives (CSS only in P2.2)
+
+- `.surface` — full card
+- `.surface--compact` — row-style divider surface (for P2.4+ capability conversion)
+- `.surface--plain` — unwrapped stack content
+
+### Product frame
+
+- All `productFrame()` output includes `.frame--product`.
+- At ≤760px, non-flush frames expand to viewport width via negative margin (copy retains gutter).
+- Vehicle stage `.frame--flush` unchanged.
+
+### QA
+
+- Chromium: **37/37** (33 Phase-1 + 4 P2.2 structural tests)
+- WebKit smoke: **2/2**
+- P2.2 screenshots: `qa/p22-*` (gitignored)
