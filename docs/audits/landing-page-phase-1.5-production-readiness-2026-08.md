@@ -3,7 +3,7 @@
 **Date:** 2026-08-12  
 **Repository:** SynqDrive-Landing-Page  
 **Branch:** `main`  
-**Release candidate commit:** *(recorded after push)*  
+**Release candidate commit:** `c77dc76`  
 **Scope:** Phase 1 navigation + governance (P1.1–P1.4.1)  
 **Auditor:** Cloud Agent integration pass  
 **Normative status:** Non-normative audit record. Binding decisions remain in `docs/DECISIONS.md`.
