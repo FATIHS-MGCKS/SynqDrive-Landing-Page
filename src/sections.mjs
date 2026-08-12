@@ -64,11 +64,61 @@ function renderPlatformPanel(c) {
         </div>`;
 }
 
+function renderMobileNav(c, other, site) {
+  const platformLinks = flattenPlatformMenu(c.nav.platformMenu)
+    .map(
+      (item) => `<li>
+            <a class="mobilenav__link" href="${item.href}">
+              <span class="mobilenav__link-label">${esc(item.label)}</span>
+            </a>
+          </li>`,
+    )
+    .join('');
+
+  return `<div
+        class="mobilenav"
+        id="mobile-nav"
+        data-nav-panel
+        role="dialog"
+        aria-modal="true"
+        aria-label="${esc(c.nav.mainLabel)}"
+        hidden
+        inert
+      >
+        <div class="mobilenav__scroll">
+          <div class="mobilenav__section">
+            <p class="mobilenav__category">${esc(c.nav.platform)}</p>
+            <ul class="mobilenav__list">${platformLinks}</ul>
+          </div>
+
+          <div class="mobilenav__section mobilenav__section--account">
+            <p class="mobilenav__section-label">${esc(c.nav.mobileNav.accountLabel)}</p>
+            <div class="mobilenav__actions">
+              <a class="action action--ghost mobilenav__login" href="${site.links.app}" rel="noopener">${esc(c.nav.login)}</a>
+              ${action({ href: site.links.demo, label: c.nav.demo, variant: 'primary', className: 'mobilenav__demo' })}
+            </div>
+          </div>
+
+          <div class="mobilenav__section mobilenav__section--locale" role="group" aria-label="${esc(c.nav.mobileNav.languageLabel)}">
+            <p class="mobilenav__section-label">${esc(c.nav.mobileNav.languageLabel)}</p>
+            <div class="mobilenav__locale">
+              <span class="mobilenav__locale-current" aria-current="true">${esc(c.meta.localeName)}</span>
+              <a
+                class="mobilenav__locale-link"
+                href="${other.dir}"
+                hreflang="${other.htmlLang}"
+                lang="${other.htmlLang}"
+                aria-label="${esc(c.meta.localeSwitchLabel)}: ${esc(other.meta.localeName)}"
+              >${esc(other.meta.localeName)}</a>
+            </div>
+          </div>
+        </div>
+      </div>`;
+}
+
 export function header(c, other, site) {
   const platformPanel = renderPlatformPanel(c);
-  const drawerLinks = flattenPlatformMenu(c.nav.platformMenu)
-    .map((item) => `<li><a href="${item.href}">${esc(item.label)}</a></li>`)
-    .join('');
+  const mobileNav = renderMobileNav(c, other, site);
 
   return `<header class="masthead" data-masthead>
       <div class="masthead__inner">
@@ -114,24 +164,13 @@ export function header(c, other, site) {
             data-label-close="${esc(c.nav.closeMenu)}"
             aria-label="${esc(c.nav.openMenu)}"
           >
-            <span class="masthead__toggle-open">${icon('menu')}</span>
-            <span class="masthead__toggle-close">${icon('x')}</span>
+            <span class="masthead__toggle-open" aria-hidden="true">${icon('menu')}</span>
+            <span class="masthead__toggle-close" aria-hidden="true">${icon('x')}</span>
           </button>
         </div>
       </div>
 
-      <div class="drawer" id="mobile-nav" data-nav-panel hidden>
-        <ul class="drawer__list">
-          ${drawerLinks}
-        </ul>
-        <div class="drawer__actions">
-          <a class="action action--ghost" href="${site.links.app}" rel="noopener">${esc(c.nav.login)}</a>
-          ${action({ href: site.links.demo, label: c.nav.demo, variant: 'primary' })}
-          <a class="drawer__locale" href="${other.dir}" hreflang="${other.htmlLang}" lang="${other.htmlLang}">
-            ${icon('globe')}<span>${esc(other.meta.localeName)}</span>
-          </a>
-        </div>
-      </div>
+      ${mobileNav}
     </header>`;
 }
 

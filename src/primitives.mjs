@@ -76,8 +76,9 @@ export function sectionHead({ eyebrow, title, body, id, level = 2, className = '
       </div>`;
 }
 
-export function action({ href, label, variant, external = false }) {
+export function action({ href, label, variant, external = false, className = '' }) {
   const rel = external ? ' rel="noopener"' : '';
   const arrow = variant === 'secondary' ? `<span class="action__arrow">${icon('arrow-right')}</span>` : '';
-  return `<a class="action action--${variant}" href="${href}"${rel}>${esc(label)}${arrow}</a>`;
+  const classes = ['action', `action--${variant}`, className].filter(Boolean).join(' ');
+  return `<a class="${classes}" href="${href}"${rel}>${esc(label)}${arrow}</a>`;
 }

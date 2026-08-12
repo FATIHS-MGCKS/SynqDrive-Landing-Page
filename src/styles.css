@@ -468,19 +468,26 @@ svg {
   display: none;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 44px;
+  height: 44px;
+  margin: 0 -6px 0 0;
   padding: 0;
-  border: 1px solid var(--hairline);
+  border: 0;
   border-radius: var(--radius);
-  background: #fff;
+  background: transparent;
   color: var(--ink);
   cursor: pointer;
+  flex: 0 0 auto;
+  transition: background-color 160ms var(--ease), color 160ms var(--ease);
+}
+
+.masthead__toggle:hover {
+  background: rgba(17, 24, 39, 0.04);
 }
 
 .masthead__toggle svg {
-  width: 19px;
-  height: 19px;
+  width: 22px;
+  height: 22px;
 }
 
 .masthead__toggle-close {
@@ -495,41 +502,140 @@ svg {
   display: block;
 }
 
-.drawer {
-  display: none;
-  padding: 8px var(--gutter) 22px;
+.mobilenav {
+  --mobilenav-top: var(--masthead-h);
+}
+
+.mobilenav {
+  position: fixed;
+  inset: var(--mobilenav-top) 0 0 0;
+  z-index: 45;
+  display: flex;
+  flex-direction: column;
+  background: var(--canvas);
   border-top: 1px solid var(--hairline);
-  background: #fff;
 }
 
-.drawer__list a {
-  display: block;
-  padding: 13px 2px;
-  border-bottom: 1px solid var(--hairline);
+.mobilenav[hidden] {
+  display: none !important;
+}
+
+.mobilenav__scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding:
+    calc(12px + env(safe-area-inset-top, 0px))
+    calc(var(--gutter) + env(safe-area-inset-right, 0px))
+    calc(20px + env(safe-area-inset-bottom, 0px))
+    calc(var(--gutter) + env(safe-area-inset-left, 0px));
+}
+
+.mobilenav__section + .mobilenav__section {
+  margin-top: 28px;
+  padding-top: 24px;
+  border-top: 1px solid var(--hairline);
+}
+
+.mobilenav__category {
+  margin: 0 0 8px;
   color: var(--ink);
-  font-size: 16px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
 }
 
-.drawer__actions {
+.mobilenav__section-label {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  line-height: 1.2;
+  text-transform: uppercase;
+}
+
+.mobilenav__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.mobilenav__link {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 10px 0;
+  color: var(--ink);
+  transition: color 160ms var(--ease), background-color 160ms var(--ease);
+}
+
+.mobilenav__link:hover,
+.mobilenav__link:focus-visible {
+  color: var(--brand-ink);
+}
+
+.mobilenav__link-label {
+  font-size: 17px;
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  line-height: 1.3;
+}
+
+.mobilenav__actions {
   display: grid;
   gap: 10px;
-  margin-top: 20px;
 }
 
-.drawer__locale {
+.mobilenav__actions .action {
+  width: 100%;
+}
+
+.mobilenav__locale {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px 16px;
+}
+
+.mobilenav__locale-current {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
   min-height: 40px;
-  color: var(--muted);
-  font-size: 14.5px;
-  font-weight: 600;
+  padding: 0 14px;
+  border-radius: var(--radius);
+  background: rgba(17, 24, 39, 0.05);
+  color: var(--ink);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.008em;
 }
 
-.drawer__locale svg {
-  width: 16px;
-  height: 16px;
+.mobilenav__locale-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 40px;
+  padding: 0 14px;
+  border-radius: var(--radius);
+  color: var(--ink-soft);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: -0.008em;
+  transition: color 160ms var(--ease), background-color 160ms var(--ease);
+}
+
+.mobilenav__locale-link:hover,
+.mobilenav__locale-link:focus-visible {
+  color: var(--ink);
+  background: rgba(17, 24, 39, 0.04);
+}
+
+html[data-nav-scroll-lock='true'] {
+  overflow: hidden;
 }
 
 /* ── Actions ─────────────────────────────────────────────────────────────── */
@@ -1333,8 +1439,15 @@ svg {
     justify-content: space-between;
   }
 
-  .masthead[data-nav-open='true'] .drawer {
-    display: block;
+  .brand img {
+    width: auto;
+    height: 22px;
+  }
+
+  .mobilenav {
+    --mobilenav-top: var(--masthead-h);
+    min-height: calc(100vh - var(--mobilenav-top));
+    min-height: calc(100dvh - var(--mobilenav-top));
   }
 
   .hero {
@@ -1445,8 +1558,7 @@ svg {
 }
 
 @media (max-width: 480px) {
-  /* The demo action stays reachable in the drawer, the hero and the closing
-     section, so the masthead keeps only the wordmark and the menu toggle. */
+  /* Small phones: logo and menu trigger only. Demo stays in the mobile navigation layer. */
   .masthead__actions .action--primary {
     display: none;
   }

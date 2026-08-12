@@ -10,6 +10,29 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+## Mobile navigation rebuild (P1.4) — 2026-08-12
+
+**Phase:** P1.4 — Mobile navigation  
+**Audit:** [`docs/audits/landing-page-phase-1.4-mobile-navigation-2026-08.md`](audits/landing-page-phase-1.4-mobile-navigation-2026-08.md)
+
+### Implemented
+
+- Deliberate mobile navigation layer replacing the pre-P1.4 flat drawer
+- Modal dialog semantics (`role="dialog"`, `aria-modal="true"`) with background `inert`, scroll lock, focus trap, Escape close
+- Platform category expanded inline (Option B — single active category, no unnecessary accordion)
+- Shared data: `nav.platformMenu` + `flattenPlatformMenu()`; `nav.mobileNav` labels only
+- Account actions and locale switch inside navigation; Demo CTA in header hidden ≤480px
+- P1.4 mobile QA tests and screenshot matrix (portrait + landscape)
+
+### Not changed (explicit)
+
+- Desktop P1.3 navigation (regression tested)
+- Landing-page sections, product images
+- Solutions, Resources, Pricing (deferred)
+- Production deployment
+
+---
+
 ## Post-review accessibility correction (P1.3.1) — 2026-08-12
 
 **Phase:** P1.3.1 — Desktop navigation keyboard accessibility  

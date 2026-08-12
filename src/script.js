@@ -128,42 +128,131 @@
     });
   });
 
-  /* ── Mobile drawer ────────────────────────────────────────────────────── */
+  /* ── Mobile navigation (modal layer) ──────────────────────────────────── */
 
   var navToggle = document.querySelector('[data-nav-toggle]');
   var navPanel = document.querySelector('[data-nav-panel]');
+  var mainContent = document.getElementById('main');
+  var siteFooter = document.querySelector('.sitefooter');
+  var skipLink = document.querySelector('.skip-link');
+  var lockedScrollY = 0;
+  var mobileBreakpoint = 1024;
+
+  var backgroundLayers = [mainContent, siteFooter, skipLink].filter(Boolean);
+
+  function focusableNodes(root) {
+    if (!root) return [];
+    return Array.prototype.slice.call(
+      root.querySelectorAll(
+        'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+      ),
+    ).filter(function (node) {
+      return node.offsetParent !== null || node === navToggle;
+    });
+  }
+
+  function lockPageScroll() {
+    if (!lockedScrollY) {
+      lockedScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+    }
+    document.documentElement.dataset.navScrollLock = 'true';
+    document.body.style.position = 'fixed';
+    document.body.style.top = '-' + lockedScrollY + 'px';
+    document.body.style.left = '0';
+    document.body.style.right = '0';
+    document.body.style.width = '100%';
+  }
+
+  function unlockPageScroll() {
+    var restoreY = lockedScrollY;
+    lockedScrollY = 0;
+    document.documentElement.removeAttribute('data-nav-scroll-lock');
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+    window.scrollTo(0, restoreY);
+    document.documentElement.scrollTop = restoreY;
+    document.body.scrollTop = restoreY;
+    requestAnimationFrame(function () {
+      if (Math.abs(window.scrollY - restoreY) > 2) window.scrollTo(0, restoreY);
+    });
+  }
+
+  function setBackgroundInert(state) {
+    backgroundLayers.forEach(function (layer) {
+      if (state) layer.setAttribute('inert', '');
+      else layer.removeAttribute('inert');
+    });
+  }
 
   function closeDrawer(returnFocus) {
     if (!masthead || !navToggle || !navPanel) return;
     masthead.dataset.navOpen = 'false';
     navPanel.hidden = true;
+    navPanel.setAttribute('inert', '');
     navToggle.setAttribute('aria-expanded', 'false');
     navToggle.setAttribute('aria-label', navToggle.dataset.labelOpen);
+    setBackgroundInert(false);
+    unlockPageScroll();
+    navPanel.removeEventListener('keydown', trapDrawerFocus);
     if (returnFocus) navToggle.focus();
+  }
+
+  function openDrawer() {
+    if (!masthead || !navToggle || !navPanel) return;
+    if (!lockedScrollY) {
+      lockedScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+    }
+    masthead.dataset.navOpen = 'true';
+    navPanel.hidden = false;
+    navPanel.removeAttribute('inert');
+    navToggle.setAttribute('aria-expanded', 'true');
+    navToggle.setAttribute('aria-label', navToggle.dataset.labelClose);
+    lockPageScroll();
+    setBackgroundInert(true);
+    var firstTarget = navPanel.querySelector('.mobilenav__link') || navPanel;
+    if (firstTarget) firstTarget.focus();
+    navPanel.addEventListener('keydown', trapDrawerFocus);
+  }
+
+  function trapDrawerFocus(event) {
+    if (event.key !== 'Tab' || !navPanel || navPanel.hidden) return;
+    var nodes = focusableNodes(navPanel);
+    if (!nodes.length) return;
+    var first = nodes[0];
+    var last = nodes[nodes.length - 1];
+    if (event.shiftKey && document.activeElement === first) {
+      event.preventDefault();
+      last.focus();
+    } else if (!event.shiftKey && document.activeElement === last) {
+      event.preventDefault();
+      first.focus();
+    }
   }
 
   if (masthead && navToggle && navPanel) {
     closeDrawer(false);
 
+    navToggle.addEventListener('pointerdown', function () {
+      if (masthead.dataset.navOpen !== 'true') {
+        lockedScrollY = window.scrollY || window.pageYOffset || document.documentElement.scrollTop;
+      }
+    });
+
     navToggle.addEventListener('click', function () {
       var open = masthead.dataset.navOpen === 'true';
-      if (open) {
-        closeDrawer(false);
-        return;
-      }
-      masthead.dataset.navOpen = 'true';
-      navPanel.hidden = false;
-      navToggle.setAttribute('aria-expanded', 'true');
-      navToggle.setAttribute('aria-label', navToggle.dataset.labelClose);
+      if (open) closeDrawer(true);
+      else openDrawer();
     });
 
     navPanel.addEventListener('click', function (event) {
       if (event.target.closest('a')) closeDrawer(false);
     });
 
-    // The drawer only exists below the desktop breakpoint.
     window.addEventListener('resize', function () {
-      if (window.innerWidth > 1024 && masthead.dataset.navOpen === 'true') closeDrawer(false);
+      if (window.innerWidth > mobileBreakpoint && masthead.dataset.navOpen === 'true') closeDrawer(false);
     });
   }
 

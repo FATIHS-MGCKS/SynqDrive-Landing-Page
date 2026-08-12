@@ -65,6 +65,45 @@ const DESKTOP_HEADER_WIDTHS = [1100, 1280, 1366, 1440, 1920];
 
 const NAV_SCREENSHOT_WIDTHS = [1100, 1280, 1440, 1920] as const;
 
+const MOBILE_NAV = {
+  de: {
+    openMenu: 'Menü öffnen',
+    closeMenu: 'Menü schließen',
+    platformCategory: 'Plattform',
+    accountLabel: 'Konto',
+    languageLabel: 'Sprache',
+    localeName: 'Deutsch',
+    otherLocaleName: 'English',
+    otherDir: '/en/',
+  },
+  en: {
+    openMenu: 'Open menu',
+    closeMenu: 'Close menu',
+    platformCategory: 'Platform',
+    accountLabel: 'Account',
+    languageLabel: 'Language',
+    localeName: 'English',
+    otherLocaleName: 'Deutsch',
+    otherDir: '/',
+  },
+} as const;
+
+const MOBILE_PORTRAIT_SHOTS = [
+  [320, 700],
+  [375, 812],
+  [390, 844],
+  [430, 932],
+  [768, 1024],
+  [1024, 1366],
+] as const;
+
+const MOBILE_LANDSCAPE_SHOTS = [
+  [844, 390],
+  [932, 430],
+] as const;
+
+const MOBILE_BREAKPOINT_WIDTHS = [320, 360, 375, 390, 393, 414, 430, 480, 600, 768, 820, 900, 960, 1024, 1100];
+
 async function collectProblems(page: Page) {
   const consoleErrors: string[] = [];
   const failedRequests: string[] = [];
@@ -470,16 +509,221 @@ test.describe('public landing page', () => {
     await page.goto('/', { waitUntil: 'load' });
 
     const toggle = page.locator('[data-nav-toggle]');
+    const panel = page.locator('[data-nav-panel]');
     await expect(toggle).toBeVisible();
-    await expect(page.locator('[data-nav-panel]')).toBeHidden();
+    await expect(panel).toBeHidden();
+    await expect(panel).toHaveAttribute('inert', '');
 
     await toggle.click();
-    await expect(page.locator('[data-nav-panel]')).toBeVisible();
+    await expect(panel).toBeVisible();
+    await expect(panel).toHaveAttribute('role', 'dialog');
+    await expect(panel).toHaveAttribute('aria-modal', 'true');
     await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+    await expect(toggle).toHaveAttribute('aria-label', 'Menü schließen');
 
-    await page.locator('[data-nav-panel]').getByRole('link', { name: 'Integrationen & Erweiterung' }).click();
-    await expect(page.locator('[data-nav-panel]')).toBeHidden();
+    await panel.getByRole('link', { name: 'Integrationen & Erweiterung' }).click();
+    await expect(panel).toBeHidden();
     await expect(page).toHaveURL(/#integrations$/);
+  });
+
+  for (const locale of ['de', 'en'] as const) {
+    const spec = PLATFORM_NAV[locale];
+    const mobile = MOBILE_NAV[locale];
+    const url = locale === 'de' ? '/' : '/en/';
+
+    test(`mobile navigation policy (${locale})`, async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto(url, { waitUntil: 'load' });
+
+      const panel = page.locator('[data-nav-panel]');
+      const toggle = page.getByRole('button', { name: mobile.openMenu });
+
+      await expect(page.locator('.mainnav')).toBeHidden();
+      await expect(toggle).toBeVisible();
+      await expect(panel).toBeHidden();
+
+      await toggle.click();
+      await expect(panel.getByText(mobile.platformCategory, { exact: true })).toBeVisible();
+      await expect(panel.getByRole('link', { name: spec.login })).toHaveAttribute(
+        'href',
+        'https://app.synqdrive.eu',
+      );
+      await expect(panel.getByRole('link', { name: spec.demo })).toHaveAttribute(
+        'href',
+        /^mailto:info@synqdrive\.eu/,
+      );
+      await expect(panel.getByText(mobile.localeName)).toHaveAttribute('aria-current', 'true');
+      await expect(panel.getByRole('link', { name: mobile.otherLocaleName })).toHaveAttribute(
+        'href',
+        mobile.otherDir,
+      );
+
+      for (const deferred of spec.deferred) {
+        await expect(panel.getByRole('link', { name: deferred })).toHaveCount(0);
+        await expect(panel.getByRole('button', { name: deferred })).toHaveCount(0);
+      }
+
+      for (const link of spec.links) {
+        await expect(panel.getByRole('link', { name: link.label })).toHaveCount(1);
+      }
+
+      await page.keyboard.press('Escape');
+      await expect(toggle).toBeFocused();
+      await expect(panel).toBeHidden();
+    });
+
+    test(`mobile navigation keyboard (${locale})`, async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto(url, { waitUntil: 'load' });
+
+      const toggle = page.locator('[data-nav-toggle]');
+      const panel = page.locator('[data-nav-panel]');
+
+      await toggle.focus();
+      await page.keyboard.press('Tab');
+      const closedTab = await page.evaluate(() => ({
+        inPanel: Boolean(document.activeElement?.closest('[data-nav-panel]')),
+      }));
+      expect(closedTab.inPanel).toBe(false);
+
+      await toggle.focus();
+      await page.keyboard.press('Enter');
+      await expect(panel).toBeVisible();
+      await expect(panel).not.toHaveAttribute('inert');
+      await expect(toggle).toHaveAttribute('aria-expanded', 'true');
+      await expect(toggle).toHaveAttribute('aria-label', mobile.closeMenu);
+      await expect(page.locator(':focus')).toHaveClass(/mobilenav__link/);
+
+      const focusables = panel.locator('a[href]');
+      const focusableCount = await focusables.count();
+      for (let index = 1; index < focusableCount; index += 1) {
+        await page.keyboard.press('Tab');
+        expect(await page.evaluate(() => Boolean(document.activeElement?.closest('[data-nav-panel]')))).toBe(
+          true,
+        );
+      }
+
+      await page.keyboard.press('Tab');
+      await expect(page.locator(':focus')).toHaveClass(/mobilenav__link/);
+
+      await page.keyboard.press('Escape');
+      await expect(panel).toBeHidden();
+      await expect(panel).toHaveAttribute('inert', '');
+      await expect(toggle).toBeFocused();
+    });
+  }
+
+  test('mobile navigation locks background scroll and preserves position', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'load' });
+    await page.evaluate(() => window.scrollTo(0, 1200));
+    await page.waitForTimeout(100);
+    const scrollBefore = await page.evaluate(() => window.scrollY);
+    expect(scrollBefore).toBeGreaterThan(400);
+
+    const toggle = page.locator('[data-nav-toggle]');
+    await toggle.click();
+    await expect(page.locator('[data-nav-panel]')).toBeVisible();
+    await expect(page.locator('html')).toHaveAttribute('data-nav-scroll-lock', 'true');
+    await expect(page.locator('#main')).toHaveAttribute('inert', '');
+
+    const lockedScroll = await page.evaluate(() => {
+      const top = document.body.style.top;
+      return top ? Math.abs(parseInt(top, 10)) : window.scrollY;
+    });
+    expect(lockedScroll).toBeGreaterThan(400);
+
+    const locked = await page.evaluate(() => ({
+      scrollY: window.scrollY,
+      bodyTop: document.body.style.top,
+    }));
+    expect(locked.scrollY).toBe(0);
+    expect(locked.bodyTop).toMatch(/^-/);
+
+    await page.mouse.wheel(0, 500);
+    expect(await page.evaluate(() => window.scrollY)).toBe(0);
+
+    await page.keyboard.press('Escape');
+    await expect(page.locator('[data-nav-panel]')).toBeHidden();
+    await expect(page.locator('html')).not.toHaveAttribute('data-nav-scroll-lock');
+    await expect
+      .poll(() => page.evaluate((expected) => Math.abs(window.scrollY - expected), lockedScroll), {
+        timeout: 3000,
+      })
+      .toBeLessThanOrEqual(24);
+  });
+
+  test('mobile navigation works with reduced motion preference', async ({ page }) => {
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'load' });
+
+    const toggle = page.getByRole('button', { name: 'Menü öffnen' });
+    await toggle.click();
+    await expect(page.locator('[data-nav-panel]')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(toggle).toBeFocused();
+    await expect(page.locator('[data-nav-panel]')).toBeHidden();
+  });
+
+  test('mobile/desktop navigation breakpoint transition', async ({ page }) => {
+    await page.setViewportSize({ width: 1024, height: 900 });
+    await page.goto('/', { waitUntil: 'load' });
+    await expect(page.locator('[data-nav-toggle]')).toBeVisible();
+    await expect(page.locator('.mainnav')).toBeHidden();
+
+    await page.setViewportSize({ width: 1100, height: 900 });
+    await expect(page.locator('[data-nav-toggle]')).toBeHidden();
+    await expect(page.getByRole('button', { name: 'Plattform' })).toBeVisible();
+
+    for (const width of MOBILE_BREAKPOINT_WIDTHS) {
+      await page.setViewportSize({ width, height: 844 });
+      const state = await page.evaluate(() => ({
+        toggleVisible: Boolean(
+          document.querySelector('[data-nav-toggle]') &&
+            window.getComputedStyle(document.querySelector('[data-nav-toggle]') as Element).display !== 'none',
+        ),
+        mainnavVisible: Boolean(
+          document.querySelector('.mainnav') &&
+            window.getComputedStyle(document.querySelector('.mainnav') as Element).display !== 'none',
+        ),
+      }));
+      if (width <= 1024) {
+        expect(state.toggleVisible, `${width}px`).toBe(true);
+        expect(state.mainnavVisible, `${width}px`).toBe(false);
+      } else {
+        expect(state.toggleVisible, `${width}px`).toBe(false);
+        expect(state.mainnavVisible, `${width}px`).toBe(true);
+      }
+    }
+  });
+
+  test('captures P1.4 mobile navigation screenshots', async ({ page }) => {
+    for (const [width, height] of MOBILE_PORTRAIT_SHOTS) {
+      await page.setViewportSize({ width, height });
+      await page.goto('/', { waitUntil: 'load' });
+      await shootHeader(page, `p14-nav-${width}-closed`);
+
+      await page.getByRole('button', { name: 'Menü öffnen' }).click();
+      await expect(page.locator('[data-nav-panel]')).toBeVisible();
+      await page.locator('[data-nav-panel]').screenshot({
+        path: path.join(OUT, `${LABEL}p14-nav-${width}-open-panel.png`),
+        animations: 'disabled',
+      });
+      await page.keyboard.press('Escape');
+    }
+
+    for (const [width, height] of MOBILE_LANDSCAPE_SHOTS) {
+      await page.setViewportSize({ width, height });
+      await page.goto('/', { waitUntil: 'load' });
+      await page.getByRole('button', { name: 'Menü öffnen' }).click();
+      await expect(page.locator('[data-nav-panel]')).toBeVisible();
+      await page.locator('[data-nav-panel]').screenshot({
+        path: path.join(OUT, `${LABEL}p14-nav-${width}x${height}-landscape-open.png`),
+        animations: 'disabled',
+      });
+      await page.keyboard.press('Escape');
+    }
   });
 
   test('language switch moves between locales', async ({ page }) => {

@@ -94,7 +94,7 @@ the page does not read as six repeated text-beside-screenshot rows.
 
 **Desktop (P1.3, current):** Single top-level **Platform** disclosure with a grouped panel (~560px): overview row, three capability groups (Intelligence, Automation, Platform), six anchor links with descriptions, optional footer discover link. Right cluster: locale switch, Log in, Demo CTA. **Contact removed** from primary desktop nav.
 
-**Mobile (pre–P1.4):** Existing drawer retained; link list derived from the same `nav.platformMenu` model via `flattenPlatformMenu()`. Full mobile redesign scheduled for P1.4.
+**Mobile (P1.4):** Full-viewport modal navigation layer below the sticky header (`role="dialog"`, `aria-modal="true"`). Platform category shown expanded (six anchors from `flattenPlatformMenu()` — no accordion while only one category is active). Account block: Log in + Demo CTA. Locale block: current language marked with `aria-current`, switch link to alternate locale. Compact header: logo + menu trigger on small phones; Demo CTA in header from 481px until desktop breakpoint. Modal behaviour: `inert` on `#main`, footer, and skip link; body scroll lock with position preservation; focus trap; Escape returns focus to trigger.
 
 **Ratified target IA (DEC-003):** Platform · Solutions · Resources · Pricing.
 
@@ -110,11 +110,11 @@ the page does not read as six repeated text-beside-screenshot rows.
 
 Platform anchors: `#platform`, `#vehicle-intelligence`, `#ai-orchestration`, `#workflow-automation`, `#communication`, `#integrations`.
 
-Data model: `content/site.mjs` → `nav.platformMenu` (overview, groups[], footerLink), `nav.deferred` (labels only, not rendered), `flattenPlatformMenu()` for mobile flat list.
+Data model: `content/site.mjs` → `nav.platformMenu` (overview, groups[], footerLink), `nav.mobileNav` (account/language section labels), `nav.deferred` (labels only, not rendered), `flattenPlatformMenu()` for mobile link list.
 
-Markup: `src/sections.mjs` → `header()`, `renderPlatformPanel()`. Styles: `.nav-panel*` in `src/styles.css`. Behaviour: `src/script.js` disclosure + delayed hover.
+Markup: `src/sections.mjs` → `header()`, `renderPlatformPanel()`, `renderMobileNav()`. Styles: `.nav-panel*` (desktop), `.mobilenav*` (mobile) in `src/styles.css`. Behaviour: `src/script.js` — desktop disclosure + mobile modal layer.
 
-Breakpoint: desktop nav hidden at `max-width: 1024px` (unchanged; verified at 1100–1920px).
+Breakpoint: desktop nav at `min-width: 1025px` (CSS `max-width: 1024px` for mobile). Verified 320–1024 mobile-only, 1100–1920 desktop-only, no collision at transition widths.
 
 **Accessibility (DEC-010):** Disclosure buttons with normal links — no ARIA menu roles. Arrow-key menu navigation not required.
 

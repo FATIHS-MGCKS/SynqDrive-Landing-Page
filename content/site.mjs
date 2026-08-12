@@ -35,7 +35,7 @@ const SECTION_IDS = {
   contact: 'contact',
 };
 
-/** Flat link list for mobile drawer until P1.4 consumes the full menu model. */
+/** Flat Platform link list shared by desktop panel helpers and mobile navigation. */
 export function flattenPlatformMenu(platformMenu) {
   const links = [{ label: platformMenu.overview.label, href: platformMenu.overview.href }];
   for (const group of platformMenu.groups) {
@@ -178,6 +178,10 @@ const en = {
       solutions: 'Solutions',
       resources: 'Resources',
       pricing: 'Pricing',
+    },
+    mobileNav: {
+      accountLabel: 'Account',
+      languageLabel: 'Language',
     },
   },
   hero: {
@@ -448,6 +452,10 @@ const de = {
       solutions: 'Lösungen',
       resources: 'Ressourcen',
       pricing: 'Preise',
+    },
+    mobileNav: {
+      accountLabel: 'Konto',
+      languageLabel: 'Sprache',
     },
   },
   hero: {
