@@ -1,6 +1,20 @@
 # SynqDrive Landing Page — Product Decisions
 
-Binding website and information-architecture decisions. If implementation or documentation conflicts with a decision here, the decision wins unless explicitly superseded by a newer entry in this file and `docs/CHANGELOG.md`.
+Binding website and information-architecture decisions.
+
+## Authority model
+
+Only **Accepted Product Decisions** in this file are normative.
+
+An Accepted Product Decision may only be superseded by another explicit Product Decision with its own stable DEC-ID. A superseding decision must reference the decision it replaces.
+
+`docs/CHANGELOG.md` records that change but **cannot** create or supersede a Product Decision itself.
+
+Audit reports in `docs/audits/` cannot supersede decisions. If an audit conflicts with an Accepted decision, the decision wins until a new DEC entry supersedes it.
+
+**Recommended future statuses:** Proposed · Accepted · Superseded · Deprecated
+
+All entries below are **Accepted** unless otherwise stated.
 
 ---
 
@@ -167,7 +181,7 @@ Binding website and information-architecture decisions. If implementation or doc
 
 ## Related documents
 
-- `AGENTS.md` — agent operational instructions
-- `docs/CHANGELOG.md` — change history
-- `docs/audits/landing-page-phase-1.1-baseline-audit-2026-08.md` — baseline findings
-- `docs/audits/landing-page-phase-1.2-governance-and-asset-policy-2026-08.md` — this phase record
+- `AGENTS.md` — agent operational instructions and authority hierarchy
+- `docs/CHANGELOG.md` — non-normative change history (records decisions; does not establish them)
+- `docs/audits/landing-page-phase-1.1-baseline-audit-2026-08.md` — baseline findings (evidence)
+- `docs/audits/landing-page-phase-1.2-governance-and-asset-policy-2026-08.md` — P1.2 record (evidence)

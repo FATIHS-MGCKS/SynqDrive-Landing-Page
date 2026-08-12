@@ -1,8 +1,10 @@
 # Changelog — SynqDrive Landing Page
 
+**Non-normative.** This changelog is historical and informational. It records decisions and implementations but does **not** establish Product Decisions. Binding decisions live exclusively in `docs/DECISIONS.md`.
+
 Meaningful website and product-marketing changes only. Not a Git commit mirror.
 
-Format: newest first. Each entry links to decisions or audit records where applicable.
+Format: newest first. Each entry may link to decisions or audit records for context.
 
 ---
 

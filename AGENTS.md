@@ -8,12 +8,25 @@ Public marketing website for SynqDrive. Static HTML, CSS, and progressive-enhanc
 
 ## Source of truth (priority order)
 
-1. **Website product decisions** — `docs/DECISIONS.md`, `docs/CHANGELOG.md`, phase audit reports in `docs/audits/`
-2. **SynqDrive Documentation Suite** — external authority for product facts and availability
+1. **Website Product Decisions** — `docs/DECISIONS.md`
+2. **SynqDrive Documentation Suite** — authority for product principles, facts, and availability
 3. **Current repository implementation** — `content/`, `src/`, `tools/`, committed `assets/`
 4. **Production configuration** — live site at `https://synqdrive.eu`
 
 If sources conflict, higher authority wins.
+
+## Supporting records — non-normative
+
+- `docs/CHANGELOG.md`
+- `docs/audits/*`
+
+These records document history, evidence, validation, and implementation context.
+
+They do **not** independently establish or supersede Product Decisions.
+
+If an audit conflicts with an accepted DEC entry, the DEC entry wins.
+
+If an audit discovers a problem with an accepted decision, it must recommend a new decision rather than silently overriding it.
 
 ## Approved phase plan
 
@@ -127,8 +140,8 @@ Deploy target: Hostinger vhost for `synqdrive.eu` only. Never touch `app.synqdri
 
 | Document | Purpose |
 |---|---|
-| `docs/DECISIONS.md` | Binding product and IA decisions |
-| `docs/CHANGELOG.md` | Meaningful website change log |
+| `docs/DECISIONS.md` | **Normative** — binding Product Decisions (DEC-*) |
+| `docs/CHANGELOG.md` | Non-normative change history |
 | `docs/IMPLEMENTATION.md` | Technical implementation report |
-| `docs/audits/` | Phase audit records |
-| `assets/product/README.md` | Product image policy |
+| `docs/audits/` | Non-normative phase audit records |
+| `assets/product/README.md` | Product image policy (implements DEC-006) |

@@ -15,10 +15,9 @@
 
 ## Governance (P1.2)
 
-Binding website decisions: `docs/DECISIONS.md`  
+**Normative:** `docs/DECISIONS.md` (Product Decisions)  
 Agent instructions: `AGENTS.md`  
-Change log: `docs/CHANGELOG.md`  
-Phase audits: `docs/audits/`
+**Non-normative supporting records:** `docs/CHANGELOG.md`, `docs/audits/`
 
 Approved phase plan: P1.1 audit → P1.2 governance → P1.3 desktop nav → P1.4 mobile nav → P1.5 integration QA → P1.6 deploy.
 

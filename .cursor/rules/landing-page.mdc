@@ -7,7 +7,7 @@ alwaysApply: true
 
 # SynqDrive Landing Page
 
-Read `AGENTS.md` first. Binding decisions: `docs/DECISIONS.md`. Phase context: `docs/audits/`.
+Read `AGENTS.md` first. **`docs/DECISIONS.md` is normative;** changelog and audit reports are supporting records only.
 
 ## Non-negotiable
 

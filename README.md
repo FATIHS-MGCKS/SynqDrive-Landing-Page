@@ -34,10 +34,10 @@ tools/build-assets.mjs  Optional local re-encode from assets-raw/ (manual mainte
 tools/build-icons.mjs   Regenerates src/icons.generated.mjs from lucide-react.
 assets/                 Shipped imagery, fonts, favicon, logo.
 assets/product/         Product image policy (documentation).
-docs/DECISIONS.md       Binding website and IA decisions.
-docs/CHANGELOG.md       Meaningful website change log.
-docs/IMPLEMENTATION.md  Full implementation report.
-docs/audits/            Phase audit records.
+docs/DECISIONS.md       Binding Product Decisions (normative)
+docs/CHANGELOG.md       Non-normative change history
+docs/IMPLEMENTATION.md  Full implementation report
+docs/audits/            Non-normative phase audit records
 rollback/               Snapshot of the previous live site.
 e2e/                    Playwright QA suite for the built output.
 ```
@@ -48,8 +48,8 @@ German.
 
 ## Governance
 
-Read `AGENTS.md` before making changes. Binding decisions live in `docs/DECISIONS.md`.
-Meaningful website changes are recorded in `docs/CHANGELOG.md`.
+Read `AGENTS.md` before making changes. Binding Product Decisions live exclusively in `docs/DECISIONS.md`.
+Non-normative history: `docs/CHANGELOG.md` and `docs/audits/`.
 
 ### Approved phase plan
 

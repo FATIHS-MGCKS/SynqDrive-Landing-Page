@@ -212,4 +212,32 @@ Markdown links verified within created docs (`docs/DECISIONS.md`, `docs/CHANGELO
 
 ---
 
+## Post-review governance authority clarification (P1.2.1)
+
+**Date:** 2026-08-12  
+**Trigger:** External review of accepted P1.2 commit `f1f71fe2e5abb2f832cea1dc8603cd47772f3ea7`
+
+### Ambiguity found
+
+`AGENTS.md` grouped `docs/DECISIONS.md`, `docs/CHANGELOG.md`, and `docs/audits/*` together under the highest-priority „Website product decisions" authority. That implied changelog and audit reports could independently establish or override Product Decisions.
+
+### Correction
+
+Authority hierarchy updated:
+
+1. Website Product Decisions — `docs/DECISIONS.md` (normative)
+2. SynqDrive Documentation Suite
+3. Current repository implementation
+4. Production configuration
+
+Changelog and audit reports are explicitly **non-normative supporting records**.
+
+`docs/DECISIONS.md` now states that only Accepted DEC entries are normative; supersession requires a new DEC-ID; changelog and audits cannot supersede decisions.
+
+### Scope
+
+Documentation and governance text only. **No** product/runtime/navigation behaviour changed. **No** rendered website code changed.
+
+---
+
 *End of Phase 1.2 report.*
