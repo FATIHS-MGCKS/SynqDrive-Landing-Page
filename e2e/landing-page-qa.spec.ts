@@ -1715,6 +1715,23 @@ test.describe('public landing page', () => {
             }
           : null;
 
+      const capabilitySurfaces = Array.from(capabilities ?? []).map((el) => {
+        const styles = getComputedStyle(el);
+        return {
+          borderTopWidth: parseFloat(styles.borderTopWidth),
+          borderRightWidth: parseFloat(styles.borderRightWidth),
+          borderBottomWidth: parseFloat(styles.borderBottomWidth),
+          borderLeftWidth: parseFloat(styles.borderLeftWidth),
+          background: styles.backgroundColor,
+          borderRadius: parseFloat(styles.borderTopLeftRadius),
+        };
+      });
+
+      const lastCompactBottomBorder =
+        capabilities && capabilities.length > 0
+          ? parseFloat(getComputedStyle(capabilities[capabilities.length - 1]!).borderBottomWidth)
+          : null;
+
       return {
         scrollWidth: document.documentElement.scrollWidth,
         clientWidth: document.documentElement.clientWidth,
@@ -1735,6 +1752,8 @@ test.describe('public landing page', () => {
             ? getComputedStyle(grid).gridTemplateColumns.includes(' ')
             : null,
         desktopLayout,
+        capabilitySurfaces,
+        lastCompactBottomBorder,
       };
     });
   }
@@ -1794,6 +1813,7 @@ test.describe('public landing page', () => {
         expect(state.fullCardCount, `${width}px compact mobile cards`).toBe(0);
         expect(state.compactSurfaceCount, `${width}px compact surface class`).toBe(4);
         expect(state.compactSurfaceActive, `${width}px compact surface active`).toBe(true);
+        expect(state.lastCompactBottomBorder, `${width}px last compact bottom border`).toBe(0);
         expect(state.mediaMarginTop, `${width}px media margin-top`).toBe(0);
         expect(state.introToMedia, `${width}px intro-media gap`).toBeGreaterThanOrEqual(24);
         expect(state.introToMedia!, `${width}px intro-media gap`).toBeLessThanOrEqual(36);
@@ -1835,6 +1855,31 @@ test.describe('public landing page', () => {
       expect(state.desktopTwoColCards, `${width}px desktop 2-col cards`).toBe(true);
       expect(state.fullCardCount, `${width}px desktop card surfaces`).toBe(4);
       expect(state.compactSurfaceActive, `${width}px desktop compact override`).toBe(false);
+    }
+  });
+
+  test('P2.4.2 platform desktop all-four-card borders', async ({ page }) => {
+    for (const width of P24_DESKTOP_WIDTHS) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const state = await readPlatformComposition(page);
+      expect(state.capabilitySurfaces, `${width}px capability surfaces`).toHaveLength(4);
+
+      for (const [index, surface] of state.capabilitySurfaces.entries()) {
+        expect(surface.borderTopWidth, `${width}px card ${index + 1} top border`).toBeGreaterThan(0);
+        expect(surface.borderRightWidth, `${width}px card ${index + 1} right border`).toBeGreaterThan(
+          0,
+        );
+        expect(surface.borderBottomWidth, `${width}px card ${index + 1} bottom border`).toBeGreaterThan(
+          0,
+        );
+        expect(surface.borderLeftWidth, `${width}px card ${index + 1} left border`).toBeGreaterThan(0);
+        expect(surface.background, `${width}px card ${index + 1} background`).not.toBe('rgba(0, 0, 0, 0)');
+        expect(surface.background, `${width}px card ${index + 1} background`).not.toBe('transparent');
+        expect(surface.borderRadius, `${width}px card ${index + 1} radius`).toBeGreaterThan(0);
+      }
     }
   });
 

@@ -1135,7 +1135,8 @@ html[data-nav-scroll-lock='true'] {
 }
 
 @media (min-width: 1025px) {
-  .capability {
+  /* Platform composition owns full-card restoration; beats .surface--compact:last-child. */
+  .brief--product-led .capability {
     padding: var(--surface-padding);
     border: 1px solid var(--hairline);
     /* Concentric: 20px padding inside a 10px inner radius gives 30px outside. */
@@ -1144,18 +1145,18 @@ html[data-nav-scroll-lock='true'] {
     transition: background-color 200ms var(--ease), border-color 200ms var(--ease);
   }
 
-  .capability:hover {
+  .brief--product-led .capability:hover {
     border-color: var(--hairline-strong);
     background: #fff;
   }
 
-  .capability h3 {
+  .brief--product-led .capability h3 {
     margin-top: 14px;
     font-size: var(--type-subheading);
     letter-spacing: -0.012em;
   }
 
-  .capability p {
+  .brief--product-led .capability p {
     margin-top: 7px;
     color: var(--muted);
     font-size: var(--type-small);
