@@ -7,7 +7,7 @@
 > **Production runtime source SHA:** `92392d23ca9f12c4d18befdcd06c611a593dd3a9`  
 > **Release artefact SHA-256:** `37abe53e1564542854b68ea57f1893c914645eb54ebc21f872680efc61326e09`  
 > **Acceptance:** P2.8C **PASS WITH INFRASTRUCTURE-LIMITED PRODUCTION TESTING** — see [`docs/audits/landing-page-phase-2.8c-production-acceptance-2026-08.md`](audits/landing-page-phase-2.8c-production-acceptance-2026-08.md)  
-> **Post-release incident (E1):** Real-device Mobile Safari unstyled presentation reported 2026-08-13 — see [`docs/audits/landing-page-mobile-safari-css-delivery-incident-2026-08.md`](audits/landing-page-mobile-safari-css-delivery-incident-2026-08.md). **Remediation NOT DEPLOYED.**
+> **Post-release incident (E1–E2):** Real-device Mobile Safari unstyled presentation reported 2026-08-13 — see the [incident audit](audits/landing-page-mobile-safari-css-delivery-incident-2026-08.md) and [E2 deployment audit](audits/landing-page-mobile-safari-css-delivery-e2-production-2026-08.md). **Technical remediation deployed; real-iPhone acceptance remains owner-controlled.**
 > **Rollback (local; not used):** `rollback/synqdrive.eu-pre-p2.8-20260813_095611.tar.gz` + [`rollback/README.md`](../rollback/README.md)  
 > **Previous P1.6.1 deploy:** **2026-08-12T14:46:48Z** — see [`docs/audits/landing-page-phase-1.6.1-production-hygiene-2026-08.md`](audits/landing-page-phase-1.6.1-production-hygiene-2026-08.md)
 
@@ -102,23 +102,25 @@ the page does not read as six repeated text-beside-screenshot rows.
 
 **Desktop (P1.3, current):** Single top-level **Platform** disclosure with a grouped panel (~560px): overview row, three capability groups (Intelligence, Automation, Platform), six anchor links with descriptions, optional footer discover link. Right cluster: locale switch, Log in, Demo CTA. **Contact removed** from primary desktop nav.
 
-**Mobile (P1.4 / P1.4.1):** Full-viewport modal navigation layer (`role="dialog"`, `aria-modal="true"`, `aria-labelledby="mobile-nav-title"`). Structure: `.mobilenav__topbar` (brand + Close control) + `.mobilenav__scroll` (Platform links, Account, Language). Normal `.masthead__inner` sits underneath and is `inert` while open. Platform category expanded inline (six anchors from `flattenPlatformMenu()`). Modal behaviour: `inert` on `.masthead__inner`, `#main`, footer, skip link; explicit scroll-lock state (`scrollLockActive`); focus trap includes Close; Escape or Close returns focus to menu trigger.
+**Mobile (hierarchy hotfix / DEC-011):** Full-viewport modal navigation layer (`role="dialog"`, `aria-modal="true"`, `aria-labelledby="mobile-nav-title"`). The root view is a compact seven-row IA: Platform, Solutions, Industries, Integrations, Resources, Pricing, Login. Platform, Solutions, Industries, and Resources open second-level in-modal views; Platform children are hidden until selected. Integrations is the real `#integrations` anchor. Pricing and unreleased child destinations are non-link rows marked **In progress / In Arbeit**. Demo + sales/contact actions and the locale switch form a compact bottom area. Normal `.masthead__inner` sits underneath and is `inert` while open. Modal behaviour remains: `inert` on `.masthead__inner`, `#main`, footer, skip link; explicit scroll-lock state (`scrollLockActive`); focus trap includes Close; Escape or Close returns focus to the menu trigger; Back returns focus to the category trigger.
 
 **Ratified target IA (DEC-003):** Platform · Solutions · Resources · Pricing.
 
-**Staged activation (DEC-004):**
+**Staged activation (DEC-004 + mobile-only DEC-011 exception):**
 
 | Category | Status |
 |---|---|
-| Platform — six homepage anchors | **Active** (desktop P1.3) |
-| Solutions | **Deferred** until destination pages exist |
-| Resources | **Deferred** until destination pages exist |
-| Pricing | **Deferred** until destination page exists |
+| Platform — six homepage anchors | **Active** on desktop; seven-row Platform mobile subview includes the overview description as a second link to the same real section |
+| Solutions | **Mobile IA visible**; only Customer Communication and Automation & AI use real section anchors, remaining entries are non-link **In Arbeit** rows |
+| Industries | **Mobile IA visible**; Car Rental marked available, other verticals marked **In Arbeit**; no fake routes |
+| Integrations | **Mobile direct link** to real `#integrations`; unchanged inside desktop Platform |
+| Resources | **Mobile IA visible** with real Product Overview, Contact, and Demo destinations |
+| Pricing | **Mobile IA visible** as a non-link **In Arbeit** row; deferred on desktop |
 | Contact as primary top-level | **Removed** — CTA, footer, future Resources |
 
 Platform anchors: `#platform`, `#vehicle-intelligence`, `#ai-orchestration`, `#workflow-automation`, `#communication`, `#integrations`.
 
-Data model: `content/site.mjs` → `nav.platformMenu` (overview, groups[], footerLink), `nav.mobileNav` (account/language section labels), `nav.deferred` (labels only, not rendered), `flattenPlatformMenu()` for mobile link list.
+Data model: `content/site.mjs` → `nav.platformMenu` (overview, groups[], footerLink), `nav.mobileNav` (localized root categories, nested view items, status labels, sales action), `nav.deferred` (desktop labels only), `flattenPlatformMenu()` for the shared Platform capability source.
 
 Markup: `src/sections.mjs` → `header()`, `renderPlatformPanel()`, `renderMobileNav()`. Styles: `.nav-panel*` (desktop), `.mobilenav*` (mobile) in `src/styles.css`. Behaviour: `src/script.js` — desktop disclosure + mobile modal layer.
 
@@ -354,8 +356,8 @@ screenshots are byte-identical to the locally approved build.
 - **P2.8B:** Phase-2 Production deployment — **PASS** (2026-08-13); Phase 2 **live** on `synqdrive.eu`.
 - **P2.8C:** Production acceptance — **PASS WITH INFRASTRUCTURE-LIMITED PRODUCTION TESTING** (2026-08-13); exhaustive Production replay stopped due Hostinger rate limiting; critical serial smoke **PASS**.
 - **Phase 2 Production Accepted:** **YES** (P2.8C; pre-E1)
-- **E1 / E1.1 / E1.2 (Mobile Safari CSS delivery):** Remediation on branch `cursor/mobile-safari-css-delivery-incident`; **NOT DEPLOYED**. E1.2 adds deterministic release packaging (`tools/package-site.mjs`) so E2 deploy uses a single frozen archive SHA. Production health for all real-device clients not assumed until E2 deploy.
-- Solutions, Resources, and Pricing top-level navigation remain deferred until real destination pages exist (DEC-004).
+- **E1 / E1.1 / E1.2 / E2 (Mobile Safari CSS delivery):** Fingerprinting, recovery, fallback, WebKit guards, and deterministic packaging deployed in E2; technical Production gate **PASS**. Real-iPhone acceptance remains owner-controlled.
+- Desktop Solutions, Resources, and Pricing remain deferred (DEC-004). Mobile may preview planned IA as non-link **In Arbeit** rows under DEC-011; no dead routes.
 - Taxi & Mobility may become a future Solutions page; it does not imply generally available Taxi Dispatch (DEC-009).
 - The product visuals are English on both locales. German screenshot variants deferred.
 - Both calls to action open a prefilled mail draft to `info@synqdrive.eu`.
@@ -559,10 +561,10 @@ Mobile chain links use `.surface--compact` divider rows; desktop restores full c
 | P2.8B deployment | **PASS** |
 | P2.8C acceptance | **PASS WITH INFRASTRUCTURE-LIMITED PRODUCTION TESTING** |
 | Phase 2 Production Accepted (P2.8C historical gate) | **YES** |
-| E1 / E1.1 remediation | **NOT DEPLOYED** — real-device Safari delivery incident open |
+| E1 / E1.1 remediation | **DEPLOYED IN E2** — technical gate PASS; real-iPhone acceptance owner-controlled |
 
 Pre-deployment exact-artefact QA: Chromium **100/100**, WebKit **2/2**. Production exhaustive replay **not completed** (Hostinger rate limiting during parallel QA). Targeted serial Production smoke **PASS**.
 
-**Post-release note (E1 / E1.1):** A real-device Mobile Safari unstyled presentation incident was reported after P2.8 acceptance. Remediation is on Draft PR #9; **NOT DEPLOYED**. Production health for all real-device clients should not be assumed until E2 deploy.
+**Post-release note (E1–E2):** A real-device Mobile Safari unstyled presentation incident was reported after P2.8 acceptance. The exact E1.2 artefact was deployed in E2 and controlled Chromium/WebKit Production checks passed. Final real-iPhone acceptance remains an owner test.
 
 **Known non-blocking manual assets:** AI Class C, Workflow Class C, Communication Class C.

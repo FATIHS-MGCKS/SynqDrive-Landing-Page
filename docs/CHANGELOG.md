@@ -8,6 +8,34 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+## Mobile navigation hierarchy hotfix — 2026-08-13
+
+**Scope:** Mobile navigation composition and IA only — **NOT DEPLOYED**
+
+### Changed
+
+- Replaced the permanently expanded Platform list with a compact seven-row root menu
+- Added nested Platform, Solutions, Industries, and Resources views with internal Back navigation
+- Exposed only real anchors/actions as links; unavailable destinations are non-link **In progress / In Arbeit** rows
+- Replaced oversized Account/Language sections with a normal Login row, two-button bottom action area, and compact locale control
+- Preserved modal focus trap, focus return, Escape, scroll lock, background `inert`, safe-area padding, and desktop Platform navigation
+- Added DEC-011 to govern mobile IA previews without dead routes
+
+### Scope boundaries
+
+- Desktop navigation unchanged
+- Landing sections and Product Images unchanged
+- Safari fingerprinting, stylesheet recovery, catastrophic fallback, CSS sentinel, and intrinsic SVG protections retained
+- Production untouched
+
+### QA
+
+- Build + deterministic package **PASS**
+- Chromium **110/110 PASS**
+- WebKit **11/11 PASS**
+
+---
+
 ---
 
 ---
