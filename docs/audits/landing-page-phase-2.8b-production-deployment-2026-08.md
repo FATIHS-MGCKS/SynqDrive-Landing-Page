@@ -169,4 +169,4 @@ Full Production Acceptance suite (100-test Chromium + production WebKit + extend
 | Item | SHA |
 |---|---|
 | Deployable release source | `92392d2` |
-| P2.8B documentation | *(this commit on `cursor/phase-2-production-release`)* |
+| P2.8B documentation | `076d4bd79700004195fa0a82825ac27e8bd9c795` |
