@@ -292,7 +292,7 @@ Duplicate surface property declarations removed from `.brief--product-led .capab
 
 ### 4. Mobile Platform regression
 
-**PASS** — 390×844 DE: section height **1017px**, frame top **284px** (unchanged from accepted P2.4)
+**PASS** — 390×844 DE (post-settle QA probe): frame top **283.5px** (≈284px; unchanged from P2.4). Section height **1081px** — see P2.4.3 for reconciliation with the P2.4 figure (**1017px** at `5f7ae7d`); the +64px delta is from canonical `surface surface--compact` markup, not composition regression.
 
 ### 5. Desktop Platform geometry
 
@@ -365,10 +365,12 @@ The Platform desktop selector now owns all four card borders consistently. Canon
 
 **PASS** — ≤1024 unchanged: four `surface--compact` rows, last row `border-bottom: 0`, zero full mobile card surfaces, Product Visual order unchanged.
 
-| Metric (390×844 DE, post-settle) | Value |
+| Metric (390×844 DE, post-settle QA probe) | Value |
 |---|---|
-| Section height | **1081px** (unchanged from P2.4.1 baseline in QA) |
-| Section top → Product Frame top | **283.5px** (≈284px; unchanged) |
+| Section height | **1081px** |
+| Section top → Product Frame top | **283.5px** (≈284px) |
+
+Mobile CSS unchanged from P2.4.1; section height differs from the P2.4 audit figure — reconciled in P2.4.3.
 
 ### Desktop Platform geometry
 
@@ -389,4 +391,45 @@ The Platform desktop selector now owns all four card borders consistently. Canon
 ### P2.4.2 commit SHA
 
 **Implementation commit:** `00097c2`  
-**Documentation commit:** `ed11339`
+**Documentation commit:** `e30b3a2`
+
+---
+
+## Final documentation closure (P2.4.3)
+
+**Date:** 2026-08-13  
+**Scope:** Audit accuracy only — no runtime changes
+
+### 1. P2.4.2 documentation SHA correction
+
+The P2.4.2 block previously referenced an intermediate amend SHA (`ed11339` / `0d0c318`). The authoritative P2.4.2 documentation commit is **`e30b3a2`**.
+
+### 2. Platform section-height reconciliation (390×844 DE)
+
+**Measurement method (current QA):** Chromium; viewport **390×844**; `deviceScaleFactor: 2`; `http://127.0.0.1:4321/` built dist; `settle()` scroll pass + **1100ms** wait; `#platform` `getBoundingClientRect().height` and Product Frame top minus section top (same probe as `readPlatformComposition()`).
+
+| Commit / phase | Section height | Frame top (rel.) |
+|---|---|---|
+| P2.4 implementation (`5f7ae7d`) | **1017px** | **283.5px** |
+| P2.4.1 + P2.4.2 HEAD (`e30b3a2`) | **1081px** | **283.5px** |
+
+**Why the figures differ:** The P2.4 audit (**1017px**) was measured correctly against the accepted P2.4 implementation before P2.4.1. P2.4.1 replaced duplicated compact CSS with canonical `surface surface--compact` markup; the canonical compact primitive’s padding and divider stack adds **+64px** section height while mobile composition (intro → product → compact rows), frame distance (~284px), and zero full-card surfaces remain accepted. P2.4.2 changed desktop card borders only — mobile metrics unchanged at **1081px / 283.5px**.
+
+Historical P2.4 before/after tables retain **1017px** as the P2.4 implementation outcome; current branch state uses **1081px**.
+
+### 3. Final technical state
+
+| Item | Status |
+|---|---|
+| Chromium | **62/62** |
+| WebKit smoke | **2/2** |
+| Desktop all-four-card borders | **PASS** |
+| H-02 | **RESOLVED** |
+| M-01 | **PARTIAL** |
+| Product Images changed | **NO** |
+| Hero changed | **NO** |
+| Navigation changed | **NO** |
+| Vehicle changed | **NO** |
+| Production deployed | **NO** |
+| P2.5 started | **NO** |
+| PR #4 | **Draft** |
