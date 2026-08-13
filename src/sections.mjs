@@ -338,39 +338,41 @@ export function communication(c) {
   const s = c.communication;
   const points = s.points
     .map(
-      (point) => `<li>
+      (point) => `<li class="notes__item notes__item--compact surface surface--compact">
             <h3>${esc(point.title)}</h3>
             <p>${esc(point.body)}</p>
           </li>`,
     )
     .join('');
 
-  return `<section class="section split layout-split layout-split--copy-first" id="${s.id}" aria-labelledby="${s.id}-title">
-      <div class="split__copy">
+  /* Mobile source order: intro → conversation product → operational context notes.
+     Desktop grid restores copy-first split with product on the right. */
+  return `<section class="section split split--mirror layout-split communication--product-led" id="${s.id}" aria-labelledby="${s.id}-title">
+      <div class="split__intro">
         ${sectionHead({ eyebrow: s.eyebrow, title: s.title, body: s.body, id: s.id })}
-        <ul class="notes notes--divided" data-reveal>${points}</ul>
       </div>
       <div class="split__media" data-reveal>
         ${productFrame({ media: s.media, alt: s.mediaAlt, sizes: '(max-width: 900px) 92vw, 48vw' })}
+      </div>
+      <div class="split__support" data-reveal>
+        <ul class="notes notes--compact">${points}</ul>
       </div>
     </section>`;
 }
 
 export function integrations(c) {
   const s = c.integrations;
-  const tile = (item) => `<li class="hub__tile" data-reveal>
+  const tile = (item) => `<li class="hub__tile hub__tile--compact surface surface--compact" data-reveal>
             ${iconMark(item.icon)}
             <h3>${esc(item.title)}</h3>
             <p>${esc(item.body)}</p>
           </li>`;
 
-  // Two flanking columns around a centre node. The list order stays meaningful
-  // when the diagram collapses to a single column below the desktop breakpoint.
   const half = Math.ceil(s.tiles.length / 2);
   const left = s.tiles.slice(0, half).map(tile).join('');
   const right = s.tiles.slice(half).map(tile).join('');
 
-  return `<section class="section hub" id="${s.id}" aria-labelledby="${s.id}-title">
+  return `<section class="section hub hub--compact" id="${s.id}" aria-labelledby="${s.id}-title">
       ${sectionHead({
         eyebrow: s.eyebrow,
         title: s.title,
@@ -379,10 +381,11 @@ export function integrations(c) {
         className: 'section-head--centered',
       })}
       <div class="hub__diagram">
-        <ul class="hub__column hub__column--left">${left}</ul>
-        <p class="hub__core">
+        <div class="hub__core">
           <img src="/assets/synqdrive-logo.png" width="1024" height="216" alt="SynqDrive" />
-        </p>
+          <p class="hub__core-label">${esc(s.hubLabel)}</p>
+        </div>
+        <ul class="hub__column hub__column--left">${left}</ul>
         <ul class="hub__column hub__column--right">${right}</ul>
       </div>
       <p class="hub__note">${esc(s.note)}</p>

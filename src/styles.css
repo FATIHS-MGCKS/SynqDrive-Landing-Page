@@ -1569,6 +1569,91 @@ html[data-nav-scroll-lock='true'] {
 
 /* Gap before workflow product visual is owned by .layout-stack--tiered. */
 
+/* P2.6 — Communication mobile product-led composition */
+@media (max-width: 1024px) {
+  .communication--product-led {
+    gap: var(--stack-copy-visual);
+  }
+
+  .communication--product-led .split__support {
+    display: grid;
+    gap: 0;
+  }
+
+  .communication--product-led .notes--compact {
+    margin-top: 0;
+    gap: 0;
+    max-width: none;
+  }
+
+  .communication--product-led .notes__item--compact h3 {
+    margin-top: 0;
+    font-size: 15px;
+  }
+
+  .communication--product-led .notes__item--compact p {
+    margin-top: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}
+
+@media (min-width: 1025px) {
+  .communication--product-led {
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    grid-template-rows: auto auto;
+    align-items: start;
+    column-gap: 72px;
+    row-gap: 0;
+  }
+
+  .communication--product-led.split--mirror .split__media {
+    order: -1;
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+
+  .communication--product-led .split__intro {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .communication--product-led .split__support {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .communication--product-led .notes--compact {
+    margin-top: 36px;
+    gap: 0;
+    max-width: 34rem;
+  }
+
+  .communication--product-led .notes__item--compact {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    border-bottom: 0;
+    padding-block: 22px;
+    border-top: 1px solid var(--hairline);
+  }
+
+  .communication--product-led .notes__item--compact:last-child {
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .communication--product-led .notes__item--compact h3 {
+    font-size: var(--type-subheading);
+  }
+
+  .communication--product-led .notes__item--compact p {
+    margin-top: 6px;
+    font-size: 14.25px;
+  }
+}
+
 /* ── Integration hub ─────────────────────────────────────────────────────── */
 
 .hub .section-head {
@@ -1612,10 +1697,6 @@ html[data-nav-scroll-lock='true'] {
 
 .hub__tile {
   position: relative;
-  padding: var(--surface-padding) calc(var(--surface-padding) + 2px);
-  border: 1px solid var(--hairline);
-  border-radius: var(--surface-radius);
-  background: #fff;
   transition: border-color 200ms var(--ease), box-shadow 200ms var(--ease);
 }
 
@@ -1636,9 +1717,11 @@ html[data-nav-scroll-lock='true'] {
   right: 100%;
 }
 
-.hub__tile:hover {
-  border-color: var(--hairline-strong);
-  box-shadow: var(--shadow-frame);
+@media (min-width: 1025px) {
+  .hub__tile:hover {
+    border-color: var(--hairline-strong);
+    box-shadow: var(--shadow-frame);
+  }
 }
 
 .hub__tile h3 {
@@ -1672,6 +1755,15 @@ html[data-nav-scroll-lock='true'] {
 .hub__core img {
   width: 116px;
   height: auto;
+}
+
+.hub__core-label {
+  margin: 0;
+  text-align: center;
+  color: var(--muted);
+  font-size: 12.75px;
+  line-height: 1.45;
+  max-width: 12rem;
 }
 
 /* Bus into the node. */
@@ -2107,6 +2199,166 @@ html[data-nav-scroll-lock='true'] {
 
   .brand img {
     width: 118px;
+  }
+}
+
+/* P2.6 — Integrations hub mobile composition, closing/footer polish */
+@media (max-width: 1024px) {
+  .hub--compact .hub__diagram {
+    --hub-gap: var(--stack-gap);
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--stack-gap);
+    align-items: stretch;
+  }
+
+  .hub--compact .hub__core {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+    height: auto;
+    min-height: 0;
+    padding: 20px 16px;
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    background: var(--canvas-alt);
+    box-shadow: none;
+  }
+
+  .hub--compact .hub__core::before,
+  .hub--compact .hub__core::after {
+    display: none;
+  }
+
+  .hub--compact .hub__core img {
+    width: 108px;
+  }
+
+  .hub--compact .hub__column {
+    display: grid;
+    gap: 0;
+    grid-auto-rows: auto;
+  }
+
+  .hub--compact .hub__column::after,
+  .hub--compact .hub__tile::after {
+    display: none;
+  }
+
+  .hub--compact .hub__tile {
+    display: grid;
+    grid-template-columns: 34px minmax(0, 1fr);
+    column-gap: 12px;
+    row-gap: 4px;
+    align-items: start;
+  }
+
+  .hub--compact .hub__tile .icon-mark {
+    grid-row: 1 / span 2;
+  }
+
+  .hub--compact .hub__tile h3 {
+    margin-top: 0;
+    font-size: 15px;
+  }
+
+  .hub--compact .hub__tile p {
+    margin-top: 0;
+    font-size: 13.75px;
+    line-height: 1.5;
+  }
+
+  .closing__inner {
+    padding-block: 72px;
+  }
+
+  .closing p {
+    margin-top: 16px;
+  }
+
+  .closing__actions {
+    margin-top: 28px;
+  }
+
+  .sitefooter__inner {
+    gap: 32px;
+    padding-block: 52px 36px;
+  }
+
+  .sitefooter__columns {
+    gap: 28px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .hub--compact .hub__diagram {
+    --hub-gap: 72px;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: center;
+    gap: var(--hub-gap);
+  }
+
+  .hub--compact .hub__column--left {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .hub--compact .hub__core {
+    grid-column: 2;
+    grid-row: 1;
+    flex-direction: column;
+    width: 172px;
+    height: 172px;
+    padding: 0;
+    border: 1px solid var(--hairline-strong);
+    border-radius: 22px;
+    background: #fff;
+    box-shadow: var(--shadow-raised);
+  }
+
+  .hub--compact .hub__core-label {
+    display: none;
+  }
+
+  .hub--compact .hub__column--right {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .hub--compact .hub__tile {
+    display: block;
+    grid-template-columns: none;
+    padding: var(--surface-padding) calc(var(--surface-padding) + 2px);
+    border: 1px solid var(--hairline);
+    border-radius: var(--surface-radius);
+    background: #fff;
+  }
+
+  .hub--compact .hub__tile:hover {
+    border-color: var(--hairline-strong);
+    box-shadow: var(--shadow-frame);
+  }
+
+  .hub--compact .hub__tile h3 {
+    margin-top: 14px;
+    font-size: 15.5px;
+  }
+
+  .hub--compact .hub__tile p {
+    margin-top: 7px;
+    font-size: 13.75px;
+  }
+}
+
+@media (max-width: 760px) {
+  .closing__inner {
+    padding-block: 56px;
+  }
+
+  .sitefooter__inner {
+    padding-block: 48px 32px;
   }
 }
 

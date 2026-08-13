@@ -2520,4 +2520,421 @@ test.describe('public landing page', () => {
       });
     }
   });
+
+  const P26_PHONE_WIDTHS = P25_PHONE_WIDTHS;
+  const P26_TABLET_WIDTHS = P25_TABLET_WIDTHS;
+  const P26_DESKTOP_WIDTHS = P25_DESKTOP_WIDTHS;
+  const P26_LOCALE_WIDTHS = [390, 768, 1440] as const;
+  const P26_LANDSCAPE = P25_LANDSCAPE;
+
+  async function readCommunicationComposition(page: Page) {
+    return page.evaluate(() => {
+      const section = document.getElementById('communication');
+      const intro = section?.querySelector('.split__intro');
+      const media = section?.querySelector('.split__media');
+      const support = section?.querySelector('.split__support');
+      const notes = section?.querySelectorAll('.notes__item');
+      const frame = section?.querySelector('.split__media .frame--product');
+      const sectionRect = section?.getBoundingClientRect();
+      const frameRect = frame?.getBoundingClientRect();
+      const introRect = intro?.getBoundingClientRect();
+      const mediaRect = media?.getBoundingClientRect();
+      const supportRect = support?.getBoundingClientRect();
+
+      const noteSurfaces = Array.from(notes ?? []).map((el) => {
+        const styles = getComputedStyle(el);
+        return {
+          hasCompactClass: el.classList.contains('surface--compact'),
+          paddingTop: parseFloat(styles.paddingTop),
+          borderTopWidth: parseFloat(styles.borderTopWidth),
+          borderBottomWidth: parseFloat(styles.borderBottomWidth),
+          borderRadius: parseFloat(styles.borderRadius),
+          background: styles.backgroundColor,
+        };
+      });
+
+      const compactNotesActive =
+        window.matchMedia('(max-width: 1024px)').matches &&
+        noteSurfaces.every(
+          (s) =>
+            s.hasCompactClass &&
+            s.borderTopWidth === 0 &&
+            (s.background === 'rgba(0, 0, 0, 0)' || s.background === 'transparent'),
+        );
+
+      const desktopSplitActive =
+        window.matchMedia('(min-width: 1025px)').matches &&
+        !!intro &&
+        !!media &&
+        !!support &&
+        media.getBoundingClientRect().left < intro.getBoundingClientRect().left;
+
+      return {
+        scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth,
+        sectionHeight: sectionRect?.height ?? 0,
+        frameTopRel: sectionRect && frameRect ? frameRect.top - sectionRect.top : null,
+        frameWidth: frameRect?.width ?? 0,
+        frameHeight: frameRect?.height ?? 0,
+        noteCount: notes?.length ?? 0,
+        introBeforeMedia:
+          !!intro &&
+          !!media &&
+          (intro.compareDocumentPosition(media) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0,
+        mediaBeforeSupport:
+          !!media &&
+          !!support &&
+          (media.compareDocumentPosition(support) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0,
+        compactNotesActive,
+        desktopSplitActive,
+        introToMedia:
+          introRect && mediaRect
+            ? Math.round((mediaRect.top - introRect.bottom) * 10) / 10
+            : null,
+        mediaToSupport:
+          mediaRect && supportRect
+            ? Math.round((supportRect.top - mediaRect.bottom) * 10) / 10
+            : null,
+        noteSurfaces,
+      };
+    });
+  }
+
+  async function readIntegrationsComposition(page: Page) {
+    return page.evaluate(() => {
+      const section = document.getElementById('integrations');
+      const core = section?.querySelector('.hub__core');
+      const tiles = section?.querySelectorAll('.hub__tile');
+      const diagram = section?.querySelector('.hub__diagram');
+      const sectionRect = section?.getBoundingClientRect();
+      const coreRect = core?.getBoundingClientRect();
+      const coreStyles = core ? getComputedStyle(core) : null;
+      const diagramStyles = diagram ? getComputedStyle(diagram) : null;
+
+      const fullCardCount = Array.from(tiles ?? []).filter((el) => {
+        const styles = getComputedStyle(el);
+        return (
+          parseFloat(styles.borderTopWidth) > 0 &&
+          styles.backgroundColor !== 'rgba(0, 0, 0, 0)' &&
+          styles.backgroundColor !== 'transparent'
+        );
+      }).length;
+
+      const coreVisible =
+        !!coreStyles &&
+        coreStyles.display !== 'none' &&
+        parseFloat(coreStyles.width) > 0 &&
+        parseFloat(coreStyles.height) > 0;
+
+      const coreTopRel =
+        sectionRect && coreRect ? Math.round((coreRect.top - sectionRect.top) * 10) / 10 : null;
+
+      const desktopHubActive =
+        window.matchMedia('(min-width: 1025px)').matches &&
+        !!diagramStyles &&
+        diagramStyles.gridTemplateColumns.split(' ').length === 3 &&
+        fullCardCount === 6;
+
+      const mobileSingleColumn =
+        window.matchMedia('(max-width: 1024px)').matches &&
+        !!diagramStyles &&
+        !diagramStyles.gridTemplateColumns.includes('auto');
+
+      return {
+        scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth,
+        sectionHeight: sectionRect?.height ?? 0,
+        tileCount: tiles?.length ?? 0,
+        fullCardCount,
+        coreVisible,
+        coreTopRel,
+        desktopHubActive,
+        mobileSingleColumn,
+      };
+    });
+  }
+
+  async function readClosingFooterMetrics(page: Page) {
+    return page.evaluate(() => {
+      const closing = document.querySelector('.closing');
+      const footer = document.querySelector('.sitefooter');
+      const primary = document.querySelector('.closing .action--primary');
+      const primaryStyles = primary ? getComputedStyle(primary) : null;
+      return {
+        closingHeight: closing ? Math.round(closing.getBoundingClientRect().height) : null,
+        footerHeight: footer ? Math.round(footer.getBoundingClientRect().height) : null,
+        pageHeight: Math.round(document.documentElement.scrollHeight),
+        primaryMinHeight: primaryStyles ? parseFloat(primaryStyles.minHeight) : null,
+      };
+    });
+  }
+
+  for (const locale of ['de', 'en'] as const) {
+    const url = locale === 'de' ? '/' : '/en/';
+
+    test(`P2.6 communication mobile composition invariants (${locale})`, async ({ page }) => {
+      for (const width of P26_PHONE_WIDTHS) {
+        await page.setViewportSize({ width, height: 844 });
+        await page.goto(url, { waitUntil: 'load' });
+        await settle(page);
+
+        const state = await readCommunicationComposition(page);
+        expect(state.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(state.clientWidth + 1);
+        expect(state.noteCount, `${width}px note count`).toBe(3);
+        expect(state.introBeforeMedia, `${width}px intro before media`).toBe(true);
+        expect(state.mediaBeforeSupport, `${width}px media before notes`).toBe(true);
+        expect(state.compactNotesActive, `${width}px compact notes`).toBe(true);
+        expect(state.frameWidth, `${width}px frame width`).toBeGreaterThan(0);
+      }
+    });
+  }
+
+  test('P2.6 communication mobile compact surface ownership', async ({ page }) => {
+    for (const width of [...P26_PHONE_WIDTHS, ...P26_TABLET_WIDTHS.filter((w) => w <= 1024)] as const) {
+      await page.setViewportSize({ width, height: 844 });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const state = await readCommunicationComposition(page);
+      expect(state.noteSurfaces, `${width}px note surfaces`).toHaveLength(3);
+
+      for (const [index, surface] of state.noteSurfaces.entries()) {
+        expect(surface.hasCompactClass, `${width}px note ${index + 1} compact class`).toBe(true);
+        expect(surface.paddingTop, `${width}px note ${index + 1} padding-top`).toBeGreaterThanOrEqual(
+          13,
+        );
+        expect(surface.paddingTop, `${width}px note ${index + 1} padding-top`).toBeLessThanOrEqual(15);
+        expect(surface.borderTopWidth, `${width}px note ${index + 1} border-top`).toBe(0);
+        expect(surface.borderRadius, `${width}px note ${index + 1} radius`).toBe(0);
+        expect(
+          surface.background === 'rgba(0, 0, 0, 0)' || surface.background === 'transparent',
+          `${width}px note ${index + 1} background`,
+        ).toBe(true);
+
+        if (index < 2) {
+          expect(surface.borderBottomWidth, `${width}px note ${index + 1} bottom divider`).toBeGreaterThan(
+            0,
+          );
+        } else {
+          expect(surface.borderBottomWidth, `${width}px note ${index + 1} bottom divider`).toBe(0);
+        }
+      }
+    }
+  });
+
+  test('P2.6 communication desktop split geometry', async ({ page }) => {
+    for (const width of P26_DESKTOP_WIDTHS) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const state = await readCommunicationComposition(page);
+      expect(state.desktopSplitActive, `${width}px desktop mirrored split`).toBe(true);
+      expect(state.noteCount, `${width}px note count`).toBe(3);
+    }
+  });
+
+  test('P2.6 communication CSS source ownership', async () => {
+    const cssPath = path.resolve(
+      path.dirname(new URL(import.meta.url).pathname),
+      '..',
+      'src',
+      'styles.css',
+    );
+    const css = await fs.readFile(cssPath, 'utf8');
+    const sectionStart = css.indexOf('/* P2.6 — Communication mobile product-led composition */');
+    expect(sectionStart, 'communication section').toBeGreaterThan(-1);
+    const sectionEnd = css.indexOf('/* ── Integration hub', sectionStart);
+    const mobileBlock = css.slice(
+      sectionStart,
+      css.indexOf('@media (min-width: 1025px)', sectionStart),
+    );
+
+    for (const pattern of [
+      /padding:\s*14px\s+0/,
+      /border-radius:\s*0/,
+      /background:\s*transparent/,
+      /border-bottom:\s*1px\s+solid\s+var\(--hairline\)/,
+    ]) {
+      expect(
+        mobileBlock,
+        `communication mobile must not duplicate compact surface chrome (${pattern})`,
+      ).not.toMatch(pattern);
+    }
+  });
+
+  test('P2.6 integrations mobile hub invariants', async ({ page }) => {
+    for (const width of P26_PHONE_WIDTHS) {
+      await page.setViewportSize({ width, height: width <= 480 ? 700 : 844 });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const state = await readIntegrationsComposition(page);
+      expect(state.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(state.clientWidth + 1);
+      expect(state.tileCount, `${width}px tile count`).toBe(6);
+      expect(state.coreVisible, `${width}px core visible`).toBe(true);
+      expect(state.fullCardCount, `${width}px full-card surfaces`).toBe(0);
+      expect(state.mobileSingleColumn, `${width}px single-column hub`).toBe(true);
+    }
+  });
+
+  test('P2.6 integrations tablet progression', async ({ page }) => {
+    for (const width of P26_TABLET_WIDTHS) {
+      await page.setViewportSize({ width, height: 1024 });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const state = await readIntegrationsComposition(page);
+      expect(state.tileCount, `${width}px tile count`).toBe(6);
+      expect(state.coreVisible, `${width}px core visible`).toBe(true);
+      if (width <= 1024) {
+        expect(state.fullCardCount, `${width}px full-card surfaces`).toBe(0);
+      }
+    }
+  });
+
+  test('P2.6 integrations desktop hub restored', async ({ page }) => {
+    for (const width of P26_DESKTOP_WIDTHS) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const state = await readIntegrationsComposition(page);
+      expect(state.desktopHubActive, `${width}px desktop hub`).toBe(true);
+      expect(state.coreVisible, `${width}px core visible`).toBe(true);
+    }
+  });
+
+  test('P2.6 integrations CSS source ownership', async () => {
+    const cssPath = path.resolve(
+      path.dirname(new URL(import.meta.url).pathname),
+      '..',
+      'src',
+      'styles.css',
+    );
+    const css = await fs.readFile(cssPath, 'utf8');
+    const sectionStart = css.indexOf('/* P2.6 — Integrations hub mobile composition');
+    expect(sectionStart, 'integrations P2.6 section').toBeGreaterThan(-1);
+    const mobileEnd = css.indexOf('@media (min-width: 1025px)', sectionStart);
+    const mobileBlock = css.slice(sectionStart, mobileEnd);
+
+    for (const pattern of [
+      /padding:\s*14px\s+0/,
+      /border-radius:\s*0/,
+      /background:\s*transparent/,
+      /border-bottom:\s*1px\s+solid\s+var\(--hairline\)/,
+    ]) {
+      expect(
+        mobileBlock,
+        `integrations mobile must not duplicate compact surface chrome (${pattern})`,
+      ).not.toMatch(pattern);
+    }
+
+    const desktopBlock = css.slice(mobileEnd);
+    const desktopOwners = [
+      ...desktopBlock.matchAll(/\.hub--compact\s+\.hub__tile\s*\{([^}]+)\}/g),
+    ];
+    expect(desktopOwners, 'exactly one desktop hub tile card owner').toHaveLength(1);
+    const ownerBody = desktopOwners[0]![1]!;
+    expect(ownerBody).toContain('padding: var(--surface-padding)');
+    expect(ownerBody).toContain('border: 1px solid var(--hairline)');
+  });
+
+  test('P2.6 closing and footer mobile polish', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'load' });
+    await settle(page);
+
+    const metrics = await readClosingFooterMetrics(page);
+    expect(metrics.primaryMinHeight, '390px CTA primary min-height').toBeGreaterThanOrEqual(44);
+    expect(metrics.closingHeight, '390px closing height').toBeGreaterThan(0);
+    expect(metrics.footerHeight, '390px footer height').toBeGreaterThan(0);
+    expect(metrics.pageHeight, '390px page height').toBeGreaterThan(8000);
+  });
+
+  test('P2.6 locale structural coverage (390 / 768 / 1440)', async ({ page }) => {
+    for (const locale of ['de', 'en'] as const) {
+      const url = locale === 'de' ? '/' : '/en/';
+      for (const width of P26_LOCALE_WIDTHS) {
+        await page.setViewportSize({ width, height: width <= 768 ? 844 : 900 });
+        await page.goto(url, { waitUntil: 'load' });
+        await settle(page);
+
+        const comm = await readCommunicationComposition(page);
+        const hub = await readIntegrationsComposition(page);
+        expect(comm.noteCount, `${locale} ${width}px comm notes`).toBe(3);
+        expect(hub.tileCount, `${locale} ${width}px hub tiles`).toBe(6);
+        expect(comm.scrollWidth, `${locale} ${width}px comm overflow`).toBeLessThanOrEqual(
+          comm.clientWidth + 1,
+        );
+        expect(hub.scrollWidth, `${locale} ${width}px hub overflow`).toBeLessThanOrEqual(
+          hub.clientWidth + 1,
+        );
+      }
+    }
+  });
+
+  test('P2.6 landscape sanity', async ({ page }) => {
+    for (const [width, height] of P26_LANDSCAPE) {
+      await page.setViewportSize({ width, height });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const comm = await readCommunicationComposition(page);
+      const hub = await readIntegrationsComposition(page);
+      expect(comm.scrollWidth, `${width}x${height} comm overflow`).toBeLessThanOrEqual(
+        comm.clientWidth + 1,
+      );
+      expect(hub.scrollWidth, `${width}x${height} hub overflow`).toBeLessThanOrEqual(
+        hub.clientWidth + 1,
+      );
+    }
+  });
+
+  test('P2.6 communication product distance regression (390 DE)', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'load' });
+    await settle(page);
+
+    const state = await readCommunicationComposition(page);
+    expect(state.frameTopRel!, '390px communication frame distance').toBeLessThan(400);
+    expect(state.frameTopRel!, '390px improved from P2.5 baseline').toBeLessThan(682);
+  });
+
+  test('captures P2.6 communication integrations closure screenshots', async ({ page }) => {
+    const shots = [
+      ['de', '/', 320, 700],
+      ['de', '/', 375, 812],
+      ['de', '/', 390, 844],
+      ['de', '/', 430, 932],
+      ['de', '/', 768, 1024],
+      ['de', '/', 1440, 1000],
+      ['en', '/en/', 320, 700],
+      ['en', '/en/', 390, 844],
+      ['en', '/en/', 430, 932],
+      ['en', '/en/', 1440, 1000],
+    ] as const;
+
+    for (const [locale, url, width, height] of shots) {
+      await page.setViewportSize({ width, height });
+      await page.goto(url, { waitUntil: 'load' });
+      await settle(page);
+      await page.locator('#communication').screenshot({
+        path: path.join(OUT, `${LABEL}p26-communication-${locale}-${width}.png`),
+        animations: 'disabled',
+      });
+      await page.locator('#integrations').screenshot({
+        path: path.join(OUT, `${LABEL}p26-integrations-${locale}-${width}.png`),
+        animations: 'disabled',
+      });
+      await page.locator('.closing').screenshot({
+        path: path.join(OUT, `${LABEL}p26-closing-${locale}-${width}.png`),
+        animations: 'disabled',
+      });
+      await page.locator('.sitefooter').screenshot({
+        path: path.join(OUT, `${LABEL}p26-footer-${locale}-${width}.png`),
+        animations: 'disabled',
+      });
+    }
+  });
 });
