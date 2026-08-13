@@ -42,6 +42,14 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 - Build, dist hygiene, package verification — **PASS**
 - 390 DE page height: **8626px**
 
+### P2.7.1 release-gate evidence (2026-08-13)
+
+- `--section-y` 1179/1180/1181 boundary assertions hardened
+- CLS release matrix (DE/EN × 390/768/1440) — all **< 0.1**
+- JavaScript-off DE/EN sanity test
+- Platform anchor offset release guard (390 mobile + 1440 desktop)
+- Chromium **100/100**; WebKit **2/2**; P2.8 ready **YES**
+
 ---
 
 ## Communication + Integrations + closing/footer (P2.6) — merged to main — 2026-08-13

@@ -526,5 +526,12 @@ Mobile chain links use `.surface--compact` divider rows; desktop restores full c
 - Chromium: **97/97**
 - WebKit smoke: **2/2**
 - Release candidate: **PASS WITH NON-BLOCKING LIMITATIONS**
-- P2.8 ready: **YES**
+- P2.8 ready: **YES** (confirmed after P2.7.1 release-gate evidence)
 - 390 DE page height: **8626px**
+
+### P2.7.1 release-gate evidence (2026-08-13)
+
+- Chromium: **100/100** (+3 tests: CLS matrix, JavaScript-off DE/EN, anchor offset guard)
+- `--section-y` 1179/1180/1181 boundary explicitly asserted
+- CLS release matrix PASS (DE/EN × 390/768/1440)
+- JavaScript-off DE/EN PASS; anchor offset PASS

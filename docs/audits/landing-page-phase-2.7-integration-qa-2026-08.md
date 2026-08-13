@@ -441,4 +441,72 @@ P2.8 owns deployment preparation and release execution only.
 **Starting SHA:** `9571aee`  
 **QA/test commit:** `7c1db16`  
 **Documentation commit:** `894714c`  
-**Documentation closure:** `bb94a8a`
+**Documentation closure:** `bb94a8a`  
+**Pre-P2.7.1 documentation head:** `64146bb`
+
+---
+
+## Post-review release-gate evidence hardening (P2.7.1)
+
+**Date:** 2026-08-13  
+**Scope:** Test + documentation only — no runtime/CSS/content/asset changes
+
+### Hardening delivered
+
+| Item | Result |
+|---|---|
+| `--section-y` 1179 / 1180 / 1181 boundary | **PASS** — explicit assertions with ±0.5px tolerance via `expectedSectionY()` |
+| CLS release matrix | **PASS** — all entries **< 0.1** |
+| JavaScript-off DE / EN (390×844) | **PASS** |
+| Platform anchor offset guard (390 mobile + 1440 desktop) | **PASS** — hash, masthead clearance, drawer close (mobile), no overflow |
+
+### `--section-y` boundary measurements
+
+| Width | `--section-y` |
+|---|---|
+| 1179 | **104px** |
+| 1180 | **104px** |
+| 1181 | **128px** |
+
+Retained band checks: 759/760 mobile (56px), 761 tablet (72px), 1023/1024 compact (72px), 1025 desktop composition (104px section-y + 6 hub cards).
+
+### CLS release matrix (PerformanceObserver, `hadRecentInput` excluded, 3500ms settle)
+
+| Locale | Viewport | CLS |
+|---|---|---|
+| DE | 390×844 | **0** |
+| DE | 768×1024 | **0** |
+| DE | 1440×1000 | **0** |
+| EN | 390×844 | **0** |
+| EN | 768×1024 | **0** |
+| EN | 1440×1000 | **0** |
+
+Recorded artefact: `qa/p271-cls-matrix.json`
+
+### JavaScript-off sanity
+
+Both `/` and `/en/` at 390×844: one H1, all marketing sections + headings visible, six product frames present, hero/closing mailto CTAs usable, footer + legal link present, no horizontal overflow, no hidden `[data-reveal]` content. Enhanced navigation (drawer/disclosure) requires JS — documented limitation unchanged.
+
+### Anchor offset regression
+
+Six Platform nav anchors (`#platform` through `#integrations`) verified at **390** (mobile drawer → close → offset) and **1440** (direct hash navigation). Target heading clears sticky masthead; no overflow.
+
+### QA (post-P2.7.1)
+
+| Gate | Result |
+|---|---|
+| Chromium | **100/100** |
+| WebKit smoke | **2/2** |
+| Build | **PASS** |
+| Dist hygiene | **PASS** (29 public files) |
+| Package | **PASS** (~996 KB) |
+
+### P2.8 readiness (post-P2.7.1)
+
+**P2.8 READY:** **YES** — all new evidence tests PASS; zero blockers; manual Class-C assets remain NON-BLOCKING.
+
+### P2.7.1 commits
+
+**Pre-P2.7.1 documentation head:** `64146bb`  
+**Implementation/test commit:** *(recorded in PR history)*  
+**Documentation commit:** *(recorded in PR history)*
