@@ -1662,6 +1662,26 @@ test.describe('public landing page', () => {
         );
       }).length;
 
+      const compactSurfaceCount = Array.from(capabilities ?? []).filter((el) =>
+        el.classList.contains('surface--compact'),
+      ).length;
+
+      const compactSurfaceActive =
+        compactSurfaceCount === 4 &&
+        Array.from(capabilities ?? []).every((el) => {
+          if (!el.classList.contains('surface--compact')) return false;
+          const styles = getComputedStyle(el);
+          const paddingTop = parseFloat(styles.paddingTop);
+          const borderTop = parseFloat(styles.borderTopWidth);
+          const bg = styles.backgroundColor;
+          return (
+            paddingTop >= 13 &&
+            paddingTop <= 15 &&
+            borderTop === 0 &&
+            (bg === 'rgba(0, 0, 0, 0)' || bg === 'transparent')
+          );
+        });
+
       const introBeforeMedia =
         !!intro &&
         !!media &&
@@ -1678,6 +1698,23 @@ test.describe('public landing page', () => {
       const mediaToGrid =
         mediaRect && gridRect ? Math.round((gridRect.top - mediaRect.bottom) * 10) / 10 : null;
 
+      const desktopLayout =
+        window.matchMedia('(min-width: 1025px)').matches && intro && grid && media
+          ? {
+              introLeft: intro.getBoundingClientRect().left,
+              introRight: intro.getBoundingClientRect().right,
+              gridLeft: grid.getBoundingClientRect().left,
+              gridTop: grid.getBoundingClientRect().top,
+              introTop: intro.getBoundingClientRect().top,
+              mediaTop: media.getBoundingClientRect().top,
+              mediaBottom: media.getBoundingClientRect().bottom,
+              rowOneBottom: Math.max(
+                intro.getBoundingClientRect().bottom,
+                grid.getBoundingClientRect().bottom,
+              ),
+            }
+          : null;
+
       return {
         scrollWidth: document.documentElement.scrollWidth,
         clientWidth: document.documentElement.clientWidth,
@@ -1686,6 +1723,8 @@ test.describe('public landing page', () => {
         frameWidth: frameRect?.width ?? 0,
         capabilityCount: capabilities?.length ?? 0,
         fullCardCount,
+        compactSurfaceCount,
+        compactSurfaceActive,
         introBeforeMedia,
         mediaBeforeGrid,
         introToMedia,
@@ -1695,6 +1734,7 @@ test.describe('public landing page', () => {
           window.matchMedia('(min-width: 1025px)').matches && grid
             ? getComputedStyle(grid).gridTemplateColumns.includes(' ')
             : null,
+        desktopLayout,
       };
     });
   }
@@ -1752,6 +1792,8 @@ test.describe('public landing page', () => {
         expect(state.mediaBeforeGrid, `${width}px media before capabilities`).toBe(true);
         expect(state.frameWidth, `${width}px platform frame width`).toBeGreaterThan(0);
         expect(state.fullCardCount, `${width}px compact mobile cards`).toBe(0);
+        expect(state.compactSurfaceCount, `${width}px compact surface class`).toBe(4);
+        expect(state.compactSurfaceActive, `${width}px compact surface active`).toBe(true);
         expect(state.mediaMarginTop, `${width}px media margin-top`).toBe(0);
         expect(state.introToMedia, `${width}px intro-media gap`).toBeGreaterThanOrEqual(24);
         expect(state.introToMedia!, `${width}px intro-media gap`).toBeLessThanOrEqual(36);
@@ -1759,18 +1801,30 @@ test.describe('public landing page', () => {
     });
   }
 
-  test('P2.4 platform tablet desktop regression', async ({ page }) => {
-    for (const width of P24_TABLET_WIDTHS) {
-      await page.setViewportSize({ width, height: 1024 });
-      await page.goto('/', { waitUntil: 'load' });
-      await settle(page);
+  const P24_PLATFORM_TABLET_WIDTHS = [768, 1024] as const;
+  const P24_DESKTOP_GEOMETRY_WIDTHS = [1100, 1440, 1920] as const;
 
-      const state = await readPlatformComposition(page);
-      expect(state.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(state.clientWidth + 1);
-      expect(state.mediaBeforeGrid, `${width}px media before grid`).toBe(true);
-      expect(state.frameTopRel!, `${width}px earlier product`).toBeLessThan(800);
+  test('P2.4 platform tablet regression (DE + EN)', async ({ page }) => {
+    for (const locale of ['de', 'en'] as const) {
+      const url = locale === 'de' ? '/' : '/en/';
+      for (const width of P24_PLATFORM_TABLET_WIDTHS) {
+        await page.setViewportSize({ width, height: 1024 });
+        await page.goto(url, { waitUntil: 'load' });
+        await settle(page);
+
+        const state = await readPlatformComposition(page);
+        expect(state.scrollWidth, `${locale} ${width}px overflow`).toBeLessThanOrEqual(
+          state.clientWidth + 1,
+        );
+        expect(state.mediaBeforeGrid, `${locale} ${width}px media before grid`).toBe(true);
+        expect(state.compactSurfaceActive, `${locale} ${width}px compact surface`).toBe(true);
+        expect(state.fullCardCount, `${locale} ${width}px full cards`).toBe(0);
+        expect(state.frameTopRel!, `${locale} ${width}px earlier product`).toBeLessThan(800);
+      }
     }
+  });
 
+  test('P2.4 platform desktop regression', async ({ page }) => {
     for (const width of P24_DESKTOP_WIDTHS) {
       await page.setViewportSize({ width, height: 900 });
       await page.goto('/', { waitUntil: 'load' });
@@ -1780,33 +1834,65 @@ test.describe('public landing page', () => {
       expect(state.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(state.clientWidth + 1);
       expect(state.desktopTwoColCards, `${width}px desktop 2-col cards`).toBe(true);
       expect(state.fullCardCount, `${width}px desktop card surfaces`).toBe(4);
+      expect(state.compactSurfaceActive, `${width}px desktop compact override`).toBe(false);
     }
   });
 
-  test('P2.4 vehicle mobile composition invariants', async ({ page }) => {
-    for (const width of [...P24_PHONE_WIDTHS, ...P24_TABLET_WIDTHS]) {
-      await page.setViewportSize({ width, height: 844 });
-      await page.goto('/', { waitUntil: 'load' });
-      await settle(page);
-
-      const state = await readVehicleComposition(page);
-      expect(state.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(state.clientWidth + 1);
-      expect(state.noteCount, `${width}px vehicle notes`).toBe(3);
-      expect(state.flushContained, `${width}px flush contained`).toBe(true);
-      expect(state.flushMarginLeft ?? 0, `${width}px flush bleed margin`).toBeGreaterThanOrEqual(0);
-      expect(state.mediaWidth, `${width}px stage media width`).toBeGreaterThan(0);
-    }
-  });
-
-  test('P2.4 vehicle desktop stage regression', async ({ page }) => {
-    for (const width of P24_DESKTOP_WIDTHS) {
+  test('P2.4.1 platform desktop layout geometry', async ({ page }) => {
+    for (const width of P24_DESKTOP_GEOMETRY_WIDTHS) {
       await page.setViewportSize({ width, height: 900 });
       await page.goto('/', { waitUntil: 'load' });
       await settle(page);
 
-      const state = await readVehicleComposition(page);
-      expect(state.desktopTwoCol, `${width}px desktop stage columns`).toBe(true);
-      expect(state.flushContained, `${width}px desktop flush contained`).toBe(true);
+      const state = await readPlatformComposition(page);
+      const layout = state.desktopLayout;
+      expect(layout, `${width}px desktop layout`).not.toBeNull();
+      expect(layout!.introRight, `${width}px intro left of grid`).toBeLessThan(layout!.gridLeft + 8);
+      expect(Math.abs(layout!.gridTop - layout!.introTop), `${width}px row-one alignment`).toBeLessThan(
+        8,
+      );
+      expect(layout!.mediaTop, `${width}px media below row one`).toBeGreaterThanOrEqual(
+        layout!.rowOneBottom - 4,
+      );
+      expect(state.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(state.clientWidth + 1);
+    }
+  });
+
+  for (const locale of ['de', 'en'] as const) {
+    const url = locale === 'de' ? '/' : '/en/';
+
+    test(`P2.4 vehicle mobile composition invariants (${locale})`, async ({ page }) => {
+      for (const width of [...P24_PHONE_WIDTHS, ...P24_TABLET_WIDTHS]) {
+        await page.setViewportSize({ width, height: 844 });
+        await page.goto(url, { waitUntil: 'load' });
+        await settle(page);
+
+        const state = await readVehicleComposition(page);
+        expect(state.scrollWidth, `${locale} ${width}px overflow`).toBeLessThanOrEqual(
+          state.clientWidth + 1,
+        );
+        expect(state.noteCount, `${locale} ${width}px vehicle notes`).toBe(3);
+        expect(state.flushContained, `${locale} ${width}px flush contained`).toBe(true);
+        expect(state.flushMarginLeft ?? 0, `${locale} ${width}px flush bleed margin`).toBeGreaterThanOrEqual(
+          0,
+        );
+        expect(state.mediaWidth, `${locale} ${width}px stage media width`).toBeGreaterThan(0);
+      }
+    });
+  }
+
+  test('P2.4 vehicle desktop stage regression', async ({ page }) => {
+    for (const locale of ['de', 'en'] as const) {
+      const url = locale === 'de' ? '/' : '/en/';
+      for (const width of P24_DESKTOP_WIDTHS) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(url, { waitUntil: 'load' });
+        await settle(page);
+
+        const state = await readVehicleComposition(page);
+        expect(state.desktopTwoCol, `${locale} ${width}px desktop stage columns`).toBe(true);
+        expect(state.flushContained, `${locale} ${width}px desktop flush contained`).toBe(true);
+      }
     }
   });
 

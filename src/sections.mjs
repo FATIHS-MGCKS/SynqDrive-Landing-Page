@@ -219,7 +219,7 @@ export function unified(c) {
   const s = c.unified;
   const cards = s.cards
     .map(
-      (card) => `<li class="capability capability--compact" data-reveal>
+      (card) => `<li class="capability capability--compact surface surface--compact" data-reveal>
             ${iconMark(card.icon)}
             <h3>${esc(card.title)}</h3>
             <p>${esc(card.body)}</p>
