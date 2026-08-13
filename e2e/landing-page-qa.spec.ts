@@ -877,10 +877,14 @@ test.describe('public landing page', () => {
 
   test('layout stays stable while images load', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/', { waitUntil: 'commit' });
+    const cls = await measurePageCls(page, '/');
+    expect(cls).toBeLessThan(0.1);
+  });
 
-    const shift = await page.evaluate(
-      () =>
+  async function measurePageCls(page: Page, url: string, waitMs = 3500) {
+    await page.goto(url, { waitUntil: 'commit' });
+    return page.evaluate(
+      (timeoutMs) =>
         new Promise<number>((resolve) => {
           let total = 0;
           new PerformanceObserver((list) => {
@@ -891,12 +895,11 @@ test.describe('public landing page', () => {
               if (!entry.hadRecentInput) total += entry.value;
             }
           }).observe({ type: 'layout-shift', buffered: true });
-          setTimeout(() => resolve(total), 3500);
+          setTimeout(() => resolve(total), timeoutMs);
         }),
+      waitMs,
     );
-
-    expect(shift).toBeLessThan(0.1);
-  });
+  }
 
   test('captures P1.3 desktop navigation screenshots', async ({ page }) => {
     for (const width of NAV_SCREENSHOT_WIDTHS) {
@@ -3027,6 +3030,390 @@ test.describe('public landing page', () => {
         path: path.join(OUT, `${LABEL}p26-footer-${locale}-${width}.png`),
         animations: 'disabled',
       });
+    }
+  });
+
+  async function readPhase2KeyMetrics(page: Page) {
+    return page.evaluate(() => {
+      const rel = (sectionId: string, sel: string) => {
+        const section = document.getElementById(sectionId);
+        const el = section?.querySelector(sel);
+        const sr = section?.getBoundingClientRect();
+        const er = el?.getBoundingClientRect();
+        return {
+          sectionHeight: sr ? Math.round(sr.height) : null,
+          frameTopRel: sr && er ? Math.round((er.top - sr.top) * 10) / 10 : null,
+        };
+      };
+      const hero = document.querySelector('.hero');
+      const heroFrame = hero?.querySelector('.frame--product');
+      const heroRect = hero?.getBoundingClientRect();
+      const heroFrameRect = heroFrame?.getBoundingClientRect();
+      const integ = document.getElementById('integrations');
+      const core = integ?.querySelector('.hub__core');
+      const tiles = integ?.querySelectorAll('.hub__tile');
+      const integRect = integ?.getBoundingClientRect();
+      const coreRect = core?.getBoundingClientRect();
+      const tileRects = Array.from(tiles ?? []).map((el) => el.getBoundingClientRect());
+      const closing = document.querySelector('.closing');
+      const footer = document.querySelector('.sitefooter');
+      return {
+        pageHeight: Math.round(document.documentElement.scrollHeight),
+        heroFrameTop:
+          heroRect && heroFrameRect
+            ? Math.round((heroFrameRect.top - heroRect.top) * 10) / 10
+            : null,
+        platform: rel('platform', '.stack__media .frame--product'),
+        ai: rel('ai-orchestration', '.split__media .frame--product'),
+        workflow: rel('workflow-automation', '.stack__media .frame--product'),
+        communication: rel('communication', '.split__media .frame--product'),
+        integrations: {
+          sectionHeight: integRect ? Math.round(integRect.height) : null,
+          coreToItem1:
+            coreRect && tileRects[0]
+              ? Math.round((tileRects[0].top - coreRect.bottom) * 10) / 10
+              : null,
+          item3ToItem4:
+            tileRects[2] && tileRects[3]
+              ? Math.round((tileRects[3].top - tileRects[2].bottom) * 10) / 10
+              : null,
+        },
+        closingHeight: closing ? Math.round(closing.getBoundingClientRect().height) : null,
+        footerHeight: footer ? Math.round(footer.getBoundingClientRect().height) : null,
+      };
+    });
+  }
+
+  test('P2.7 breakpoint boundary band transitions', async ({ page }) => {
+    const bands = [
+      [759, 900],
+      [760, 900],
+      [761, 900],
+      [1023, 900],
+      [1024, 900],
+      [1025, 900],
+      [1179, 900],
+      [1180, 900],
+      [1181, 900],
+    ] as const;
+
+    for (const [width, height] of bands) {
+      await page.setViewportSize({ width, height });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const state = await page.evaluate(() => {
+        const sectionY = parseFloat(
+          getComputedStyle(document.documentElement).getPropertyValue('--section-y'),
+        );
+        const aiStep = document.querySelector('#ai-orchestration .flow__step--compact');
+        const aiBorderTop = aiStep ? parseFloat(getComputedStyle(aiStep).borderTopWidth) : null;
+        const hubFullCards = Array.from(document.querySelectorAll('#integrations .hub__tile')).filter(
+          (el) => {
+            const styles = getComputedStyle(el);
+            return (
+              parseFloat(styles.borderTopWidth) > 0 &&
+              styles.backgroundColor !== 'rgba(0, 0, 0, 0)' &&
+              styles.backgroundColor !== 'transparent'
+            );
+          },
+        ).length;
+        const mobileBand = window.matchMedia('(max-width: 1024px)').matches;
+        return {
+          sectionY,
+          aiBorderTop,
+          hubFullCards,
+          mobileBand,
+          overflowOk:
+            document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+        };
+      });
+
+      expect(state.overflowOk, `${width}px overflow`).toBe(true);
+
+      const expectedY = expectedSectionY(width);
+      expect(state.sectionY, `${width}px section-y`).toBeGreaterThanOrEqual(expectedY - 0.5);
+      expect(state.sectionY, `${width}px section-y`).toBeLessThanOrEqual(expectedY + 0.5);
+
+      if (width <= 1024) {
+        expect(state.mobileBand, `${width}px mobile band`).toBe(true);
+        expect(state.aiBorderTop, `${width}px AI compact border`).toBe(0);
+        expect(state.hubFullCards, `${width}px hub compact tiles`).toBe(0);
+      } else {
+        expect(state.mobileBand, `${width}px desktop band`).toBe(false);
+        expect(state.hubFullCards, `${width}px hub desktop cards`).toBe(6);
+      }
+    }
+  });
+
+  test('P2.7 phase-2 source ownership guard', async () => {
+    const cssPath = path.resolve(
+      path.dirname(new URL(import.meta.url).pathname),
+      '..',
+      'src',
+      'styles.css',
+    );
+    const css = await fs.readFile(cssPath, 'utf8');
+    const forbidden = [
+      /padding:\s*14px\s+0/,
+      /border-radius:\s*0/,
+      /background:\s*transparent/,
+      /border-bottom:\s*1px\s+solid\s+var\(--hairline\)/,
+    ] as const;
+
+    const mobileBlocks = [
+      {
+        name: 'workflow',
+        start: css.indexOf('/* P2.5 — Workflow compact chain */'),
+        endMarker: '/* Gap before workflow product visual',
+      },
+      {
+        name: 'communication',
+        start: css.indexOf('/* P2.6 — Communication mobile product-led composition */'),
+        endMarker: '/* ── Integration hub',
+      },
+      {
+        name: 'integrations',
+        start: css.indexOf('/* P2.6 — Integrations hub mobile composition'),
+        endMarker: '/* ── Reduced motion',
+      },
+    ];
+
+    for (const block of mobileBlocks) {
+      expect(block.start, `${block.name} block`).toBeGreaterThan(-1);
+      const end = css.indexOf(block.endMarker, block.start);
+      const mobileStart = css.indexOf('@media (max-width: 1024px)', block.start);
+      const mobileEnd = css.indexOf('@media (min-width: 1025px)', mobileStart);
+      const mobileBlock = css.slice(mobileStart, mobileEnd > mobileStart ? mobileEnd : end);
+      for (const pattern of forbidden) {
+        expect(
+          mobileBlock,
+          `${block.name} mobile must not duplicate .surface--compact chrome (${pattern})`,
+        ).not.toMatch(pattern);
+      }
+    }
+  });
+
+  test('P2.7 full page key metrics regression (390 DE)', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'load' });
+    await settle(page);
+
+    const metrics = await readPhase2KeyMetrics(page);
+    expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(8610);
+    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(8640);
+    expect(metrics.heroFrameTop!, '390px hero frame top').toBeGreaterThan(400);
+    expect(metrics.platform.frameTopRel!, '390px platform frame top').toBeGreaterThan(250);
+    expect(metrics.ai.frameTopRel!, '390px AI frame top').toBeGreaterThan(300);
+    expect(metrics.ai.frameTopRel!, '390px AI frame top').toBeLessThanOrEqual(310);
+    expect(metrics.workflow.frameTopRel!, '390px workflow frame top').toBeGreaterThan(620);
+    expect(metrics.workflow.frameTopRel!, '390px workflow frame top').toBeLessThanOrEqual(630);
+    expect(metrics.communication.frameTopRel!, '390px communication frame top').toBeGreaterThan(220);
+    expect(metrics.communication.frameTopRel!, '390px communication frame top').toBeLessThanOrEqual(
+      240,
+    );
+    expect(metrics.integrations.sectionHeight!, '390px integrations height').toBeGreaterThanOrEqual(
+      960,
+    );
+    expect(metrics.integrations.coreToItem1!, '390px core→item1').toBeGreaterThanOrEqual(16);
+    expect(metrics.integrations.coreToItem1!, '390px core→item1').toBeLessThanOrEqual(20);
+    expect(metrics.integrations.item3ToItem4!, '390px item3→item4').toBeLessThanOrEqual(1);
+  });
+
+  test('captures P2.7 full page screenshots', async ({ page }) => {
+    const shots = [
+      ['de', '/', 320, 700],
+      ['de', '/', 375, 812],
+      ['de', '/', 390, 844],
+      ['de', '/', 430, 932],
+      ['de', '/', 768, 1024],
+      ['de', '/', 1024, 1366],
+      ['de', '/', 1440, 1000],
+      ['en', '/en/', 320, 700],
+      ['en', '/en/', 390, 844],
+      ['en', '/en/', 430, 932],
+      ['en', '/en/', 768, 1024],
+      ['en', '/en/', 1440, 1000],
+    ] as const;
+
+    for (const [locale, url, width, height] of shots) {
+      await page.setViewportSize({ width, height });
+      await page.goto(url, { waitUntil: 'load' });
+      await settle(page);
+      await page.screenshot({
+        path: path.join(OUT, `${LABEL}p27-full-${locale}-${width}.png`),
+        fullPage: true,
+        animations: 'disabled',
+      });
+    }
+  });
+
+  test('P2.7.1 CLS release matrix', async ({ page }) => {
+    const matrix = [
+      ['de', '/', 390, 844],
+      ['de', '/', 768, 1024],
+      ['de', '/', 1440, 1000],
+      ['en', '/en/', 390, 844],
+      ['en', '/en/', 768, 1024],
+      ['en', '/en/', 1440, 1000],
+    ] as const;
+
+    const results: Record<string, number> = {};
+
+    for (const [locale, url, width, height] of matrix) {
+      await page.setViewportSize({ width, height });
+      const cls = await measurePageCls(page, url);
+      const key = `${locale}-${width}`;
+      results[key] = cls;
+      expect(cls, `${locale} ${width}×${height} CLS`).toBeLessThan(0.1);
+    }
+
+    await fs.mkdir(OUT, { recursive: true });
+    await fs.writeFile(
+      path.join(OUT, `${LABEL}p271-cls-matrix.json`),
+      `${JSON.stringify(results, null, 2)}\n`,
+    );
+  });
+
+  test('P2.7.1 marketing page readable without JavaScript', async ({ browser }) => {
+    for (const [locale, url] of [
+      ['de', '/'],
+      ['en', '/en/'],
+    ] as const) {
+      const context = await browser.newContext({
+        javaScriptEnabled: false,
+        viewport: { width: 390, height: 844 },
+      });
+      const page = await context.newPage();
+
+      await page.goto(url, { waitUntil: 'load' });
+
+      await expect(page.locator('html')).toHaveAttribute('lang', locale);
+      await expect(page.locator('html')).not.toHaveClass(/js/);
+      await expect(page.locator('h1')).toHaveCount(1);
+
+      for (const id of SECTION_IDS) {
+        await expect(page.locator(`#${id}`)).toHaveCount(1);
+      }
+
+      for (const id of SECTION_IDS) {
+        const heading = page.locator(`#${id} h2, #${id} .section-title`).first();
+        await expect(heading, `${id} heading`).toBeVisible();
+      }
+
+      await expect(page.locator('.frame--product')).toHaveCount(6);
+      await expect(page.locator('.frame--product img')).toHaveCount(6);
+
+      await expect(page.locator('.hero__actions a[href^="mailto:"]')).toHaveCount(1);
+      await expect(page.locator('.closing a[href^="mailto:"]')).toHaveCount(1);
+      await expect(page.locator('.sitefooter')).toHaveCount(1);
+      await expect(page.locator('.sitefooter__legal a[href^="mailto:"]')).toHaveCount(1);
+
+      const overflow = await page.evaluate(() => ({
+        scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth,
+      }));
+      expect(overflow.scrollWidth).toBeLessThanOrEqual(overflow.clientWidth + 1);
+
+      const hiddenReveal = await page.$$eval('[data-reveal]', (nodes) =>
+        nodes
+          .filter((node) => {
+            const styles = window.getComputedStyle(node);
+            return (
+              parseFloat(styles.opacity) < 0.99 ||
+              styles.visibility === 'hidden' ||
+              styles.display === 'none'
+            );
+          })
+          .map(
+            (node) =>
+              `${node.closest('section')?.id ?? 'hero'} ${node.tagName.toLowerCase()}.${node.className}`,
+          ),
+      );
+      expect(hiddenReveal, hiddenReveal.join('\n')).toEqual([]);
+
+      await context.close();
+    }
+  });
+
+  async function assertPlatformAnchorOffset(page: Page, hash: string) {
+    const sectionId = hash.slice(1);
+    await expect(page).toHaveURL(new RegExp(`${hash.replace('#', '\\#')}$`));
+
+    const heading = page
+      .locator(`#${sectionId}-title, #${sectionId} h2.section-title, #${sectionId} h2`)
+      .first();
+    await expect(heading, `${hash} heading`).toBeAttached();
+
+    await page.waitForFunction(
+      (id) => {
+        const title =
+          document.querySelector(`#${id}-title`) ??
+          document.querySelector(`#${id} h2.section-title`) ??
+          document.querySelector(`#${id} h2`);
+        const masthead = document.querySelector('.masthead');
+        if (!title || !masthead) return false;
+        const styles = window.getComputedStyle(title);
+        if (parseFloat(styles.opacity) < 0.99) return false;
+        const top = title.getBoundingClientRect().top;
+        const mastheadBottom = masthead.getBoundingClientRect().bottom;
+        return (
+          top >= mastheadBottom - 2 &&
+          top < window.innerHeight &&
+          document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1
+        );
+      },
+      sectionId,
+      { timeout: 8000, message: `${hash} anchor offset settle` },
+    );
+
+    const geometry = await page.evaluate((id) => {
+      const masthead = document.querySelector('.masthead');
+      const title =
+        document.querySelector(`#${id}-title`) ??
+        document.querySelector(`#${id} h2.section-title`) ??
+        document.querySelector(`#${id} h2`);
+      if (!masthead || !title) return null;
+      const mastheadRect = masthead.getBoundingClientRect();
+      const titleRect = title.getBoundingClientRect();
+      return {
+        mastheadBottom: Math.round(mastheadRect.bottom * 10) / 10,
+        headingTop: Math.round(titleRect.top * 10) / 10,
+        overflowOk:
+          document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+      };
+    }, sectionId);
+
+    expect(geometry, `${hash} geometry`).not.toBeNull();
+    expect(geometry!.headingTop, `${hash} masthead offset`).toBeGreaterThanOrEqual(
+      geometry!.mastheadBottom - 2,
+    );
+    expect(geometry!.overflowOk, `${hash} overflow`).toBe(true);
+  }
+
+  test('P2.7.1 platform anchor offset release guard', async ({ page }) => {
+    const anchors = PLATFORM_NAV.de.links.map((link) => link.href);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'load' });
+
+    for (const hash of anchors) {
+      await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+      await page.getByRole('button', { name: 'Menü öffnen' }).click();
+      const panel = page.locator('[data-nav-panel]');
+      await expect(panel).toBeVisible();
+
+      const label = PLATFORM_NAV.de.links.find((link) => link.href === hash)!.label;
+      await panel.getByRole('link', { name: label }).click();
+      await expect(panel).toBeHidden();
+
+      await assertPlatformAnchorOffset(page, hash);
+    }
+
+    await page.setViewportSize({ width: 1440, height: 900 });
+    for (const hash of anchors) {
+      await page.goto(`/${hash}`, { waitUntil: 'load' });
+      await assertPlatformAnchorOffset(page, hash);
     }
   });
 });

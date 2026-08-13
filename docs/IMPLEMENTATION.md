@@ -345,8 +345,9 @@ screenshots are byte-identical to the locally approved build.
 - **P2.3:** Hero mobile composition — **merged to main** (PR #3, 2026-08-12).
 - **P2.4:** Platform + Vehicle mobile composition — **merged to main** (PR #4, 2026-08-13); not deployed — see [`docs/audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md`](audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md).
 - **P2.5:** AI + Workflow mobile composition — **merged to main** (PR #5, 2026-08-13); **not deployed** — see [`docs/audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md`](audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md).
-- **P2.6:** Communication + Integrations + closing/footer mobile composition — **in progress** on branch `cursor/communication-integrations-mobile-composition`.
-- **Phase 2.7+:** Remaining section-specific work — **pending**.
+- **P2.6:** Communication + Integrations + closing/footer mobile composition — **merged to main** (PR #6, 2026-08-13); **not deployed** — see [`docs/audits/landing-page-phase-2.6-communication-integrations-closure-2026-08.md`](audits/landing-page-phase-2.6-communication-integrations-closure-2026-08.md).
+- **P2.7:** Phase-2 integration QA & release-candidate hardening — **in progress** on branch `cursor/phase-2-integration-qa`.
+- **P2.8:** Production deployment — **pending** (requires P2.7 PASS).
 - Solutions, Resources, and Pricing top-level navigation remain deferred until real destination pages exist (DEC-004).
 - Taxi & Mobility may become a future Solutions page; it does not imply generally available Taxi Dispatch (DEC-009).
 - The product visuals are English on both locales. German screenshot variants deferred.
@@ -486,7 +487,7 @@ Mobile chain links use `.surface--compact` divider rows; desktop restores full c
 - 390×844 DE Workflow frame top: **624.3px** (was **715.7px**)
 - 390×844 DE page height: **8804px** (was **8975px**)
 
-## Communication + Integrations + closing/footer (P2.6 — in progress)
+## Communication + Integrations + closing/footer (P2.6 — merged to main, not deployed)
 
 **Audit:** [`docs/audits/landing-page-phase-2.6-communication-integrations-closure-2026-08.md`](audits/landing-page-phase-2.6-communication-integrations-closure-2026-08.md)
 
@@ -510,8 +511,27 @@ Mobile chain links use `.surface--compact` divider rows; desktop restores full c
 
 ### QA
 
-- Chromium: **92/92**
+- Chromium: **93/93**
 - WebKit smoke: **2/2**
 - H-05: **PARTIAL**; M-02: **RESOLVED**; L-01/L-02: **RESOLVED**
 - 390×844 DE Communication frame top: **233.7px** (was **681.9px**)
-- 390×844 DE page height: **8643px** (post-P2.5 **8804px**)
+- 390×844 DE page height: **8626px** (post-P2.5 **8804px**)
+
+## Phase-2 integration QA (P2.7 — in progress)
+
+**Audit:** [`docs/audits/landing-page-phase-2.7-integration-qa-2026-08.md`](audits/landing-page-phase-2.7-integration-qa-2026-08.md)
+
+### QA
+
+- Chromium: **97/97**
+- WebKit smoke: **2/2**
+- Release candidate: **PASS WITH NON-BLOCKING LIMITATIONS**
+- P2.8 ready: **YES** (confirmed after P2.7.1 release-gate evidence)
+- 390 DE page height: **8626px**
+
+### P2.7.1 release-gate evidence (2026-08-13)
+
+- Chromium: **100/100** (+3 tests: CLS matrix, JavaScript-off DE/EN, anchor offset guard)
+- `--section-y` 1179/1180/1181 boundary explicitly asserted
+- CLS release matrix PASS (DE/EN × 390/768/1440)
+- JavaScript-off DE/EN PASS; anchor offset PASS
