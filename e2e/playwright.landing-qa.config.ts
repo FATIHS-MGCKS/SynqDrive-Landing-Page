@@ -12,7 +12,7 @@ import { defineConfig } from '@playwright/test';
  */
 export default defineConfig({
   testDir: '.',
-  testMatch: /landing-page-qa\.spec\.ts/,
+  testMatch: /(landing-page-qa|stylesheet-delivery)\.spec\.ts/,
   fullyParallel: false,
   workers: 1,
   retries: 0,
