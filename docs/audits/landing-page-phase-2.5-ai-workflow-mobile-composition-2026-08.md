@@ -563,4 +563,4 @@ Re-measured after CSS cleanup — values remain effectively identical to P2.5.2 
 ### P2.5.3 commit SHA
 
 **Implementation commit:** `9c1d016`  
-**Documentation commit:** *(after push)*
+**Documentation commit:** `6ed59e8`
