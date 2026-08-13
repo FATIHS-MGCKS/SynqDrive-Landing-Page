@@ -1,7 +1,7 @@
 # Phase 2.5 — AI Orchestration + Workflow Automation Mobile Composition
 
 **Date:** 2026-08-13  
-**Scope:** AI (#ai-orchestration) and Workflow (#workflow-automation) sections only — merged to main locally; **not deployed**
+**Scope:** AI (#ai-orchestration) and Workflow (#workflow-automation) sections only — implemented in Draft PR #5; **not deployed**
 
 ---
 
@@ -9,13 +9,21 @@
 
 P2.5 makes AI Orchestration and Workflow Automation more product-led on mobile/tablet using P2.2 surface primitives and composition patterns from P2.3/P2.4. AI moves the Product Visual immediately after the section intro with compact flow and governance rows below. Workflow retains intro → compact chain → Product Visual order with divider-style chain links on ≤1024px.
 
-**Key outcome (390×844 DE, post-settle QA probe):**
+**Key outcome (390×844 DE, post-settle QA probe — authoritative, commit-pinned):**
 
 | Section | Frame top before → after | Section height before → after |
 |---|---|---|
 | AI | **948px → 307.9px** | **1328px → 1248px** |
-| Workflow | **715.7px → 660.3px** | **1120px → 1065px** |
-| Page | — | **8975px → 8840px** |
+| Workflow | **715.7px → 624.3px** | **1120px → 1029px** |
+| Page | — | **8975px → 8804px** |
+
+**Corresponding improvements (390×844 DE):**
+
+| Metric | Δ |
+|---|---|
+| Workflow frame top | **−91.4px** |
+| Workflow section height | **−91px** |
+| Total page height | **−171px** |
 
 **H-03:** **PARTIAL** (composition materially improved; manual mobile crop still recommended)  
 **H-04:** **PARTIAL** (compact chain + earlier product; manual mobile crop still recommended)
@@ -177,7 +185,9 @@ Compact divider rows alone proved sufficient (+55px frame improvement, −55px s
 
 ## Metrics (390×844 DE, post-settle)
 
-| Metric | Before | After | Δ |
+*Initial P2.5 measurement — later corrected by commit-pinned P2.5.2 reconciliation. Authoritative after values: frame top **624.3px**, section height **1029px**.*
+
+| Metric | Before | After (initial P2.5) | Δ (initial P2.5) |
 |---|---|---|---|
 | Section height | 1120px | **1065px** | **−55px** |
 | Section top → frame top | 715.7px | **660.3px** | **−55.4px** |
@@ -249,9 +259,13 @@ German remains primary stress case (KI-Orchestrierung, Workflow-Automatisierung,
 
 # Page Height Impact
 
+**Authoritative outcome (390×844 DE, commit-pinned settle probe):**
+
 | Metric (390×844 DE) | Before | After | Δ |
 |---|---|---|---|
-| Total page height | **8975px** | **8840px** | **−135px** |
+| Total page height | **8975px** | **8804px** | **−171px** |
+
+*Superseded initial P2.5 measurement recorded **8840px** (−135px) — later corrected by commit-pinned P2.5.2 reconciliation.*
 
 Page-level length improved without sacrificing section comprehension.
 
@@ -288,6 +302,8 @@ Mid-page sequence Vehicle → AI → Workflow → Communication reviewed: AI pro
 | **G-03** | **PARTIAL** | AI product materially earlier; Workflow product modestly earlier |
 | **G-04** | **PARTIAL** | Compact surfaces replace full mobile card stacks |
 | **M-03** | **PARTIAL** | Layout/framing improved; manual crops still recommended |
+
+*G-02 / H-04 deltas above reflect initial P2.5 measurements (Workflow −55px / page −135px). Authoritative reconciled deltas: Workflow frame top **−91.4px**, section height **−91px**, page height **−171px** — see P2.5.2 reconciliation.*
 
 ---
 
@@ -563,4 +579,54 @@ Re-measured after CSS cleanup — values remain effectively identical to P2.5.2 
 ### P2.5.3 commit SHA
 
 **Implementation commit:** `9c1d016`  
-**Documentation commit:** `6ed59e8`
+**Documentation commit:** `6ed59e8`  
+**SHA finalizer:** `f9ba06a`
+
+---
+
+## Documentation truth closure (P2.5.4)
+
+**Date:** 2026-08-13  
+**Scope:** Audit documentation only — no runtime, test, template, content, or asset changes
+
+External review confirmed P2.5 / P2.5.1 / P2.5.2 / P2.5.3 **technical PASS**. This phase closes documentation truth gaps:
+
+- Scope status corrected: Draft PR #5 (not merged to main)
+- Executive Summary Key Outcome updated to commit-pinned authoritative metrics
+- Historical tables retaining **660.3px / 1065px / 8840px** explicitly labeled as initial P2.5 measurements superseded by P2.5.2 reconciliation
+- Page Height Impact active outcome corrected to **8804px / −171px**
+
+---
+
+# P2.5 FINAL TECHNICAL STATE
+
+- AI composition: **PASS**
+- Workflow composition: **PASS**
+- canonical Workflow mobile surface ownership: **PASS**
+- single Workflow desktop card owner: **PASS**
+- source-level ownership regression guard: **PASS**
+- Chromium: **78/78**
+- WebKit: **2/2**
+- AI frame top at 390: **307.9px**
+- Workflow frame top at 390: **624.3px**
+- Workflow section height: **1029px**
+- Page height: **8804px**
+- H-03: **PARTIAL**
+- H-04: **PARTIAL**
+- AI asset class: **C**
+- Workflow asset class: **C**
+- Product Images changed: **NO**
+- Production deployed: **NO**
+- PR #5 merged: **NO**
+- P2.6 started: **NO**
+
+### Approved commit references
+
+| Phase | Implementation | Documentation |
+|---|---|---|
+| P2.5 | `ffe7417` | `004c8d0` |
+| P2.5.1 | `33b5501` | `0e2ec79` |
+| P2.5.2 | `86d141d` | `e910454` |
+| P2.5.3 | `9c1d016` | `6ed59e8` |
+
+**P2.5.3 SHA finalizer:** `f9ba06a`
