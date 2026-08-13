@@ -344,8 +344,9 @@ screenshots are byte-identical to the locally approved build.
 - **P2.2:** Global mobile layout system — **merged to main** (PR #2, 2026-08-12).
 - **P2.3:** Hero mobile composition — **merged to main** (PR #3, 2026-08-12).
 - **P2.4:** Platform + Vehicle mobile composition — **merged to main** (PR #4, 2026-08-13); not deployed — see [`docs/audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md`](audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md).
-- **P2.5:** AI + Workflow mobile composition — **implemented locally** (not deployed); see [`docs/audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md`](audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md).
-- **Phase 2.6–2.8:** Remaining section-specific mobile composition — **pending**.
+- **P2.5:** AI + Workflow mobile composition — **merged to main** (PR #5, 2026-08-13); **not deployed** — see [`docs/audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md`](audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md).
+- **P2.6:** Communication + Integrations + closing/footer mobile composition — **in progress** on branch `cursor/communication-integrations-mobile-composition`.
+- **Phase 2.7+:** Remaining section-specific work — **pending**.
 - Solutions, Resources, and Pricing top-level navigation remain deferred until real destination pages exist (DEC-004).
 - Taxi & Mobility may become a future Solutions page; it does not imply generally available Taxi Dispatch (DEC-009).
 - The product visuals are English on both locales. German screenshot variants deferred.
@@ -454,7 +455,7 @@ Mobile capabilities use `.capability--compact` divider rows (0 full card surface
 - WebKit smoke: **2/2**
 - 390×844 DE Platform frame distance: **284px** (was **962px**)
 
-## AI + Workflow mobile composition (P2.5 — local, not deployed)
+## AI + Workflow mobile composition (P2.5 — merged to main, not deployed)
 
 **Audit:** [`docs/audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md`](audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md)
 
@@ -478,8 +479,39 @@ Mobile chain links use `.surface--compact` divider rows; desktop restores full c
 
 ### QA
 
-- Chromium: **75/75**
+- Chromium: **78/78**
 - WebKit smoke: **2/2**
 - H-03: **PARTIAL**; H-04: **PARTIAL**
 - 390×844 DE AI frame top: **307.9px** (was **948px**)
-- 390×844 DE Workflow frame top: **660.3px** (was **715.7px**)
+- 390×844 DE Workflow frame top: **624.3px** (was **715.7px**)
+- 390×844 DE page height: **8804px** (was **8975px**)
+
+## Communication + Integrations + closing/footer (P2.6 — in progress)
+
+**Audit:** [`docs/audits/landing-page-phase-2.6-communication-integrations-closure-2026-08.md`](audits/landing-page-phase-2.6-communication-integrations-closure-2026-08.md)
+
+### Customer Communication
+
+| Viewport | Order |
+|---|---|
+| Mobile/tablet (≤1024) | `.split__intro` → `.split__media` → compact context notes (`.split__support`) |
+| Desktop (≥1025) | Mirrored split: product left; intro + divided notes right |
+
+### Integrations
+
+| Viewport | Layout |
+|---|---|
+| Mobile/tablet (≤1024) | Visible `.hub__core` → six compact integration rows (0 full-card surfaces) |
+| Desktop (≥1025) | Three-column hub diagram with centre SynqDrive node restored |
+
+### Closing CTA / Footer
+
+- Spacing and touch-target polish only — no redesign
+
+### QA
+
+- Chromium: **92/92**
+- WebKit smoke: **2/2**
+- H-05: **PARTIAL**; M-02: **RESOLVED**; L-01/L-02: **RESOLVED**
+- 390×844 DE Communication frame top: **233.7px** (was **681.9px**)
+- 390×844 DE page height: **8643px** (post-P2.5 **8804px**)
