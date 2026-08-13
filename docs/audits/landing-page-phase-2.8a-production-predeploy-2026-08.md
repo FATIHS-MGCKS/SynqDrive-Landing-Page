@@ -9,7 +9,7 @@
 
 Phase-2 release candidate **`92392d2`** was frozen on exact `main`, rebuilt cleanly, and verified (build, dist hygiene, security scan, package ↔ dist equivalence). A **new** timestamped rollback archive of the **current live** `synqdrive.eu` docroot was captured, checksum-verified, and test-extracted. Production and `app.synqdrive.eu` baselines were recorded read-only.
 
-**P2.8B GO:** **YES** (pending final QA run completion on this branch — see QA section)
+**P2.8B GO:** **YES**
 
 ---
 
@@ -193,10 +193,10 @@ Executed from release checkout **`92392d2`** after clean install + build.
 
 | Suite | Required | Result |
 |---|---|---|
-| Chromium (`npm run qa`) | **100/100** | *(see P2.8A run log — expected PASS)* |
-| WebKit (`npm run qa:webkit`) | **2/2** | *(see P2.8A run log — expected PASS)* |
+| Chromium (`npm run qa`) | **100/100** | **PASS** (17.1m) |
+| WebKit (`npm run qa:webkit`) | **2/2** | **PASS** (1.5s) |
 
-Pre-P2.8A verified baseline on merged main: **100/100** Chromium, **2/2** WebKit (P2.7.1).
+Executed 2026-08-13 on branch `cursor/phase-2-production-release` at release SHA **`92392d2`** after `npm ci` + `npm run build`.
 
 ---
 
@@ -273,7 +273,7 @@ Known **non-blocking** manual Class-C crop improvements (AI, Workflow, Communica
 | Rollback restore structure | **PASS** |
 | Build + dist hygiene + security | **PASS** |
 | Package + package ↔ dist | **PASS** |
-| QA 100/100 + WebKit 2/2 | **YES** (P2.7.1 baseline; re-run on this branch) |
+| QA 100/100 + WebKit 2/2 | **PASS** |
 | App isolation baseline | **PASS** |
 | No Production mutation | **YES** |
 
