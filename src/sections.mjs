@@ -277,7 +277,7 @@ export function ai(c) {
   const s = c.ai;
   const steps = s.flow
     .map(
-      (step) => `<li class="flow__step">
+      (step) => `<li class="flow__step flow__step--compact surface surface--compact">
             <h3>${esc(step.title)}</h3>
             <p>${esc(step.body)}</p>
           </li>`,
@@ -285,27 +285,28 @@ export function ai(c) {
     .join('');
   const governance = s.governance
     .map(
-      (item) => `<li>
+      (item) => `<li class="notes__item notes__item--compact surface surface--compact">
             <h3>${esc(item.title)}</h3>
             <p>${esc(item.body)}</p>
           </li>`,
     )
     .join('');
 
-  // Copy first in the DOM even though this section renders mirrored: stacked on
-  // a phone the reader must meet the heading before the screenshot. The mirror
-  // is a desktop-only column swap, done in CSS.
-  return `<section class="section split split--mirror layout-split layout-split--copy-first" id="${s.id}" aria-labelledby="${s.id}-title">
-      <div class="split__copy">
+  /* Mobile source order: intro → product → supporting explanation. Desktop grid
+     restores mirrored split with product left and copy/process right. */
+  return `<section class="section split split--mirror layout-split split--product-led" id="${s.id}" aria-labelledby="${s.id}-title">
+      <div class="split__intro">
         ${sectionHead({ eyebrow: s.eyebrow, title: s.title, body: s.body, id: s.id })}
-        <div class="flow" data-reveal>
-          <p class="flow__label">${esc(s.flowLabel)}</p>
-          <ol class="flow__list">${steps}</ol>
-        </div>
-        <ul class="notes" data-reveal>${governance}</ul>
       </div>
       <div class="split__media" data-reveal>
         ${productFrame({ media: s.media, alt: s.mediaAlt, sizes: '(max-width: 900px) 92vw, 48vw' })}
+      </div>
+      <div class="split__support" data-reveal>
+        <div class="flow flow--compact">
+          <p class="flow__label">${esc(s.flowLabel)}</p>
+          <ol class="flow__list">${steps}</ol>
+        </div>
+        <ul class="notes notes--compact">${governance}</ul>
       </div>
     </section>`;
 }
@@ -314,14 +315,14 @@ export function workflow(c) {
   const s = c.workflow;
   const chain = s.chain
     .map(
-      (link) => `<li class="chain__link" data-reveal>
+      (link) => `<li class="chain__link chain__link--compact surface surface--compact" data-reveal>
             <h3>${esc(link.title)}</h3>
             <p>${esc(link.body)}</p>
           </li>`,
     )
     .join('');
 
-  return `<section class="section stack layout-stack layout-stack--tiered" id="${s.id}" aria-labelledby="${s.id}-title">
+  return `<section class="section stack layout-stack layout-stack--tiered workflow--compact" id="${s.id}" aria-labelledby="${s.id}-title">
       ${sectionHead({ eyebrow: s.eyebrow, title: s.title, body: s.body, id: s.id })}
       <div class="chain">
         <p class="chain__label">${esc(s.chainLabel)}</p>

@@ -1331,6 +1331,168 @@ html[data-nav-scroll-lock='true'] {
   line-height: 1.5;
 }
 
+/* P2.5 — AI mobile product-led composition */
+@media (max-width: 1024px) {
+  .split--product-led {
+    gap: var(--stack-copy-visual);
+  }
+
+  .split--product-led .split__support {
+    display: grid;
+    gap: var(--stack-gap);
+  }
+
+  .split--product-led .flow--compact {
+    margin-top: 0;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .split--product-led .flow--compact .flow__list {
+    margin-top: 8px;
+  }
+
+  .split--product-led .flow__step--compact {
+    padding-left: 0;
+  }
+
+  .split--product-led .flow__step--compact::before,
+  .split--product-led .flow__step--compact::after {
+    display: none;
+  }
+
+  .split--product-led .flow__step--compact h3 {
+    margin-top: 0;
+    font-size: 15px;
+  }
+
+  .split--product-led .flow__step--compact p {
+    margin-top: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .split--product-led .notes--compact {
+    margin-top: 0;
+    gap: 0;
+    max-width: none;
+  }
+
+  .split--product-led .notes__item--compact h3 {
+    font-size: 15px;
+  }
+
+  .split--product-led .notes__item--compact p {
+    margin-top: 4px;
+    font-size: 14px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .split--product-led {
+    grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+    grid-template-rows: auto auto;
+    align-items: start;
+    column-gap: 72px;
+    row-gap: 0;
+  }
+
+  .split--product-led.split--mirror .split__media {
+    order: -1;
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    align-self: center;
+  }
+
+  .split--product-led .split__intro {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .split--product-led .split__support {
+    grid-column: 2;
+    grid-row: 2;
+  }
+
+  .split--product-led .flow--compact {
+    margin-top: 40px;
+    padding: 22px 24px 24px;
+    border: 1px solid var(--hairline);
+    border-radius: 16px;
+    background: var(--canvas-alt);
+  }
+
+  .split--product-led .flow__step--compact {
+    position: relative;
+    padding: 14px 0 14px 26px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    border-bottom: 0;
+  }
+
+  .split--product-led .flow__step--compact::before {
+    display: block;
+    content: '';
+    position: absolute;
+    left: 4px;
+    top: 22px;
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: var(--brand);
+  }
+
+  .split--product-led .flow__step--compact::after {
+    display: block;
+    content: '';
+    position: absolute;
+    left: 7px;
+    top: 32px;
+    bottom: 4px;
+    width: 1px;
+    background: var(--hairline-strong);
+  }
+
+  .split--product-led .flow__step--compact:last-child::after {
+    display: none;
+  }
+
+  .split--product-led .flow__step--compact h3 {
+    font-size: 14.75px;
+  }
+
+  .split--product-led .flow__step--compact p {
+    margin-top: 3px;
+    font-size: 13.75px;
+  }
+
+  .split--product-led .notes--compact {
+    margin-top: 36px;
+    gap: 22px;
+    max-width: 34rem;
+  }
+
+  .split--product-led .notes__item--compact {
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    border-bottom: 0;
+  }
+
+  .split--product-led .notes__item--compact h3 {
+    font-size: var(--type-subheading);
+  }
+
+  .split--product-led .notes__item--compact p {
+    margin-top: 6px;
+    font-size: 14.25px;
+  }
+}
+
 /* ── Workflow automation: stacked ────────────────────────────────────────── */
 
 .stack .section-head {
@@ -1375,6 +1537,57 @@ html[data-nav-scroll-lock='true'] {
   color: var(--muted);
   font-size: 13.75px;
   line-height: 1.55;
+}
+
+/* P2.5 — Workflow compact chain */
+@media (max-width: 1024px) {
+  .workflow--compact .chain__list {
+    gap: 0;
+    margin-top: 8px;
+  }
+
+  .workflow--compact .chain__link.chain__link--compact.surface--compact {
+    position: static;
+    padding: 14px 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .workflow--compact .chain__link.chain__link--compact.surface--compact:last-child {
+    border-bottom: 0;
+  }
+
+  .workflow--compact .chain__link + .chain__link::before {
+    display: none;
+  }
+
+  .workflow--compact .chain__link--compact h3 {
+    margin-top: 0;
+    font-size: 15px;
+  }
+
+  .workflow--compact .chain__link--compact p {
+    margin-top: 4px;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+}
+
+@media (min-width: 1025px) {
+  .workflow--compact .chain__link--compact {
+    position: relative;
+    padding: var(--surface-padding);
+    border: 1px solid var(--hairline);
+    border-radius: var(--surface-radius);
+    background: var(--canvas-alt);
+    border-bottom: 1px solid var(--hairline);
+  }
+
+  .workflow--compact .chain__link--compact:last-child {
+    border-bottom: 1px solid var(--hairline);
+  }
 }
 
 /* Gap before workflow product visual is owned by .layout-stack--tiered. */
