@@ -346,7 +346,7 @@ export function communication(c) {
     .join('');
 
   /* Mobile source order: intro → conversation product → operational context notes.
-     Desktop grid restores copy-first split with product on the right. */
+     Desktop grid restores mirrored split with product left and intro + notes right. */
   return `<section class="section split split--mirror layout-split communication--product-led" id="${s.id}" aria-labelledby="${s.id}-title">
       <div class="split__intro">
         ${sectionHead({ eyebrow: s.eyebrow, title: s.title, body: s.body, id: s.id })}

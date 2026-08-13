@@ -2604,12 +2604,27 @@ test.describe('public landing page', () => {
     return page.evaluate(() => {
       const section = document.getElementById('integrations');
       const core = section?.querySelector('.hub__core');
+      const leftColumn = section?.querySelector('.hub__column--left');
+      const rightColumn = section?.querySelector('.hub__column--right');
       const tiles = section?.querySelectorAll('.hub__tile');
       const diagram = section?.querySelector('.hub__diagram');
       const sectionRect = section?.getBoundingClientRect();
       const coreRect = core?.getBoundingClientRect();
+      const leftColumnRect = leftColumn?.getBoundingClientRect();
+      const rightColumnRect = rightColumn?.getBoundingClientRect();
       const coreStyles = core ? getComputedStyle(core) : null;
+      const rightColumnStyles = rightColumn ? getComputedStyle(rightColumn) : null;
       const diagramStyles = diagram ? getComputedStyle(diagram) : null;
+
+      const tileMetrics = Array.from(tiles ?? []).map((el) => {
+        const rect = el.getBoundingClientRect();
+        const styles = getComputedStyle(el);
+        return {
+          top: Math.round(rect.top * 10) / 10,
+          bottom: Math.round(rect.bottom * 10) / 10,
+          borderBottomWidth: parseFloat(styles.borderBottomWidth),
+        };
+      });
 
       const fullCardCount = Array.from(tiles ?? []).filter((el) => {
         const styles = getComputedStyle(el);
@@ -2628,6 +2643,22 @@ test.describe('public landing page', () => {
 
       const coreTopRel =
         sectionRect && coreRect ? Math.round((coreRect.top - sectionRect.top) * 10) / 10 : null;
+
+      const coreToItem1Gap =
+        coreRect && tileMetrics[0]
+          ? Math.round((tileMetrics[0].top - coreRect.bottom) * 10) / 10
+          : null;
+
+      const item3ToItem4Gap =
+        tileMetrics[2] && tileMetrics[3]
+          ? Math.round((tileMetrics[3].top - tileMetrics[2].bottom) * 10) / 10
+          : null;
+
+      const rightColumnSeamBorder = rightColumnStyles
+        ? parseFloat(rightColumnStyles.borderTopWidth)
+        : null;
+
+      const coreMarginBottom = coreStyles ? parseFloat(coreStyles.marginBottom) : null;
 
       const desktopHubActive =
         window.matchMedia('(min-width: 1025px)').matches &&
@@ -2648,8 +2679,31 @@ test.describe('public landing page', () => {
         fullCardCount,
         coreVisible,
         coreTopRel,
+        coreToItem1Gap,
+        item3ToItem4Gap,
+        rightColumnSeamBorder,
+        coreMarginBottom,
         desktopHubActive,
         mobileSingleColumn,
+        tileMetrics,
+        coreRect: coreRect
+          ? {
+              top: Math.round(coreRect.top * 10) / 10,
+              bottom: Math.round(coreRect.bottom * 10) / 10,
+            }
+          : null,
+        leftColumnRect: leftColumnRect
+          ? {
+              top: Math.round(leftColumnRect.top * 10) / 10,
+              bottom: Math.round(leftColumnRect.bottom * 10) / 10,
+            }
+          : null,
+        rightColumnRect: rightColumnRect
+          ? {
+              top: Math.round(rightColumnRect.top * 10) / 10,
+              bottom: Math.round(rightColumnRect.bottom * 10) / 10,
+            }
+          : null,
       };
     });
   }
@@ -2778,6 +2832,42 @@ test.describe('public landing page', () => {
     }
   });
 
+  test('P2.6.1 integrations mobile row continuity', async ({ page }) => {
+    const widths = [...P26_PHONE_WIDTHS, ...P26_TABLET_WIDTHS.filter((w) => w <= 1024)] as const;
+
+    for (const width of widths) {
+      await page.setViewportSize({ width, height: width <= 480 ? 700 : 844 });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const state = await readIntegrationsComposition(page);
+      expect(state.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(state.clientWidth + 1);
+      expect(state.tileCount, `${width}px tile count`).toBe(6);
+      expect(state.tileMetrics, `${width}px tile metrics`).toHaveLength(6);
+      expect(state.coreVisible, `${width}px core visible`).toBe(true);
+      expect(state.fullCardCount, `${width}px full-card surfaces`).toBe(0);
+      expect(state.mobileSingleColumn, `${width}px single-column hub`).toBe(true);
+
+      expect(state.coreToItem1Gap!, `${width}px core→item1 gap`).toBeGreaterThanOrEqual(14);
+      expect(state.coreToItem1Gap!, `${width}px core→item1 gap`).toBeLessThanOrEqual(22);
+
+      expect(state.item3ToItem4Gap!, `${width}px item3→item4 gap`).toBeGreaterThanOrEqual(0);
+      expect(state.item3ToItem4Gap!, `${width}px item3→item4 gap`).toBeLessThanOrEqual(1);
+
+      expect(state.rightColumnSeamBorder, `${width}px column seam`).toBeGreaterThan(0);
+
+      for (const [index, tile] of state.tileMetrics.entries()) {
+        if (index === 2) {
+          expect(tile.borderBottomWidth, `${width}px tile 3 bottom (list boundary)`).toBe(0);
+        } else if (index < 5) {
+          expect(tile.borderBottomWidth, `${width}px tile ${index + 1} divider`).toBeGreaterThan(0);
+        } else {
+          expect(tile.borderBottomWidth, `${width}px tile 6 bottom`).toBe(0);
+        }
+      }
+    }
+  });
+
   test('P2.6 integrations tablet progression', async ({ page }) => {
     for (const width of P26_TABLET_WIDTHS) {
       await page.setViewportSize({ width, height: 1024 });
@@ -2802,6 +2892,8 @@ test.describe('public landing page', () => {
       const state = await readIntegrationsComposition(page);
       expect(state.desktopHubActive, `${width}px desktop hub`).toBe(true);
       expect(state.coreVisible, `${width}px core visible`).toBe(true);
+      expect(state.rightColumnSeamBorder, `${width}px mobile seam reset`).toBe(0);
+      expect(state.coreMarginBottom, `${width}px core margin reset`).toBe(0);
     }
   });
 

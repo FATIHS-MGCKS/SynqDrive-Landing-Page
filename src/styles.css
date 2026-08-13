@@ -2207,7 +2207,7 @@ html[data-nav-scroll-lock='true'] {
   .hub--compact .hub__diagram {
     --hub-gap: var(--stack-gap);
     grid-template-columns: minmax(0, 1fr);
-    gap: var(--stack-gap);
+    gap: 0;
     align-items: stretch;
   }
 
@@ -2220,6 +2220,7 @@ html[data-nav-scroll-lock='true'] {
     width: 100%;
     height: auto;
     min-height: 0;
+    margin-bottom: var(--stack-gap);
     padding: 20px 16px;
     border: 1px solid var(--hairline);
     border-radius: 16px;
@@ -2240,6 +2241,10 @@ html[data-nav-scroll-lock='true'] {
     display: grid;
     gap: 0;
     grid-auto-rows: auto;
+  }
+
+  .hub--compact .hub__column--right {
+    border-top: 1px solid var(--hairline);
   }
 
   .hub--compact .hub__column::after,
@@ -2311,6 +2316,7 @@ html[data-nav-scroll-lock='true'] {
     flex-direction: column;
     width: 172px;
     height: 172px;
+    margin-bottom: 0;
     padding: 0;
     border: 1px solid var(--hairline-strong);
     border-radius: 22px;
@@ -2325,6 +2331,7 @@ html[data-nav-scroll-lock='true'] {
   .hub--compact .hub__column--right {
     grid-column: 3;
     grid-row: 1;
+    border-top: 0;
   }
 
   .hub--compact .hub__tile {
