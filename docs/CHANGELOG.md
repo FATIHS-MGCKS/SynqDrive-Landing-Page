@@ -18,9 +18,37 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
-## AI + Workflow mobile composition (P2.5) — 2026-08-13
+## Communication + Integrations + closing/footer (P2.6) — 2026-08-13
 
-**Phase:** P2.5 — AI Orchestration + Workflow Automation mobile composition (local only; **not deployed**)  
+**Phase:** P2.6 — Communication, Integrations hub, closing CTA, and footer mobile composition (Draft PR; **not deployed**)  
+**Audit:** [`docs/audits/landing-page-phase-2.6-communication-integrations-closure-2026-08.md`](audits/landing-page-phase-2.6-communication-integrations-closure-2026-08.md)
+
+### Changed
+
+- Communication mobile order: intro → conversation product → compact context notes
+- Communication notes: `.surface--compact` divider rows instead of divided note blocks
+- Integrations mobile: visible SynqDrive hub core + six compact integration rows (not six full cards)
+- Integrations desktop: three-column hub diagram preserved via grid placement
+- Closing CTA and footer: spacing/touch-target polish
+
+### Not changed
+
+- Hero, navigation, Platform, Vehicle, AI, Workflow, product assets
+- Production (`synqdrive.eu`)
+
+### Verified (local)
+
+- `npm run build` — pass
+- Chromium QA **92/92**; WebKit smoke **2/2**
+- H-05 **PARTIAL**; M-02 **RESOLVED**; L-01 **RESOLVED**; L-02 **RESOLVED**
+- Communication frame top at 390 DE: **233.7px** (was **681.9px**)
+- Page height at 390 DE: **8643px** (post-P2.5 **8804px**)
+
+---
+
+## AI + Workflow mobile composition (P2.5) — merged to main — 2026-08-13
+
+**Phase:** P2.5 — AI Orchestration + Workflow Automation mobile composition (**merged to main** via PR #5; **not deployed**)  
 **Audit:** [`docs/audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md`](audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md)
 
 ### Changed
@@ -37,11 +65,11 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 ### Verified (local)
 
 - `npm run build` — pass
-- Chromium QA *(see audit)*; WebKit smoke **2/2**
+- Chromium QA **78/78**; WebKit smoke **2/2**
 - H-03 **PARTIAL**; H-04 **PARTIAL**
 - AI frame top at 390 DE: **307.9px** (was **948px**)
-- Workflow frame top at 390 DE: **660.3px** (was **715.7px**)
-- Page height at 390 DE: **8840px** (was **8975px**)
+- Workflow frame top at 390 DE: **624.3px** (was **715.7px**)
+- Page height at 390 DE: **8804px** (was **8975px**)
 
 ---
 
