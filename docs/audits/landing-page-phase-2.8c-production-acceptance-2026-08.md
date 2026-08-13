@@ -247,7 +247,7 @@ The following were **not** re-run against Production and remain covered by pre-d
 |---|---|
 | Deployable release source (`main`) | `92392d23ca9f12c4d18befdcd06c611a593dd3a9` |
 | P2.8B documentation | `076d4bd79700004195fa0a82825ac27e8bd9c795` |
-| P2.8C documentation | *(this commit on `cursor/phase-2-production-release`)* |
+| P2.8C documentation | `84f3f007` (`cursor/phase-2-production-release`) |
 
 ---
 
