@@ -59,15 +59,20 @@ const SOCIAL_CARD = { url: `${SITE.origin}/assets/landing-social-card.jpg`, widt
  */
 const CATASTROPHIC_FALLBACK_STYLE = [
   '*,*::before,*::after{box-sizing:border-box}',
-  'html{-webkit-text-size-adjust:100%}',
+  'html{background:#fff;color-scheme:light;-webkit-text-size-adjust:100%}',
   'body{margin:0;background:#fff;color:#111827;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.6;overflow-x:hidden}',
   'img,video{max-width:100%;height:auto;display:block}',
-  'svg{max-width:100%;height:auto;display:block}',
+  'svg{width:24px;height:24px;max-width:100%;display:block}',
   'ul,ol{margin:0;padding:0;list-style:none}',
   'a{color:inherit;text-decoration:none}',
   '.skip-link{position:absolute;left:16px;top:-64px;z-index:60;padding:10px 16px;background:#111827;color:#fff;font-size:14px;font-weight:600}',
   '.skip-link:focus-visible{top:14px}',
+  '.nav-panel[inert]{display:none}',
 ].join('');
+
+function stylesheetRecoveryScript(assets) {
+  return `(function(){var primary=${JSON.stringify(assets.cssHref)};var fingerprint=${JSON.stringify(assets.cssFingerprint)};var link=document.querySelector('link[data-synqdrive-primary-stylesheet]');if(!link||link.getAttribute('href')!==primary)return;var retried=false;link.addEventListener('error',function(){if(retried)return;retried=true;var retry=document.createElement('link');retry.rel='stylesheet';retry.href='/styles.css?v='+encodeURIComponent(fingerprint);retry.setAttribute('data-synqdrive-stylesheet-retry','');link.after(retry);});})();`;
+}
 
 /** Both locales plus x-default, emitted identically on every page. */
 function hreflangTags() {
@@ -158,7 +163,8 @@ function document(locale, assets) {
       fetchpriority="high"
     />
     <style id="synqdrive-catastrophic-fallback">${CATASTROPHIC_FALLBACK_STYLE}</style>
-    <link rel="stylesheet" href="${assets.cssHref}" />
+    <link rel="stylesheet" href="${assets.cssHref}" data-synqdrive-primary-stylesheet />
+    <script>${stylesheetRecoveryScript(assets)}</script>
     <script>
       /* Reveal styles apply only when scripting is available, so the page never
          stays blank without JavaScript. Setting the class here rather than in
@@ -257,6 +263,7 @@ async function main() {
   const assets = {
     cssHref: `/${cssName}`,
     jsHref: `/${jsName}`,
+    cssFingerprint,
   };
 
   for (const locale of locales) {

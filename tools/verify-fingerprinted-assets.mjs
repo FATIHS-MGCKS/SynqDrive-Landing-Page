@@ -125,6 +125,29 @@ async function main() {
     process.exit(1);
   }
 
+  const retryNeedle = "retry.href='/styles.css?v='+encodeURIComponent(fingerprint)";
+  for (const [label, html] of [
+    ['DE', deHtml],
+    ['EN', enHtml],
+  ]) {
+    if (!html.includes(retryNeedle)) {
+      console.error(`verify-fingerprinted-assets: ${label} HTML missing one-time stylesheet retry handler`);
+      process.exit(1);
+    }
+    if (!html.includes(`fingerprint="${expectedCssFp}"`)) {
+      console.error(`verify-fingerprinted-assets: ${label} HTML retry missing current CSS fingerprint`);
+      process.exit(1);
+    }
+    if (!html.includes('data-synqdrive-primary-stylesheet')) {
+      console.error(`verify-fingerprinted-assets: ${label} HTML missing primary stylesheet marker`);
+      process.exit(1);
+    }
+    if ((html.match(/if\(retried\)return;retried=true;/g) ?? []).length !== 1) {
+      console.error(`verify-fingerprinted-assets: ${label} HTML retry guard must be singular`);
+      process.exit(1);
+    }
+  }
+
   console.log(`verify-fingerprinted-assets: OK`);
   console.log(`  css: ${cssName} sha256=${await sha256(cssContent)}`);
   console.log(`  js:  ${jsName} sha256=${await sha256(jsContent)}`);
