@@ -8,7 +8,7 @@
     "node": ">=20"
   },
   "scripts": {
-    "build": "node tools/build-site.mjs && node tools/verify-dist-artefact.mjs",
+    "build": "node tools/build-site.mjs && node tools/verify-dist-artefact.mjs && node tools/verify-fingerprinted-assets.mjs",
     "serve": "cd dist && python3 -m http.server 4321 --bind 127.0.0.1",
     "qa": "playwright test -c e2e/playwright.landing-qa.config.ts",
     "qa:webkit": "playwright test -c e2e/playwright.landing-qa-webkit.config.ts",
