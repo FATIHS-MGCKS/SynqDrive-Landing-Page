@@ -1508,10 +1508,15 @@ html[data-nav-scroll-lock='true'] {
 
 .chain__link {
   position: relative;
-  padding: var(--surface-padding);
-  border: 1px solid var(--hairline);
-  border-radius: var(--surface-radius);
-  background: var(--canvas-alt);
+}
+
+@media (min-width: 1025px) {
+  .chain__link {
+    padding: var(--surface-padding);
+    border: 1px solid var(--hairline);
+    border-radius: var(--surface-radius);
+    background: var(--canvas-alt);
+  }
 }
 
 /* Chevron between chain steps, drawn from the border rather than an icon. */
@@ -1539,24 +1544,11 @@ html[data-nav-scroll-lock='true'] {
   line-height: 1.55;
 }
 
-/* P2.5 — Workflow compact chain */
+/* P2.5 — Workflow compact chain (layout/typography only; surface--compact owns chrome) */
 @media (max-width: 1024px) {
   .workflow--compact .chain__list {
     gap: 0;
     margin-top: 8px;
-  }
-
-  .workflow--compact .chain__link.chain__link--compact.surface--compact {
-    position: static;
-    padding: 14px 0;
-    border: 0;
-    border-radius: 0;
-    background: transparent;
-    border-bottom: 1px solid var(--hairline);
-  }
-
-  .workflow--compact .chain__link.chain__link--compact.surface--compact:last-child {
-    border-bottom: 0;
   }
 
   .workflow--compact .chain__link + .chain__link::before {
@@ -1576,17 +1568,12 @@ html[data-nav-scroll-lock='true'] {
 }
 
 @media (min-width: 1025px) {
+  /* Workflow composition owns full-card restoration; beats .surface--compact:last-child. */
   .workflow--compact .chain__link--compact {
-    position: relative;
     padding: var(--surface-padding);
     border: 1px solid var(--hairline);
     border-radius: var(--surface-radius);
     background: var(--canvas-alt);
-    border-bottom: 1px solid var(--hairline);
-  }
-
-  .workflow--compact .chain__link--compact:last-child {
-    border-bottom: 1px solid var(--hairline);
   }
 }
 

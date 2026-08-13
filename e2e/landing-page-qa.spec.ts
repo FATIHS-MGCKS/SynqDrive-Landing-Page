@@ -2127,6 +2127,21 @@ test.describe('public landing page', () => {
         );
       }).length;
 
+      const chainLinkSurfaces = Array.from(links ?? []).map((el) => {
+        const styles = getComputedStyle(el);
+        return {
+          hasCompactClass: el.classList.contains('surface--compact'),
+          paddingTop: parseFloat(styles.paddingTop),
+          paddingBottom: parseFloat(styles.paddingBottom),
+          borderTopWidth: parseFloat(styles.borderTopWidth),
+          borderRightWidth: parseFloat(styles.borderRightWidth),
+          borderBottomWidth: parseFloat(styles.borderBottomWidth),
+          borderLeftWidth: parseFloat(styles.borderLeftWidth),
+          background: styles.backgroundColor,
+          borderRadius: parseFloat(styles.borderTopLeftRadius),
+        };
+      });
+
       return {
         scrollWidth: document.documentElement.scrollWidth,
         clientWidth: document.documentElement.clientWidth,
@@ -2146,6 +2161,7 @@ test.describe('public landing page', () => {
           window.matchMedia('(min-width: 1025px)').matches && chainList
             ? getComputedStyle(chainList).gridTemplateColumns.split(' ').length === 3
             : null,
+        chainLinkSurfaces,
       };
     });
   }
@@ -2258,6 +2274,75 @@ test.describe('public landing page', () => {
         expect(state.scrollWidth, `${locale} ${width}px overflow`).toBeLessThanOrEqual(
           state.clientWidth + 1,
         );
+      }
+    }
+  });
+
+  test('P2.5.1 workflow mobile compact surface ownership', async ({ page }) => {
+    for (const width of [...P25_PHONE_WIDTHS, ...P25_TABLET_WIDTHS.filter((w) => w <= 1024)] as const) {
+      await page.setViewportSize({ width, height: 844 });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const state = await readWorkflowComposition(page);
+      expect(state.chainLinkSurfaces, `${width}px chain surfaces`).toHaveLength(3);
+
+      for (const [index, surface] of state.chainLinkSurfaces.entries()) {
+        expect(surface.hasCompactClass, `${width}px link ${index + 1} compact class`).toBe(true);
+        expect(surface.paddingTop, `${width}px link ${index + 1} padding-top`).toBeGreaterThanOrEqual(
+          13,
+        );
+        expect(surface.paddingTop, `${width}px link ${index + 1} padding-top`).toBeLessThanOrEqual(15);
+        expect(surface.paddingBottom, `${width}px link ${index + 1} padding-bottom`).toBeGreaterThanOrEqual(
+          13,
+        );
+        expect(surface.paddingBottom, `${width}px link ${index + 1} padding-bottom`).toBeLessThanOrEqual(
+          15,
+        );
+        expect(surface.borderTopWidth, `${width}px link ${index + 1} border-top`).toBe(0);
+        expect(surface.borderLeftWidth, `${width}px link ${index + 1} border-left`).toBe(0);
+        expect(surface.borderRightWidth, `${width}px link ${index + 1} border-right`).toBe(0);
+        expect(surface.borderRadius, `${width}px link ${index + 1} radius`).toBe(0);
+        expect(
+          surface.background === 'rgba(0, 0, 0, 0)' || surface.background === 'transparent',
+          `${width}px link ${index + 1} background`,
+        ).toBe(true);
+
+        if (index < 2) {
+          expect(surface.borderBottomWidth, `${width}px link ${index + 1} bottom divider`).toBeGreaterThan(
+            0,
+          );
+        } else {
+          expect(surface.borderBottomWidth, `${width}px link ${index + 1} bottom divider`).toBe(0);
+        }
+      }
+    }
+  });
+
+  test('P2.5.1 workflow desktop all-three-card borders', async ({ page }) => {
+    for (const width of P25_DESKTOP_WIDTHS) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const state = await readWorkflowComposition(page);
+      expect(state.desktopThreeCol, `${width}px desktop 3-col chain`).toBe(true);
+      expect(state.chainLinkSurfaces, `${width}px chain surfaces`).toHaveLength(3);
+
+      for (const [index, surface] of state.chainLinkSurfaces.entries()) {
+        expect(surface.borderTopWidth, `${width}px card ${index + 1} top border`).toBeGreaterThan(0);
+        expect(surface.borderRightWidth, `${width}px card ${index + 1} right border`).toBeGreaterThan(
+          0,
+        );
+        expect(surface.borderBottomWidth, `${width}px card ${index + 1} bottom border`).toBeGreaterThan(
+          0,
+        );
+        expect(surface.borderLeftWidth, `${width}px card ${index + 1} left border`).toBeGreaterThan(0);
+        expect(surface.background, `${width}px card ${index + 1} background`).not.toBe(
+          'rgba(0, 0, 0, 0)',
+        );
+        expect(surface.background, `${width}px card ${index + 1} background`).not.toBe('transparent');
+        expect(surface.borderRadius, `${width}px card ${index + 1} radius`).toBeGreaterThan(0);
       }
     }
   });
