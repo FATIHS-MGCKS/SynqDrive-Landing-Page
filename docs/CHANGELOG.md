@@ -18,9 +18,36 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
-## Platform + Vehicle mobile composition (P2.4) — 2026-08-12
+## AI + Workflow mobile composition (P2.5) — 2026-08-13
 
-**Phase:** P2.4 — Platform + Connected Vehicle Intelligence mobile composition (local only; **not deployed**)  
+**Phase:** P2.5 — AI Orchestration + Workflow Automation mobile composition (local only; **not deployed**)  
+**Audit:** [`docs/audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md`](audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md)
+
+### Changed
+
+- AI mobile order: intro → product visual → compact four-step flow → compact governance notes
+- AI mobile flow/governance: `.surface--compact` divider rows instead of bordered rail + note blocks
+- Workflow mobile chain: compact divider rows instead of three full cards; chevrons hidden ≤1024px
+
+### Not changed
+
+- Hero, navigation, Platform, Vehicle, Communication, Integrations, product assets, closing/footer
+- Production (`synqdrive.eu`)
+
+### Verified (local)
+
+- `npm run build` — pass
+- Chromium QA *(see audit)*; WebKit smoke **2/2**
+- H-03 **PARTIAL**; H-04 **PARTIAL**
+- AI frame top at 390 DE: **307.9px** (was **948px**)
+- Workflow frame top at 390 DE: **660.3px** (was **715.7px**)
+- Page height at 390 DE: **8840px** (was **8975px**)
+
+---
+
+## Platform + Vehicle mobile composition (P2.4) — merged to main — 2026-08-12
+
+**Phase:** P2.4 — Platform + Connected Vehicle Intelligence mobile composition (**merged to main** via PR #4; **not deployed**)  
 **Audit:** [`docs/audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md`](audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md)
 
 ### Changed

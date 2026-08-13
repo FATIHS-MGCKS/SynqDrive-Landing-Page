@@ -1996,4 +1996,528 @@ test.describe('public landing page', () => {
       });
     }
   });
+
+  const P25_PHONE_WIDTHS = P24_PHONE_WIDTHS;
+  const P25_TABLET_WIDTHS = P24_TABLET_WIDTHS;
+  const P25_DESKTOP_WIDTHS = P24_DESKTOP_WIDTHS;
+  const P25_LOCALE_WIDTHS = [390, 768, 1440] as const;
+  const P25_LANDSCAPE = P24_LANDSCAPE;
+
+  async function readAiComposition(page: Page) {
+    return page.evaluate(() => {
+      const section = document.getElementById('ai-orchestration');
+      const intro = section?.querySelector('.split__intro');
+      const media = section?.querySelector('.split__media');
+      const support = section?.querySelector('.split__support');
+      const flow = section?.querySelector('.flow');
+      const flowList = section?.querySelector('.flow__list');
+      const steps = section?.querySelectorAll('.flow__step');
+      const governance = section?.querySelectorAll('.notes__item');
+      const frame = section?.querySelector('.split__media .frame--product');
+      const sectionRect = section?.getBoundingClientRect();
+      const frameRect = frame?.getBoundingClientRect();
+      const introRect = intro?.getBoundingClientRect();
+      const mediaRect = media?.getBoundingClientRect();
+      const supportRect = support?.getBoundingClientRect();
+      const flowStyles = flow ? getComputedStyle(flow) : null;
+
+      const introBeforeMedia =
+        !!intro &&
+        !!media &&
+        (intro.compareDocumentPosition(media) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+      const mediaBeforeSupport =
+        !!media &&
+        !!support &&
+        (media.compareDocumentPosition(support) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+
+      const compactFlowActive =
+        window.matchMedia('(max-width: 1024px)').matches &&
+        !!flow &&
+        parseFloat(getComputedStyle(flow).borderTopWidth) === 0 &&
+        (getComputedStyle(flow).backgroundColor === 'rgba(0, 0, 0, 0)' ||
+          getComputedStyle(flow).backgroundColor === 'transparent');
+
+      const compactStepCount = Array.from(steps ?? []).filter((el) =>
+        el.classList.contains('surface--compact'),
+      ).length;
+
+      const desktopLayout =
+        window.matchMedia('(min-width: 1025px)').matches && intro && media && support
+          ? {
+              mediaLeft: media.getBoundingClientRect().left,
+              introLeft: intro.getBoundingClientRect().left,
+              supportLeft: support.getBoundingClientRect().left,
+              mediaRight: media.getBoundingClientRect().right,
+              introRight: intro.getBoundingClientRect().right,
+              introTop: intro.getBoundingClientRect().top,
+              supportTop: support.getBoundingClientRect().top,
+              flowRailBorder: flow ? parseFloat(getComputedStyle(flow).borderTopWidth) : 0,
+            }
+          : null;
+
+      return {
+        scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth,
+        sectionHeight: sectionRect?.height ?? 0,
+        frameTopRel: sectionRect && frameRect ? frameRect.top - sectionRect.top : null,
+        frameWidth: frameRect?.width ?? 0,
+        frameHeight: frameRect?.height ?? 0,
+        flowStepCount: steps?.length ?? 0,
+        governanceCount: governance?.length ?? 0,
+        flowListIsOl: flowList?.tagName === 'OL',
+        introBeforeMedia,
+        mediaBeforeSupport,
+        compactFlowActive,
+        compactStepCount,
+        flowMarginTop: flowStyles ? parseFloat(flowStyles.marginTop) : null,
+        introToMedia:
+          introRect && mediaRect
+            ? Math.round((mediaRect.top - introRect.bottom) * 10) / 10
+            : null,
+        mediaToSupport:
+          mediaRect && supportRect
+            ? Math.round((supportRect.top - mediaRect.bottom) * 10) / 10
+            : null,
+        desktopLayout,
+      };
+    });
+  }
+
+  async function readWorkflowComposition(page: Page) {
+    return page.evaluate(() => {
+      const section = document.getElementById('workflow-automation');
+      const head = section?.querySelector('.section-head');
+      const chain = section?.querySelector('.chain');
+      const chainList = section?.querySelector('.chain__list');
+      const links = section?.querySelectorAll('.chain__link');
+      const media = section?.querySelector('.stack__media');
+      const frame = section?.querySelector('.stack__media .frame--product');
+      const sectionRect = section?.getBoundingClientRect();
+      const frameRect = frame?.getBoundingClientRect();
+      const chainStyles = chain ? getComputedStyle(chain) : null;
+      const mediaStyles = media ? getComputedStyle(media) : null;
+
+      const headBeforeChain =
+        !!head &&
+        !!chain &&
+        (head.compareDocumentPosition(chain) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+      const chainBeforeMedia =
+        !!chain &&
+        !!media &&
+        (chain.compareDocumentPosition(media) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
+
+      const compactChainActive =
+        window.matchMedia('(max-width: 1024px)').matches &&
+        Array.from(links ?? []).every((el) => {
+          if (!el.classList.contains('surface--compact')) return false;
+          const styles = getComputedStyle(el);
+          return (
+            parseFloat(styles.borderTopWidth) === 0 &&
+            (styles.backgroundColor === 'rgba(0, 0, 0, 0)' ||
+              styles.backgroundColor === 'transparent')
+          );
+        });
+
+      const fullCardCount = Array.from(links ?? []).filter((el) => {
+        const styles = getComputedStyle(el);
+        return (
+          parseFloat(styles.borderTopWidth) > 0 &&
+          styles.backgroundColor !== 'rgba(0, 0, 0, 0)' &&
+          styles.backgroundColor !== 'transparent'
+        );
+      }).length;
+
+      const chainLinkSurfaces = Array.from(links ?? []).map((el) => {
+        const styles = getComputedStyle(el);
+        return {
+          hasCompactClass: el.classList.contains('surface--compact'),
+          paddingTop: parseFloat(styles.paddingTop),
+          paddingBottom: parseFloat(styles.paddingBottom),
+          borderTopWidth: parseFloat(styles.borderTopWidth),
+          borderRightWidth: parseFloat(styles.borderRightWidth),
+          borderBottomWidth: parseFloat(styles.borderBottomWidth),
+          borderLeftWidth: parseFloat(styles.borderLeftWidth),
+          background: styles.backgroundColor,
+          borderRadius: parseFloat(styles.borderTopLeftRadius),
+        };
+      });
+
+      return {
+        scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth,
+        sectionHeight: sectionRect?.height ?? 0,
+        frameTopRel: sectionRect && frameRect ? frameRect.top - sectionRect.top : null,
+        frameWidth: frameRect?.width ?? 0,
+        frameHeight: frameRect?.height ?? 0,
+        chainLinkCount: links?.length ?? 0,
+        chainListIsOl: chainList?.tagName === 'OL',
+        headBeforeChain,
+        chainBeforeMedia,
+        compactChainActive,
+        fullCardCount,
+        chainMarginTop: chainStyles ? parseFloat(chainStyles.marginTop) : null,
+        mediaMarginTop: mediaStyles ? parseFloat(mediaStyles.marginTop) : null,
+        desktopThreeCol:
+          window.matchMedia('(min-width: 1025px)').matches && chainList
+            ? getComputedStyle(chainList).gridTemplateColumns.split(' ').length === 3
+            : null,
+        chainLinkSurfaces,
+      };
+    });
+  }
+
+  for (const locale of ['de', 'en'] as const) {
+    const url = locale === 'de' ? '/' : '/en/';
+
+    test(`P2.5 AI mobile composition invariants (${locale})`, async ({ page }) => {
+      for (const width of P25_PHONE_WIDTHS) {
+        await page.setViewportSize({ width, height: 844 });
+        await page.goto(url, { waitUntil: 'load' });
+        await settle(page);
+
+        const state = await readAiComposition(page);
+        expect(state.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(state.clientWidth + 1);
+        expect(state.flowStepCount, `${width}px flow steps`).toBe(4);
+        expect(state.governanceCount, `${width}px governance items`).toBe(2);
+        expect(state.flowListIsOl, `${width}px flow ol`).toBe(true);
+        expect(state.introBeforeMedia, `${width}px intro before media`).toBe(true);
+        expect(state.mediaBeforeSupport, `${width}px media before support`).toBe(true);
+        expect(state.compactFlowActive, `${width}px compact flow rail`).toBe(true);
+        expect(state.compactStepCount, `${width}px compact steps`).toBe(4);
+        expect(state.frameWidth, `${width}px frame width`).toBeGreaterThan(0);
+        expect(state.flowMarginTop, `${width}px flow margin-top`).toBe(0);
+        expect(state.introToMedia!, `${width}px intro-media gap`).toBeGreaterThanOrEqual(24);
+        expect(state.introToMedia!, `${width}px intro-media gap`).toBeLessThanOrEqual(36);
+      }
+    });
+  }
+
+  for (const locale of ['de', 'en'] as const) {
+    const url = locale === 'de' ? '/' : '/en/';
+
+    test(`P2.5 workflow mobile composition invariants (${locale})`, async ({ page }) => {
+      for (const width of P25_PHONE_WIDTHS) {
+        await page.setViewportSize({ width, height: 844 });
+        await page.goto(url, { waitUntil: 'load' });
+        await settle(page);
+
+        const state = await readWorkflowComposition(page);
+        expect(state.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(state.clientWidth + 1);
+        expect(state.chainLinkCount, `${width}px chain links`).toBe(3);
+        expect(state.chainListIsOl, `${width}px chain ol`).toBe(true);
+        expect(state.headBeforeChain, `${width}px head before chain`).toBe(true);
+        expect(state.chainBeforeMedia, `${width}px chain before media`).toBe(true);
+        expect(state.compactChainActive, `${width}px compact chain`).toBe(true);
+        expect(state.fullCardCount, `${width}px full chain cards`).toBe(0);
+        expect(state.frameWidth, `${width}px frame width`).toBeGreaterThan(0);
+      }
+    });
+  }
+
+  test('P2.5 AI tablet regression (DE + EN)', async ({ page }) => {
+    for (const locale of ['de', 'en'] as const) {
+      const url = locale === 'de' ? '/' : '/en/';
+      for (const width of [768, 1024] as const) {
+        await page.setViewportSize({ width, height: 1024 });
+        await page.goto(url, { waitUntil: 'load' });
+        await settle(page);
+
+        const state = await readAiComposition(page);
+        expect(state.scrollWidth, `${locale} ${width}px overflow`).toBeLessThanOrEqual(
+          state.clientWidth + 1,
+        );
+        expect(state.mediaBeforeSupport, `${locale} ${width}px media before support`).toBe(true);
+        expect(state.compactFlowActive, `${locale} ${width}px compact flow`).toBe(true);
+        expect(state.frameTopRel!, `${locale} ${width}px earlier product`).toBeLessThan(700);
+      }
+    }
+  });
+
+  test('P2.5 AI desktop mirrored geometry', async ({ page }) => {
+    for (const width of P25_DESKTOP_WIDTHS) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const state = await readAiComposition(page);
+      const layout = state.desktopLayout;
+      expect(layout, `${width}px desktop layout`).not.toBeNull();
+      expect(layout!.mediaRight, `${width}px product left of copy`).toBeLessThan(
+        layout!.introLeft + 8,
+      );
+      expect(Math.abs(layout!.introLeft - layout!.supportLeft), `${width}px copy column`).toBeLessThan(
+        8,
+      );
+      expect(layout!.supportTop, `${width}px support below intro`).toBeGreaterThanOrEqual(
+        layout!.introTop,
+      );
+      expect(layout!.flowRailBorder, `${width}px flow rail restored`).toBeGreaterThan(0);
+      expect(state.compactFlowActive, `${width}px desktop compact override`).toBe(false);
+      expect(state.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(state.clientWidth + 1);
+    }
+  });
+
+  test('P2.5 workflow desktop chain regression', async ({ page }) => {
+    for (const locale of ['de', 'en'] as const) {
+      const url = locale === 'de' ? '/' : '/en/';
+      for (const width of P25_DESKTOP_WIDTHS) {
+        await page.setViewportSize({ width, height: 900 });
+        await page.goto(url, { waitUntil: 'load' });
+        await settle(page);
+
+        const state = await readWorkflowComposition(page);
+        expect(state.desktopThreeCol, `${locale} ${width}px desktop 3-col chain`).toBe(true);
+        expect(state.fullCardCount, `${locale} ${width}px desktop chain cards`).toBe(3);
+        expect(state.compactChainActive, `${locale} ${width}px desktop compact override`).toBe(
+          false,
+        );
+        expect(state.scrollWidth, `${locale} ${width}px overflow`).toBeLessThanOrEqual(
+          state.clientWidth + 1,
+        );
+      }
+    }
+  });
+
+  test('P2.5.1 workflow mobile compact surface ownership', async ({ page }) => {
+    for (const width of [...P25_PHONE_WIDTHS, ...P25_TABLET_WIDTHS.filter((w) => w <= 1024)] as const) {
+      await page.setViewportSize({ width, height: 844 });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const state = await readWorkflowComposition(page);
+      expect(state.chainLinkSurfaces, `${width}px chain surfaces`).toHaveLength(3);
+
+      for (const [index, surface] of state.chainLinkSurfaces.entries()) {
+        expect(surface.hasCompactClass, `${width}px link ${index + 1} compact class`).toBe(true);
+        expect(surface.paddingTop, `${width}px link ${index + 1} padding-top`).toBeGreaterThanOrEqual(
+          13,
+        );
+        expect(surface.paddingTop, `${width}px link ${index + 1} padding-top`).toBeLessThanOrEqual(15);
+        expect(surface.paddingBottom, `${width}px link ${index + 1} padding-bottom`).toBeGreaterThanOrEqual(
+          13,
+        );
+        expect(surface.paddingBottom, `${width}px link ${index + 1} padding-bottom`).toBeLessThanOrEqual(
+          15,
+        );
+        expect(surface.borderTopWidth, `${width}px link ${index + 1} border-top`).toBe(0);
+        expect(surface.borderLeftWidth, `${width}px link ${index + 1} border-left`).toBe(0);
+        expect(surface.borderRightWidth, `${width}px link ${index + 1} border-right`).toBe(0);
+        expect(surface.borderRadius, `${width}px link ${index + 1} radius`).toBe(0);
+        expect(
+          surface.background === 'rgba(0, 0, 0, 0)' || surface.background === 'transparent',
+          `${width}px link ${index + 1} background`,
+        ).toBe(true);
+
+        if (index < 2) {
+          expect(surface.borderBottomWidth, `${width}px link ${index + 1} bottom divider`).toBeGreaterThan(
+            0,
+          );
+        } else {
+          expect(surface.borderBottomWidth, `${width}px link ${index + 1} bottom divider`).toBe(0);
+        }
+      }
+    }
+  });
+
+  test('P2.5.3 workflow CSS source ownership', async () => {
+    const cssPath = path.resolve(
+      path.dirname(new URL(import.meta.url).pathname),
+      '..',
+      'src',
+      'styles.css',
+    );
+    const css = await fs.readFile(cssPath, 'utf8');
+
+    const sectionStart = css.indexOf('/* P2.5 — Workflow compact chain */');
+    expect(sectionStart, 'workflow compact chain section').toBeGreaterThan(-1);
+    const sectionEnd = css.indexOf('/* Gap before workflow product visual', sectionStart);
+    const workflowSection = css.slice(sectionStart, sectionEnd);
+
+    const mobileStart = workflowSection.indexOf('@media (max-width: 1024px)');
+    const mobileEnd = workflowSection.indexOf('@media (min-width: 1025px)', mobileStart);
+    const mobileBlock = workflowSection.slice(mobileStart, mobileEnd);
+
+    const forbiddenMobilePatterns = [
+      /padding:\s*14px\s+0/,
+      /border-radius:\s*0/,
+      /background:\s*transparent/,
+      /border-bottom:\s*1px\s+solid\s+var\(--hairline\)/,
+    ] as const;
+
+    for (const pattern of forbiddenMobilePatterns) {
+      expect(
+        mobileBlock,
+        `mobile workflow rules must not duplicate compact surface chrome (${pattern})`,
+      ).not.toMatch(pattern);
+    }
+
+    expect(mobileBlock, 'no workflow surface--compact:last-child rule').not.toMatch(
+      /\.surface--compact:last-child/,
+    );
+
+    const desktopStart = workflowSection.indexOf('@media (min-width: 1025px)');
+    const desktopBlock = workflowSection.slice(desktopStart);
+    const desktopOwnerMatches = [
+      ...desktopBlock.matchAll(/\.workflow--compact\s+\.chain__link\s*\{([^}]+)\}/g),
+    ];
+    expect(desktopOwnerMatches, 'exactly one desktop workflow card-chrome owner').toHaveLength(1);
+
+    const ownerBody = desktopOwnerMatches[0]![1]!;
+    expect(ownerBody).toContain('padding: var(--surface-padding)');
+    expect(ownerBody).toContain('border: 1px solid var(--hairline)');
+    expect(ownerBody).toContain('border-radius: var(--surface-radius)');
+    expect(ownerBody).toContain('background: var(--canvas-alt)');
+
+    const duplicateCompactOwners = [
+      ...desktopBlock.matchAll(/\.workflow--compact\s+\.chain__link--compact\s*\{[^}]+\}/g),
+    ];
+    expect(duplicateCompactOwners, 'no duplicate chain__link--compact desktop owner').toHaveLength(
+      0,
+    );
+
+    const baseChainMatch = css.match(/^\.chain__link\s*\{([^}]+)\}/m);
+    expect(baseChainMatch, 'base .chain__link rule').toBeTruthy();
+    const baseBody = baseChainMatch![1]!;
+    expect(baseBody).toContain('position: relative');
+    expect(baseBody).not.toMatch(/padding:/);
+    expect(baseBody).not.toMatch(/border:/);
+    expect(baseBody).not.toMatch(/border-radius:/);
+    expect(baseBody).not.toMatch(/background:/);
+  });
+
+  test('P2.5.1 workflow desktop all-three-card borders', async ({ page }) => {
+    for (const width of P25_DESKTOP_WIDTHS) {
+      await page.setViewportSize({ width, height: 900 });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const state = await readWorkflowComposition(page);
+      expect(state.desktopThreeCol, `${width}px desktop 3-col chain`).toBe(true);
+      expect(state.chainLinkSurfaces, `${width}px chain surfaces`).toHaveLength(3);
+
+      for (const [index, surface] of state.chainLinkSurfaces.entries()) {
+        expect(surface.borderTopWidth, `${width}px card ${index + 1} top border`).toBeGreaterThan(0);
+        expect(surface.borderRightWidth, `${width}px card ${index + 1} right border`).toBeGreaterThan(
+          0,
+        );
+        expect(surface.borderBottomWidth, `${width}px card ${index + 1} bottom border`).toBeGreaterThan(
+          0,
+        );
+        expect(surface.borderLeftWidth, `${width}px card ${index + 1} left border`).toBeGreaterThan(0);
+        expect(surface.background, `${width}px card ${index + 1} background`).not.toBe(
+          'rgba(0, 0, 0, 0)',
+        );
+        expect(surface.background, `${width}px card ${index + 1} background`).not.toBe('transparent');
+        expect(surface.borderRadius, `${width}px card ${index + 1} radius`).toBeGreaterThan(0);
+      }
+    }
+  });
+
+  test('P2.5 AI workflow spacing ownership', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'load' });
+    await settle(page);
+
+    const ai = await readAiComposition(page);
+    expect(ai.flowMarginTop, 'AI flow margin-top').toBe(0);
+    expect(ai.introToMedia!, 'AI intro-media gap').toBeGreaterThanOrEqual(24);
+    expect(ai.mediaToSupport!, 'AI media-support gap').toBeGreaterThanOrEqual(16);
+
+    const workflow = await readWorkflowComposition(page);
+    const spacing = await readStackSpacing(page);
+    expect(spacing.workflowHeadToChain!, 'workflow head-chain gap').toBeGreaterThanOrEqual(44);
+    expect(spacing.workflowHeadToChain!, 'workflow head-chain gap').toBeLessThanOrEqual(52);
+    expect(spacing.workflowChainToMedia!, 'workflow chain-media gap').toBeGreaterThanOrEqual(24);
+    expect(spacing.workflowChainToMedia!, 'workflow chain-media gap').toBeLessThanOrEqual(36);
+    expect(workflow.chainMarginTop, 'workflow chain margin-top').toBeGreaterThan(0);
+    expect(workflow.mediaMarginTop, 'workflow media margin-top').toBeGreaterThan(0);
+  });
+
+  test('P2.5 AI product distance regression (390 DE)', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'load' });
+    await settle(page);
+
+    const state = await readAiComposition(page);
+    expect(state.frameTopRel!, '390px AI frame distance').toBeLessThan(500);
+    expect(state.frameTopRel!, '390px improved from P2.4 main baseline').toBeLessThan(948);
+  });
+
+  test('P2.5 workflow product distance regression (390 DE)', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'load' });
+    await settle(page);
+
+    const state = await readWorkflowComposition(page);
+    expect(state.frameTopRel!, '390px workflow frame distance').toBeLessThan(750);
+    expect(state.frameTopRel!, '390px improved from P2.4 main baseline').toBeLessThan(716);
+  });
+
+  test('P2.5 locale structural coverage (390 / 768 / 1440)', async ({ page }) => {
+    for (const locale of ['de', 'en'] as const) {
+      const url = locale === 'de' ? '/' : '/en/';
+      for (const width of P25_LOCALE_WIDTHS) {
+        await page.setViewportSize({ width, height: width <= 768 ? 844 : 900 });
+        await page.goto(url, { waitUntil: 'load' });
+        await settle(page);
+
+        const ai = await readAiComposition(page);
+        const workflow = await readWorkflowComposition(page);
+        expect(ai.flowStepCount, `${locale} ${width}px AI steps`).toBe(4);
+        expect(workflow.chainLinkCount, `${locale} ${width}px workflow links`).toBe(3);
+        expect(ai.scrollWidth, `${locale} ${width}px AI overflow`).toBeLessThanOrEqual(
+          ai.clientWidth + 1,
+        );
+        expect(workflow.scrollWidth, `${locale} ${width}px workflow overflow`).toBeLessThanOrEqual(
+          workflow.clientWidth + 1,
+        );
+      }
+    }
+  });
+
+  test('P2.5 landscape sanity', async ({ page }) => {
+    for (const [width, height] of P25_LANDSCAPE) {
+      await page.setViewportSize({ width, height });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const ai = await readAiComposition(page);
+      const workflow = await readWorkflowComposition(page);
+      expect(ai.scrollWidth, `${width}x${height} AI overflow`).toBeLessThanOrEqual(
+        ai.clientWidth + 1,
+      );
+      expect(workflow.scrollWidth, `${width}x${height} workflow overflow`).toBeLessThanOrEqual(
+        workflow.clientWidth + 1,
+      );
+    }
+  });
+
+  test('captures P2.5 AI workflow screenshots', async ({ page }) => {
+    const shots = [
+      ['de', '/', 320, 700],
+      ['de', '/', 375, 812],
+      ['de', '/', 390, 844],
+      ['de', '/', 430, 932],
+      ['de', '/', 768, 1024],
+      ['de', '/', 1440, 1000],
+      ['en', '/en/', 320, 700],
+      ['en', '/en/', 390, 844],
+      ['en', '/en/', 430, 932],
+      ['en', '/en/', 1440, 1000],
+    ] as const;
+
+    for (const [locale, url, width, height] of shots) {
+      await page.setViewportSize({ width, height });
+      await page.goto(url, { waitUntil: 'load' });
+      await settle(page);
+      await page.locator('#ai-orchestration').screenshot({
+        path: path.join(OUT, `${LABEL}p25-ai-${locale}-${width}.png`),
+        animations: 'disabled',
+      });
+      await page.locator('#workflow-automation').screenshot({
+        path: path.join(OUT, `${LABEL}p25-workflow-${locale}-${width}.png`),
+        animations: 'disabled',
+      });
+    }
+  });
 });

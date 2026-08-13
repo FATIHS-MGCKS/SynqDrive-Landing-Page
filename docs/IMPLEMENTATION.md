@@ -343,8 +343,9 @@ screenshots are byte-identical to the locally approved build.
 - **P2.1:** Mobile experience baseline audit — **complete** (2026-08-12).
 - **P2.2:** Global mobile layout system — **merged to main** (PR #2, 2026-08-12).
 - **P2.3:** Hero mobile composition — **merged to main** (PR #3, 2026-08-12).
-- **P2.4:** Platform + Vehicle mobile composition — **implemented locally** (not deployed); see [`docs/audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md`](audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md).
-- **Phase 2.5–2.8:** Remaining section-specific mobile composition — **pending**.
+- **P2.4:** Platform + Vehicle mobile composition — **merged to main** (PR #4, 2026-08-13); not deployed — see [`docs/audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md`](audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md).
+- **P2.5:** AI + Workflow mobile composition — **implemented locally** (not deployed); see [`docs/audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md`](audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md).
+- **Phase 2.6–2.8:** Remaining section-specific mobile composition — **pending**.
 - Solutions, Resources, and Pricing top-level navigation remain deferred until real destination pages exist (DEC-004).
 - Taxi & Mobility may become a future Solutions page; it does not imply generally available Taxi Dispatch (DEC-009).
 - The product visuals are English on both locales. German screenshot variants deferred.
@@ -429,7 +430,7 @@ P2.3 restructures Hero markup and CSS only — no navigation, asset, or downstre
 - Production: **NOT DEPLOYED**
 - 390×844 DE frame top: **508px** (P2.2 **716px**)
 
-## Platform + Vehicle mobile composition (P2.4 — local, not deployed)
+## Platform + Vehicle mobile composition (P2.4 — merged to main, not deployed)
 
 **Audit:** [`docs/audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md`](audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md)
 
@@ -449,6 +450,36 @@ Mobile capabilities use `.capability--compact` divider rows (0 full card surface
 
 ### QA
 
-- Chromium: **61/61**
+- Chromium: **62/62** (post-P2.4.2)
 - WebKit smoke: **2/2**
 - 390×844 DE Platform frame distance: **284px** (was **962px**)
+
+## AI + Workflow mobile composition (P2.5 — local, not deployed)
+
+**Audit:** [`docs/audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md`](audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md)
+
+### AI Orchestration
+
+| Viewport | Order |
+|---|---|
+| Mobile/tablet (≤1024) | `.split__intro` → `.split__media` → compact flow + governance (`.split__support`) |
+| Desktop (≥1025) | Mirrored split: product left; intro + flow/governance right |
+
+Mobile flow/governance use `.surface--compact` rows; desktop restores bordered flow rail.
+
+### Workflow Automation
+
+| Viewport | Order |
+|---|---|
+| Mobile/tablet (≤1024) | `.section-head` → compact chain → `.stack__media` |
+| Desktop (≥1025) | Tiered stack with 3-column chain band (unchanged hierarchy) |
+
+Mobile chain links use `.surface--compact` divider rows; desktop restores full chain cards.
+
+### QA
+
+- Chromium: **75/75**
+- WebKit smoke: **2/2**
+- H-03: **PARTIAL**; H-04: **PARTIAL**
+- 390×844 DE AI frame top: **307.9px** (was **948px**)
+- 390×844 DE Workflow frame top: **660.3px** (was **715.7px**)
