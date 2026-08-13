@@ -16,6 +16,33 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+---
+
+## Platform + Vehicle mobile composition (P2.4) — 2026-08-12
+
+**Phase:** P2.4 — Platform + Connected Vehicle Intelligence mobile composition (local only; **not deployed**)  
+**Audit:** [`docs/audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md`](audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md)
+
+### Changed
+
+- Platform mobile order: intro → product visual → compact capability rows
+- Platform mobile capabilities: divider rows instead of four full cards (≤1024px)
+- Vehicle mobile: tighter stage notes and lighter panel chrome
+
+### Not changed
+
+- Hero, navigation, product assets, AI/Workflow/Communication/Integrations/closing/footer
+- Production (`synqdrive.eu`)
+
+### Verified (local)
+
+- `npm run build` — pass
+- Chromium QA **58/58**; WebKit smoke **2/2**
+- H-02 **RESOLVED**; M-01 **PARTIAL**
+- Platform section height at 390 DE: **1017px** (was **1264px**)
+
+---
+
 ## Hero desktop spacing correction (P2.3.1) — 2026-08-12
 
 **Phase:** P2.3.1 — Desktop Hero intro → proof spacing correction (Draft PR #3; **not deployed**)

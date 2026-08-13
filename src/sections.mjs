@@ -219,7 +219,7 @@ export function unified(c) {
   const s = c.unified;
   const cards = s.cards
     .map(
-      (card) => `<li class="capability" data-reveal>
+      (card) => `<li class="capability capability--compact surface surface--compact" data-reveal>
             ${iconMark(card.icon)}
             <h3>${esc(card.title)}</h3>
             <p>${esc(card.body)}</p>
@@ -227,14 +227,16 @@ export function unified(c) {
     )
     .join('');
 
-  return `<section class="section brief layout-stack" id="${s.id}" aria-labelledby="${s.id}-title">
-      <div class="brief__head">
+  /* Mobile source order: intro → product → capabilities. Desktop grid restores
+     head beside capability cards with the product frame full width below. */
+  return `<section class="section brief layout-stack brief--product-led" id="${s.id}" aria-labelledby="${s.id}-title">
+      <div class="brief__intro">
         ${sectionHead({ eyebrow: s.eyebrow, title: s.title, body: s.body, id: s.id })}
-        <ul class="capability-grid">${cards}</ul>
       </div>
       <div class="stack__media" data-reveal>
         ${productFrame({ media: s.media, alt: s.mediaAlt, sizes: '(max-width: 900px) 92vw, 88vw' })}
       </div>
+      <ul class="capability-grid">${cards}</ul>
     </section>`;
 }
 

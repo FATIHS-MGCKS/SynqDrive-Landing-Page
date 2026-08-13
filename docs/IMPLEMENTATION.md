@@ -342,8 +342,9 @@ screenshots are byte-identical to the locally approved build.
 - **P1.6 / P1.6.1:** Production deployment, live acceptance, and artefact hygiene — **complete** (2026-08-12).
 - **P2.1:** Mobile experience baseline audit — **complete** (2026-08-12).
 - **P2.2:** Global mobile layout system — **merged to main** (PR #2, 2026-08-12).
-- **P2.3:** Hero mobile composition — **implemented locally** (not deployed); see [`docs/audits/landing-page-phase-2.3-hero-mobile-composition-2026-08.md`](audits/landing-page-phase-2.3-hero-mobile-composition-2026-08.md).
-- **Phase 2.4–2.8:** Remaining section-specific mobile composition — **pending**.
+- **P2.3:** Hero mobile composition — **merged to main** (PR #3, 2026-08-12).
+- **P2.4:** Platform + Vehicle mobile composition — **implemented locally** (not deployed); see [`docs/audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md`](audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md).
+- **Phase 2.5–2.8:** Remaining section-specific mobile composition — **pending**.
 - Solutions, Resources, and Pricing top-level navigation remain deferred until real destination pages exist (DEC-004).
 - Taxi & Mobility may become a future Solutions page; it does not imply generally available Taxi Dispatch (DEC-009).
 - The product visuals are English on both locales. German screenshot variants deferred.
@@ -401,7 +402,7 @@ Phase 2.2 introduces a shared responsive foundation in `src/styles.css` without 
 - WebKit smoke: **2/2**
 - P2.2 screenshots: `qa/p22-*` (gitignored)
 
-## Hero mobile composition (P2.3 — local, not deployed)
+## Hero mobile composition (P2.3 — merged to main, not deployed)
 
 **Audit:** [`docs/audits/landing-page-phase-2.3-hero-mobile-composition-2026-08.md`](audits/landing-page-phase-2.3-hero-mobile-composition-2026-08.md)
 
@@ -427,3 +428,27 @@ P2.3 restructures Hero markup and CSS only — no navigation, asset, or downstre
 - H-01: **RESOLVED**
 - Production: **NOT DEPLOYED**
 - 390×844 DE frame top: **508px** (P2.2 **716px**)
+
+## Platform + Vehicle mobile composition (P2.4 — local, not deployed)
+
+**Audit:** [`docs/audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md`](audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md)
+
+### Platform
+
+| Viewport | Order |
+|---|---|
+| Mobile/tablet (≤1024) | `.brief__intro` → `.stack__media` → compact `.capability-grid` |
+| Desktop (≥1025) | Grid: intro + 2×2 cards row 1; product frame row 2 |
+
+Mobile capabilities use `.capability--compact` divider rows (0 full card surfaces at ≤1024).
+
+### Vehicle
+
+- Stage panel preserved; `.frame--flush` containment unchanged
+- Mobile: tighter note padding/rhythm; lighter panel radius at ≤760px
+
+### QA
+
+- Chromium: **61/61**
+- WebKit smoke: **2/2**
+- 390×844 DE Platform frame distance: **284px** (was **962px**)
