@@ -335,5 +335,66 @@ Product image files unchanged in this phase.
 # Commit SHAs
 
 **Starting SHA:** `d35bca70d1c8bd07aa703c813bedf64886242a0b`  
+**Implementation commit:** `ffe7417`  
+**Documentation commit:** `004c8d0`
+
+---
+
+## Post-review compact-surface ownership correction (P2.5.1)
+
+**Date:** 2026-08-13  
+**Scope:** Workflow compact-surface cascade only — composition unchanged
+
+### Duplicate Workflow compact-surface ownership
+
+P2.5 duplicated `.surface--compact` chrome inside `.workflow--compact .chain__link.chain__link--compact.surface--compact` (padding, border reset, transparent background, bottom hairline, and `:last-child` divider removal).
+
+### Cascade fix
+
+- **Mobile (≤1024):** canonical `.surface--compact` owns compact chrome; `.workflow--compact` owns layout/typography only (list gap, chevron removal, heading/body spacing)
+- **Desktop (≥1025):** `.chain__link` card chrome scoped to `@media (min-width: 1025px)`; `.workflow--compact .chain__link--compact` restores full cards with sufficient specificity to beat `.surface--compact:last-child`
+- **`position: static` removed** — not required once chevron pseudo-elements are disabled on mobile; `position: relative` retained from base `.chain__link` without layout change
+
+### Mobile Workflow divider regression
+
+**PASS** — P2.5.1 test verifies all three links at ≤1024: `surface--compact` class, ~14px padding, zero side/top borders, transparent background, links 1–2 bottom divider > 0, link 3 bottom divider = 0
+
+### Desktop Workflow all-three-card chrome
+
+**PASS** — P2.5.1 test verifies non-zero borders, non-transparent background, and radius on all three chain cards at **1100**, **1280**, **1440**, **1920**; 3-column layout retained
+
+### Composition freeze verification (390×844 DE, post-settle)
+
+| Metric | P2.5 | P2.5.1 | Δ |
+|---|---|---|---|
+| AI frame top | 307.9px | **307.9px** | — |
+| AI section height | 1248px | **1248px** | — |
+| Workflow frame top | 624.3px | **624.3px** | — |
+| Workflow section height | 1029px | **1029px** | — |
+| Page height | 8804px | **8804px** | — |
+
+(AI/Workflow mobile order unchanged.)
+
+### Final QA
+
+| Gate | Result |
+|---|---|
+| Chromium | **77/77** |
+| WebKit smoke | **2/2** |
+
+### Finding status
+
+- **H-03:** **PARTIAL**
+- **H-04:** **PARTIAL**
+
+### Asset classification
+
+- AI: **C** — manual asset still recommended
+- Workflow: **C** — manual asset still recommended
+- Product Images changed: **NO**
+- Production deployed: **NO**
+
+### P2.5.1 commit SHA
+
 **Implementation commit:** *(recorded after commit)*  
 **Documentation commit:** *(recorded after commit)*
