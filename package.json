@@ -15,7 +15,7 @@
     "qa:prod": "LANDING_QA_BASE_URL=https://synqdrive.eu LANDING_QA_LABEL=prod playwright test -c e2e/playwright.landing-qa.config.ts",
     "assets": "node tools/build-assets.mjs",
     "icons": "node tools/build-icons.mjs",
-    "package": "cd dist && tar -czf ../synqdrive-landing-page.tar.gz ."
+    "package": "node tools/package-site.mjs"
   },
   "devDependencies": {
     "@playwright/test": "^1.52.0",
