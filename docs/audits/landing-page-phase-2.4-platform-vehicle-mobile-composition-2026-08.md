@@ -31,7 +31,7 @@ P2.4 makes Platform and Connected Vehicle Intelligence more product-led on mobil
 |---|---|---|
 | **H-02** | Platform mobile composition | Primary |
 | **M-01** | Vehicle notes lengthen section | Primary |
-| **G-02** | Excessive mobile vertical length | Hero contribution only — improved here |
+| **G-02** | Excessive mobile vertical length | Platform/Vehicle contribution improved; global excessive-length finding remains **PARTIAL** |
 | **G-03** | Product visuals deprioritized | Improved in Platform |
 | **M-03** | Screenshot readability | Monitor — layout improved; crops unchanged |
 
@@ -177,7 +177,17 @@ Stage concept preserved — one composed panel with `.frame--flush` inside `.sta
 
 ## DE / EN
 
-Both locales pass P2.4 invariants. German stress-tested for capability title wrapping and note length.
+**Platform phone (≤480):** DE and EN — widths 320, 360, 375, 390, 393, 414, 430, 480.
+
+**Platform tablet:** DE and EN — widths 768, 1024.
+
+**Platform desktop:** DE only — widths 1100, 1280, 1440, 1920 (card/grid regression); layout geometry at 1100, 1440, 1920.
+
+**Vehicle phone/tablet:** DE and EN — widths 320–480 and 600, 768, 820, 1024.
+
+**Vehicle desktop:** DE and EN — widths 1100, 1280, 1440, 1920.
+
+German remains the primary stress case for wrapping; EN verified at the widths above.
 
 ---
 
@@ -255,3 +265,68 @@ Hero → Platform → Vehicle rhythm reviewed: Platform product arrives earlier;
 **Starting SHA:** `d1c6531`  
 **Implementation commit:** `5f7ae7d`  
 **Documentation commit:** `f8617ee`
+
+---
+
+## Post-review system consistency correction (P2.4.1)
+
+**Date:** 2026-08-13  
+**Scope:** Compact-surface reuse, locale QA coverage, documentation accuracy — composition unchanged
+
+### 1. Duplicate compact-surface ownership
+
+P2.4 duplicated `.surface--compact` chrome inside `.brief--product-led .capability--compact` (padding, border reset, transparent background, bottom hairline).
+
+### 2. Canonical `.surface--compact` reuse
+
+Markup now uses:
+
+`capability capability--compact surface surface--compact`
+
+### 3. Cascade solution
+
+- **Mobile (≤1024):** `.surface--compact` owns compact chrome; `.capability--compact` owns layout only (icon/text grid, typography)
+- **Desktop (≥1025):** `.capability` card chrome scoped to `@media (min-width: 1025px)` so full cards restore without compact surface winning
+
+Duplicate surface property declarations removed from `.brief--product-led .capability--compact`.
+
+### 4. Mobile Platform regression
+
+**PASS** — 390×844 DE: section height **1017px**, frame top **284px** (unchanged from accepted P2.4)
+
+### 5. Desktop Platform geometry
+
+**PASS** at 1100 / 1440 / 1920 — intro left of grid, shared row-one alignment, media below row one
+
+### 6. EN Platform tablet coverage
+
+**PASS** — DE + EN at 768 and 1024
+
+### 7. EN Vehicle coverage
+
+**PASS** — DE + EN phone/tablet invariants; DE + EN desktop stage at 1100–1920
+
+### 8. G-02 wording
+
+Corrected to: Platform/Vehicle contribution improved; global status remains **PARTIAL**
+
+### 9. IMPLEMENTATION P2.3 status
+
+Heading corrected to **merged to main, not deployed**
+
+### 10. Final QA
+
+| Gate | Result |
+|---|---|
+| Chromium | **61/61** |
+| WebKit smoke | **2/2** |
+
+### 11. Finding status
+
+- **H-02:** **RESOLVED**
+- **M-01:** **PARTIAL**
+
+### P2.4.1 commit SHA
+
+**Implementation commit:** `0d711fa`  
+**Documentation commit:** *(recorded after commit)*

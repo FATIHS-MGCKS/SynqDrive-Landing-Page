@@ -402,7 +402,7 @@ Phase 2.2 introduces a shared responsive foundation in `src/styles.css` without 
 - WebKit smoke: **2/2**
 - P2.2 screenshots: `qa/p22-*` (gitignored)
 
-## Hero mobile composition (P2.3 — local, not deployed)
+## Hero mobile composition (P2.3 — merged to main, not deployed)
 
 **Audit:** [`docs/audits/landing-page-phase-2.3-hero-mobile-composition-2026-08.md`](audits/landing-page-phase-2.3-hero-mobile-composition-2026-08.md)
 
@@ -449,6 +449,6 @@ Mobile capabilities use `.capability--compact` divider rows (0 full card surface
 
 ### QA
 
-- Chromium: **58/58**
+- Chromium: **61/61**
 - WebKit smoke: **2/2**
 - 390×844 DE Platform frame distance: **284px** (was **962px**)
