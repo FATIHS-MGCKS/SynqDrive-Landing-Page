@@ -256,12 +256,15 @@ Forced abort of fingerprinted CSS at 390×844:
 
 ### Release package (NOT DEPLOYED)
 
-| Field | Value |
-|---|---|
-| File | `synqdrive-landing-page.tar.gz` |
-| Size | **1,033,438 bytes** |
-| SHA-256 | `8092d9c326110f3d1ed0ca32e5f360fd38bf2f4f5a5d9f4affe1156504160c23` |
-| Extract verification | HTML → fingerprinted asset references resolve **PASS** |
+**SUPERSEDED by E1.2** — prior non-deterministic legacy `tar -czf` identities must not be used for deploy:
+
+| Field | Value | Status |
+|---|---|---|
+| Size | **1,033,438 bytes** | **SUPERSEDED** |
+| SHA-256 | `8092d9c326110f3d1ed0ca32e5f360fd38bf2f4f5a5d9f4affe1156504160c23` | **SUPERSEDED** |
+| PR-body interim SHA (legacy tar) | `a9f8b2771b2a84e4a941baa8af55276dbffca069ddcb66a6419422066122faa3` / 1,033,433 bytes | **SUPERSEDED** |
+
+**Current E2 artefact identity:** see **E1.2 Deterministic Release Packaging** below.
 
 ---
 
@@ -343,12 +346,71 @@ External review of Draft PR #9 identified four release blockers. E1.1 addresses 
 
 ---
 
+## E1.2 Deterministic Release Packaging (2026-08-13)
+
+### Prior package SHA contradiction
+
+E1.1 QA recorded legacy-package SHA `8092d9c326110f3d1ed0ca32e5f360fd38bf2f4f5a5d9f4affe1156504160c23` (1,033,438 bytes). Draft PR #9 body later recorded a different legacy-package SHA `a9f8b2771b2a84e4a941baa8af55276dbffca069ddcb66a6419422066122faa3` (1,033,433 bytes). Both were produced from equivalent runtime fingerprints but **different non-deterministic archive bytes** — unacceptable for an exact-artifact E2 deploy gate.
+
+### Root cause (proved)
+
+`package.json` previously used:
+
+```bash
+cd dist && tar -czf ../synqdrive-landing-page.tar.gz .
+```
+
+GNU `tar -czf` embeds per-file metadata from `dist/` (mtime, uid, gid). Each `npm run build` refreshes filesystem mtimes even when file **content** bytes are unchanged. The gzip stream also carries a modification timestamp unless suppressed. Re-packaging the same dist after `touch index.html` changed legacy archive SHA (`4bdc7e4f…` → `4e7e23cc…`) and size (1,033,433 → 1,033,434 bytes) without changing runtime HTML/CSS/JS content.
+
+### Deterministic packaging implementation
+
+- **NEW:** `tools/package-site.mjs`
+- **`npm run package`** now invokes the wrapper
+- Archive creation uses sorted paths, fixed mtime (`@0`), root owner/group (`0:0`), numeric owners, and `gzip -n`
+- Package contract verification remains: site files at archive root, required runtime assets present, forbidden repo paths absent, HTML references resolve
+
+Runtime landing assets unchanged: `styles.88323d36c46c.css`, `script.6e17f1c027e9.js`.
+
+### Reproducibility proof (unchanged dist/)
+
+| Run | Size (bytes) | SHA-256 |
+|---|---|---|
+| Package run #1 | **1,027,239** | `75cdd62cf817adc1027d23265044cbeab21a805f1b1c2afe2324b712fcdae55d` |
+| Package run #2 (no dist change) | **1,027,239** | `75cdd62cf817adc1027d23265044cbeab21a805f1b1c2afe2324b712fcdae55d` |
+
+**run1 == run2:** **YES**
+
+### Clean rebuild proof
+
+After `npm run build` from the same source HEAD (no source edits), deterministic packaging reproduced the same archive identity:
+
+| Field | Value |
+|---|---|
+| Size | **1,027,239 bytes** |
+| SHA-256 | `75cdd62cf817adc1027d23265044cbeab21a805f1b1c2afe2324b712fcdae55d` |
+| Matches reproducibility SHA | **YES** |
+
+### Final E2 artefact identity (NOT DEPLOYED)
+
+| Field | Value |
+|---|---|
+| Path | `synqdrive-landing-page.tar.gz` |
+| Size | **1,027,239 bytes** |
+| SHA-256 | `75cdd62cf817adc1027d23265044cbeab21a805f1b1c2afe2324b712fcdae55d` |
+| Extract verification | HTML → fingerprinted asset references resolve **PASS** |
+| Production touched | **NO** |
+
+**E1.2 result:** **PASS** (local; **NOT DEPLOYED**)
+
+---
+
 ## E2 Deployment Readiness
 
 | Gate | Status |
 |---|---|
 | E1 implementation complete | **YES** |
 | E1.1 review blockers resolved | **YES** |
+| E1.2 deterministic package identity frozen | **YES** |
 | Local QA green (107 Chromium / 10 WebKit) | **YES** |
 | Release package verified | **YES** |
 | Production touched | **NO** |
@@ -368,8 +430,8 @@ External review of Draft PR #9 identified four release blockers. E1.1 addresses 
 
 ## Commit SHAs
 
-| Item | SHA |
+| Phase | Commits |
 |---|---|
-| Build fingerprinting | `d9b0bbc` |
-| QA guards | `4abcc20` |
-| Incident documentation | *(this commit)* |
+| **E1** | `d9b0bbc` (build fingerprinting), `4abcc20` (QA guards), `941c8b2` (incident documentation) |
+| **E1.1** | `0fa29eb` (delivery recovery), `9bfdc12` (WebKit failure tests), `7bb2131` (E1.1 documentation) |
+| **E1.2** | *(packaging + artefact freeze — see git/PR history)* |

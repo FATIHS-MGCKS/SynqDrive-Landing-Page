@@ -354,7 +354,7 @@ screenshots are byte-identical to the locally approved build.
 - **P2.8B:** Phase-2 Production deployment — **PASS** (2026-08-13); Phase 2 **live** on `synqdrive.eu`.
 - **P2.8C:** Production acceptance — **PASS WITH INFRASTRUCTURE-LIMITED PRODUCTION TESTING** (2026-08-13); exhaustive Production replay stopped due Hostinger rate limiting; critical serial smoke **PASS**.
 - **Phase 2 Production Accepted:** **YES** (P2.8C; pre-E1)
-- **E1 / E1.1 (Mobile Safari CSS delivery):** Remediation on branch `cursor/mobile-safari-css-delivery-incident`; **NOT DEPLOYED**. Real-device unstyled presentation incident; Production health for all real-device clients not assumed until E2 deploy.
+- **E1 / E1.1 / E1.2 (Mobile Safari CSS delivery):** Remediation on branch `cursor/mobile-safari-css-delivery-incident`; **NOT DEPLOYED**. E1.2 adds deterministic release packaging (`tools/package-site.mjs`) so E2 deploy uses a single frozen archive SHA. Production health for all real-device clients not assumed until E2 deploy.
 - Solutions, Resources, and Pricing top-level navigation remain deferred until real destination pages exist (DEC-004).
 - Taxi & Mobility may become a future Solutions page; it does not imply generally available Taxi Dispatch (DEC-009).
 - The product visuals are English on both locales. German screenshot variants deferred.
