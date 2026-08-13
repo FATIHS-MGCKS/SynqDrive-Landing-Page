@@ -329,4 +329,64 @@ Heading corrected to **merged to main, not deployed**
 ### P2.4.1 commit SHA
 
 **Implementation commit:** `0d711fa`  
-**Documentation commit:** *(recorded after commit)*
+**Documentation commit:** `df6294d`
+
+---
+
+## Post-review desktop surface cascade correction (P2.4.2)
+
+**Date:** 2026-08-13  
+**Scope:** Desktop Platform card border cascade only — mobile compact rows unchanged
+
+### Root cause
+
+`.surface--compact:last-child { border-bottom: 0; }` (specificity 0,2,0) outranked the desktop restoration rule `.capability { border: … }` (specificity 0,1,0) on the fourth capability card, leaving `border-bottom: 0` at ≥1025px.
+
+### Cascade fix
+
+Desktop full-card chrome scoped to Platform composition with equal-or-higher specificity and later source order:
+
+```css
+@media (min-width: 1025px) {
+  .brief--product-led .capability { … }
+  .brief--product-led .capability:hover { … }
+  .brief--product-led .capability h3 { … }
+  .brief--product-led .capability p { … }
+}
+```
+
+The Platform desktop selector now owns all four card borders consistently. Canonical `.surface--compact` mobile behavior and semantic markup unchanged.
+
+### Desktop all-four-card border verification
+
+**PASS** — `readPlatformComposition()` extended with per-card `borderTopWidth`, `borderRightWidth`, `borderBottomWidth`, `borderLeftWidth`, `background`, and `borderRadius`. New test `P2.4.2 platform desktop all-four-card borders` asserts non-zero borders, non-transparent background, and restored radius on all four cards at **1100**, **1280**, **1440**, and **1920**.
+
+### Mobile compact-row regression
+
+**PASS** — ≤1024 unchanged: four `surface--compact` rows, last row `border-bottom: 0`, zero full mobile card surfaces, Product Visual order unchanged.
+
+| Metric (390×844 DE, post-settle) | Value |
+|---|---|
+| Section height | **1081px** (unchanged from P2.4.1 baseline in QA) |
+| Section top → Product Frame top | **283.5px** (≈284px; unchanged) |
+
+### Desktop Platform geometry
+
+**PASS** — existing P2.4.1 geometry tests retained at 1100 / 1440 / 1920.
+
+### Final QA
+
+| Gate | Result |
+|---|---|
+| Chromium | **62/62** |
+| WebKit smoke | **2/2** |
+
+### Finding status
+
+- **H-02:** **RESOLVED**
+- **M-01:** **PARTIAL**
+
+### P2.4.2 commit SHA
+
+**Implementation commit:** `00097c2`  
+**Documentation commit:** `ed11339`
