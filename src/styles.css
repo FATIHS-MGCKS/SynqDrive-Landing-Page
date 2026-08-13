@@ -104,6 +104,7 @@
 
   --ease: cubic-bezier(0.16, 1, 0.3, 1);
   --masthead-h: 68px;
+  --synqdrive-release-css: 1;
 }
 
 *,

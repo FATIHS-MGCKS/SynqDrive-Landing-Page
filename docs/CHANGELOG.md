@@ -20,6 +20,63 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+---
+
+## E1.2 deterministic release packaging — 2026-08-13
+
+**Scope:** Exact-artifact deploy gate — **NOT DEPLOYED**
+
+### Changed
+
+- **`tools/package-site.mjs`** — deterministic `synqdrive-landing-page.tar.gz` packaging (`tar --sort=name --mtime=@0 … | gzip -n`) plus archive contract verification
+- **`package.json`** — `npm run package` invokes the wrapper
+
+### Result
+
+- Legacy non-deterministic archive SHAs **SUPERSEDED**
+- Single frozen E2 artefact: **1,027,239 bytes**, SHA-256 `75cdd62cf817adc1027d23265044cbeab21a805f1b1c2afe2324b712fcdae55d`
+- Runtime fingerprints unchanged: `styles.88323d36c46c.css`, `script.6e17f1c027e9.js`
+- Chromium **107/107 PASS**, WebKit **10/10 PASS**
+
+---
+
+## E1.1 post-review delivery hardening — 2026-08-13
+
+**Scope:** External review corrections on Draft PR #9 — **NOT DEPLOYED**
+
+### Added
+
+- Intrinsic `width="24" height="24"` on generated Lucide SVG roots
+- Strengthened catastrophic fallback (`html`/`body` white canvas, `color-scheme: light`, bounded SVG, `.nav-panel[inert]{display:none}`)
+- One-time primary CSS failure recovery via `/styles.css?v=<cssFingerprint>` (exactly once, no loop)
+- WebKit forced-failure, dark-mode, and incident-signature regression guards
+- Chromium primary-failure recovery and total-failure guards
+
+### QA (local)
+
+- Chromium **107/107 PASS**
+- WebKit **10/10 PASS**
+
+---
+
+## Mobile Safari CSS delivery incident (E1) — 2026-08-13
+
+**Incident:** Real iPhone Safari unstyled / partially styled Production presentation  
+**Audit:** [`docs/audits/landing-page-mobile-safari-css-delivery-incident-2026-08.md`](audits/landing-page-mobile-safari-css-delivery-incident-2026-08.md)
+
+### Result
+
+- **E1:** PASS (local release candidate; **NOT DEPLOYED**)
+- Root cause class: stylesheet delivery / cache-versioning failure (stable `/styles.css` architecture weakness)
+- Remediation: fingerprinted CSS/JS, transitional aliases, catastrophic inline fallback, WebKit/Chromium guards
+
+### Production status
+
+- Production runtime unchanged (`92392d2` artefact still live)
+- E2 controlled deploy pending external review
+
+---
+
 ## Phase 2 production acceptance (P2.8C) — 2026-08-13
 
 **Phase:** P2.8C — Production acceptance (infrastructure-limited)  

@@ -9,7 +9,9 @@
  * Output:
  *   dist/index.html      German, root locale (matches the current public site)
  *   dist/en/index.html   English
- *   dist/styles.css, dist/script.js, dist/assets/**
+ *   dist/styles.<hash>.css, dist/script.<hash>.js   fingerprinted runtime assets
+ *   dist/styles.css, dist/script.js                 transitional compatibility aliases
+ *   dist/assets/**
  *   dist/robots.txt, dist/sitemap.xml
  *
  * Usage: node landingpage/tools/build-site.mjs
@@ -18,6 +20,12 @@ import { cp, mkdir, readdir, readFile, rm, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+import {
+  contentFingerprint,
+  fingerprintedCssName,
+  fingerprintedJsName,
+  verifyFingerprintedFilename,
+} from './fingerprint-assets.mjs';
 import { isPublicStaticFile } from './public-artefact-policy.mjs';
 
 import { SITE, locales } from '../content/site.mjs';
@@ -44,6 +52,27 @@ const HERO = locales[0].hero.media;
 
 /** Fixed 1200x630 JPEG, see the social card target in build-assets.mjs. */
 const SOCIAL_CARD = { url: `${SITE.origin}/assets/landing-social-card.jpg`, width: 1200, height: 630 };
+
+/**
+ * Minimal inline safety net when the external stylesheet fails to load.
+ * Not a substitute for the real design system — foundational degradation only.
+ */
+const CATASTROPHIC_FALLBACK_STYLE = [
+  '*,*::before,*::after{box-sizing:border-box}',
+  'html{background:#fff;color-scheme:light;-webkit-text-size-adjust:100%}',
+  'body{margin:0;background:#fff;color:#111827;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;line-height:1.6;overflow-x:hidden}',
+  'img,video{max-width:100%;height:auto;display:block}',
+  'svg{width:24px;height:24px;max-width:100%;display:block}',
+  'ul,ol{margin:0;padding:0;list-style:none}',
+  'a{color:inherit;text-decoration:none}',
+  '.skip-link{position:absolute;left:16px;top:-64px;z-index:60;padding:10px 16px;background:#111827;color:#fff;font-size:14px;font-weight:600}',
+  '.skip-link:focus-visible{top:14px}',
+  '.nav-panel[inert]{display:none}',
+].join('');
+
+function stylesheetRecoveryScript(assets) {
+  return `(function(){var primary=${JSON.stringify(assets.cssHref)};var fingerprint=${JSON.stringify(assets.cssFingerprint)};var link=document.querySelector('link[data-synqdrive-primary-stylesheet]');if(!link||link.getAttribute('href')!==primary)return;var retried=false;link.addEventListener('error',function(){if(retried)return;retried=true;var retry=document.createElement('link');retry.rel='stylesheet';retry.href='/styles.css?v='+encodeURIComponent(fingerprint);retry.setAttribute('data-synqdrive-stylesheet-retry','');link.after(retry);});})();`;
+}
 
 /** Both locales plus x-default, emitted identically on every page. */
 function hreflangTags() {
@@ -72,7 +101,10 @@ function structuredData(locale) {
   });
 }
 
-function document(locale) {
+/**
+ * @param {{ cssHref: string; jsHref: string }} assets
+ */
+function document(locale, assets) {
   const other = locales.find((candidate) => candidate.locale !== locale.locale);
   const canonical = `${SITE.origin}${locale.dir}`;
 
@@ -130,7 +162,9 @@ function document(locale) {
       imagesizes="${HERO_SIZES}"
       fetchpriority="high"
     />
-    <link rel="stylesheet" href="/styles.css" />
+    <style id="synqdrive-catastrophic-fallback">${CATASTROPHIC_FALLBACK_STYLE}</style>
+    <link rel="stylesheet" href="${assets.cssHref}" data-synqdrive-primary-stylesheet />
+    <script>${stylesheetRecoveryScript(assets)}</script>
     <script>
       /* Reveal styles apply only when scripting is available, so the page never
          stays blank without JavaScript. Setting the class here rather than in
@@ -149,10 +183,20 @@ function document(locale) {
   <body>
     <a class="skip-link" href="#main">${locale.meta.skipLink}</a>
     ${body}
-    <script src="/script.js" defer></script>
+    <script src="${assets.jsHref}" defer></script>
   </body>
 </html>
 `;
+}
+
+async function writeRuntimeAsset(distDir, filename, content) {
+  const target = path.join(distDir, filename);
+  await writeFile(target, content);
+  verifyFingerprintedFilename(filename, content);
+}
+
+async function writeCompatibilityAlias(distDir, filename, content) {
+  await writeFile(path.join(distDir, filename), content);
 }
 
 function robots() {
@@ -210,14 +254,28 @@ async function main() {
   await rm(DIST, { recursive: true, force: true });
   await mkdir(DIST, { recursive: true });
 
+  const cssContent = await readFile(path.join(SRC, 'styles.css'));
+  const jsContent = await readFile(path.join(SRC, 'script.js'));
+  const cssFingerprint = contentFingerprint(cssContent);
+  const jsFingerprint = contentFingerprint(jsContent);
+  const cssName = fingerprintedCssName(cssFingerprint);
+  const jsName = fingerprintedJsName(jsFingerprint);
+  const assets = {
+    cssHref: `/${cssName}`,
+    jsHref: `/${jsName}`,
+    cssFingerprint,
+  };
+
   for (const locale of locales) {
     const target = path.join(DIST, locale.dir, 'index.html');
     await mkdir(path.dirname(target), { recursive: true });
-    await writeFile(target, document(locale), 'utf8');
+    await writeFile(target, document(locale, assets), 'utf8');
   }
 
-  await cp(path.join(SRC, 'styles.css'), path.join(DIST, 'styles.css'));
-  await cp(path.join(SRC, 'script.js'), path.join(DIST, 'script.js'));
+  await writeRuntimeAsset(DIST, cssName, cssContent);
+  await writeRuntimeAsset(DIST, jsName, jsContent);
+  await writeCompatibilityAlias(DIST, 'styles.css', cssContent);
+  await writeCompatibilityAlias(DIST, 'script.js', jsContent);
   await copyPublicAssets(path.join(ROOT, 'assets'), path.join(DIST, 'assets'));
   await writeFile(path.join(DIST, 'robots.txt'), robots(), 'utf8');
   await writeFile(path.join(DIST, 'sitemap.xml'), sitemap(), 'utf8');
@@ -230,6 +288,10 @@ async function main() {
     }
     console.log(`${locale.locale.padEnd(3)} ${(html.length / 1024).toFixed(1)} kB html`);
   }
+
+  console.log(`css ${cssName}`);
+  console.log(`js  ${jsName}`);
+  console.log('aliases styles.css, script.js');
 }
 
 await main();

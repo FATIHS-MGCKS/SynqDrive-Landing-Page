@@ -3,7 +3,7 @@ import { defineConfig } from '@playwright/test';
 /** Targeted WebKit smoke tests for mobile navigation (P1.4.1). */
 export default defineConfig({
   testDir: '.',
-  testMatch: /mobile-nav-webkit\.spec\.ts/,
+  testMatch: /(mobile-nav-webkit|stylesheet-delivery-webkit)\.spec\.ts/,
   fullyParallel: false,
   workers: 1,
   retries: 0,
