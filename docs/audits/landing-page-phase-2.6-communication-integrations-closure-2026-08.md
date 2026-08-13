@@ -404,4 +404,36 @@ Communication authoritative values unchanged: section **1042px**, frame top **23
 ### P2.6.1 commit SHA
 
 **Implementation commit:** `2156752`  
-**Documentation commit:** *(after push)*
+**Documentation commit:** `368a15d`  
+**SHA finalizer:** `633ad3c`
+
+---
+
+# P2.6 FINAL TECHNICAL STATE
+
+- Communication composition: **PASS**
+- Communication asset dependency: **Class C**
+- H-05: **PARTIAL**
+- Integrations mobile hub: **PASS**
+- six-row mobile continuity: **PASS**
+- Core → Item 1 at 390: **18px**
+- Item 3 → Item 4 at 390: **1px**
+- Item 3/4 separator: **PASS**
+- Integrations section height at 390: **966px**
+- Page height at 390: **8626px**
+- M-02: **RESOLVED**
+- L-01: **RESOLVED**
+- L-02: **RESOLVED**
+- Chromium: **93/93**
+- WebKit: **2/2**
+- Product Images changed: **NO**
+- Production deployed: **NO**
+- PR #6 merged: **NO**
+- P2.7 started: **NO**
+
+### Approved commit references
+
+| Phase | Implementation | Documentation | SHA finalizer |
+|---|---|---|---|
+| P2.6 | `94d1acd` | `571169d` | `42bbf76` |
+| P2.6.1 | `2156752` | `368a15d` | `633ad3c` |
