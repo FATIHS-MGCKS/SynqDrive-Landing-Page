@@ -182,7 +182,7 @@ function renderMobileNav(c, other, site) {
             <div class="mobilenav__bottom">
               <div class="mobilenav__actions">
                 ${action({ href: site.links.demo, label: c.nav.demo, variant: 'primary', className: 'mobilenav__demo' })}
-                ${action({ href: site.links.contact, label: mobile.sales, variant: 'secondary', className: 'mobilenav__sales' })}
+                <a class="action action--secondary mobilenav__sales" href="${site.links.contact}">${esc(mobile.sales)}</a>
               </div>
               <div class="mobilenav__locale" role="group" aria-label="${esc(mobile.languageLabel)}">
                 <span class="mobilenav__locale-current" aria-current="true">${esc(c.meta.localeName)}</span>
