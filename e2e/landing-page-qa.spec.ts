@@ -3524,6 +3524,7 @@ test.describe('public landing page', () => {
       await expect(panel).toBeVisible();
 
       const label = PLATFORM_NAV.de.links.find((link) => link.href === hash)!.label;
+      await panel.getByRole('button', { name: 'Plattform' }).click();
       await panel.getByRole('link', { name: label }).click();
       await expect(panel).toBeHidden();
 
