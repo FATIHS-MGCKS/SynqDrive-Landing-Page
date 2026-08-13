@@ -159,7 +159,11 @@
         'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
       ),
     ).filter(function (node) {
-      return !node.closest('[hidden]') && node.getAttribute('aria-hidden') !== 'true';
+      return (
+        !node.closest('[hidden]') &&
+        node.getAttribute('aria-hidden') !== 'true' &&
+        node.getAttribute('tabindex') !== '-1'
+      );
     });
   }
 

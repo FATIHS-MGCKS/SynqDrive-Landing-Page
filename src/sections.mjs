@@ -137,7 +137,7 @@ function renderMobileNav(c, other, site) {
         inert
       >
         <div class="mobilenav__topbar">
-          <a class="brand mobilenav__brand" href="${c.dir}" aria-label="${esc(c.nav.home)}">
+          <a class="brand mobilenav__brand" href="${c.dir}" tabindex="-1" aria-label="${esc(c.nav.home)}">
             <img src="/assets/synqdrive-logo.png" width="1024" height="216" alt="SynqDrive" />
           </a>
           <button
