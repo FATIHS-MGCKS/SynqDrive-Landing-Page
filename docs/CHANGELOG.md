@@ -18,6 +18,56 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+---
+
+## Phase 2 production acceptance (P2.8C) — 2026-08-13
+
+**Phase:** P2.8C — Production acceptance (infrastructure-limited)  
+**Audit:** [`docs/audits/landing-page-phase-2.8c-production-acceptance-2026-08.md`](audits/landing-page-phase-2.8c-production-acceptance-2026-08.md)
+
+### Result
+
+- **P2.8C:** PASS WITH INFRASTRUCTURE-LIMITED PRODUCTION TESTING
+- **Phase 2 Production Accepted:** YES
+- Full Production Chromium replay: **ABORTED** (Hostinger rate limiting; first run 56/100 before stop)
+- Critical serial Production smoke: **PASS**
+- CRITICAL / HIGH runtime findings: **0**
+
+### QA truth
+
+- Pre-deploy exact artefact Chromium: **100/100**
+- Pre-deploy exact artefact WebKit: **2/2**
+- Production exhaustive replay: **NOT COMPLETED** (Hostinger rate limiting)
+- Production critical acceptance: **PASS**
+
+---
+
+## Phase 2 production deployment (P2.8B) — 2026-08-13
+
+**Phase:** P2.8B — Exact Phase-2 Production deployment  
+**Audit:** [`docs/audits/landing-page-phase-2.8b-production-deployment-2026-08.md`](audits/landing-page-phase-2.8b-production-deployment-2026-08.md)
+
+### Deployed
+
+- Exact P2.8A artefact to `https://synqdrive.eu` via Hostinger static deploy
+- Runtime source SHA: `92392d23ca9f12c4d18befdcd06c611a593dd3a9`
+- Rollback not required
+
+---
+
+## Phase 2 pre-deployment freeze (P2.8A) — 2026-08-13
+
+**Phase:** P2.8A — Pre-deployment freeze, rollback capture, release artefact verification  
+**Audit:** [`docs/audits/landing-page-phase-2.8a-production-predeploy-2026-08.md`](audits/landing-page-phase-2.8a-production-predeploy-2026-08.md)
+
+### Verified
+
+- Release artefact SHA-256: `37abe53e1564542854b68ea57f1893c914645eb54ebc21f872680efc61326e09`
+- Rollback archive SHA-256: `a767d61ce374af42e8219deee7ae55e7366843853dab533c5cc3ece842c2d8bc`
+- P2.8B GO: **YES** (no deploy in P2.8A)
+
+---
+
 ## Phase-2 integration QA (P2.7) — 2026-08-13
 
 **Phase:** P2.7 — Full Phase-2 integration QA & release-candidate hardening (Draft PR; **not deployed**)  
