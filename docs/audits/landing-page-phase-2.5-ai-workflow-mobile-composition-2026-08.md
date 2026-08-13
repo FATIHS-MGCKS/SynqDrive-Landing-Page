@@ -487,5 +487,80 @@ The original P2.5 audit prose (**660.3px / 1065px / 8840px**) was recorded befor
 
 ### P2.5.2 commit SHA
 
-**Implementation commit:** *(recorded after commit)*  
-**Documentation commit:** *(recorded after commit)*
+**Implementation commit:** `86d141d`  
+**Documentation commit:** `e910454`
+
+---
+
+## Post-review ownership regression correction (P2.5.3)
+
+**Date:** 2026-08-13  
+**Scope:** Restore canonical Workflow surface ownership after P2.5.2 regression — no composition, content, or asset change
+
+### What P2.5.2 (`86d141d`) accidentally reintroduced
+
+External review found that commit **`86d141d`** attempted desktop card-chrome consolidation but also:
+
+1. Restored generic card chrome on base **`.chain__link`** at all widths (padding, border, radius, background)
+2. Reintroduced a duplicate mobile compact-surface block on **`.workflow--compact .chain__link.chain__link--compact.surface--compact`** (padding `14px 0`, border reset, transparent background, bottom divider, and `:last-child` divider removal)
+3. Left a second desktop owner on **`.workflow--compact .chain__link--compact`** instead of the intended single selector
+
+Therefore the P2.5.2 audit statement that mobile canonical ownership was unchanged and that a single desktop owner was already in place was **inaccurate** for the shipped CSS.
+
+### P2.5.3 correction
+
+P2.5.3 restores the intended P2.5.1 architecture:
+
+| Breakpoint | Sole surface/card owner | Workflow-specific rules own |
+|---|---|---|
+| Mobile ≤1024 | **`.surface--compact`** — padding, border reset, radius reset, transparent background, bottom divider, last-child divider removal | `.chain__list` gap/margin; connector/chevron suppression; heading/body spacing/type only |
+| Desktop ≥1025 | **`.workflow--compact .chain__link`** — padding, border, radius, background | — |
+
+Base **`.chain__link`** owns **`position: relative` only** (no card chrome at any width).
+
+### Source-level regression guard
+
+Added **`P2.5.3 workflow CSS source ownership`** — reads `src/styles.css` and asserts:
+
+- Workflow mobile rules do not duplicate canonical `.surface--compact` chrome (`padding: 14px 0`, `border-radius: 0`, `background: transparent`, `border-bottom: 1px solid var(--hairline)`)
+- No Workflow-specific `.surface--compact:last-child` rule
+- Exactly one desktop Workflow card-chrome selector: `.workflow--compact .chain__link`
+- Base `.chain__link` contains only positioning, not card chrome
+
+Existing P2.5.1 computed-style mobile and desktop rendered tests retained unchanged.
+
+### Composition freeze verification (390×844 DE, post-settle)
+
+Re-measured after CSS cleanup — values remain effectively identical to P2.5.2 authoritative metrics (sub-pixel rounding acceptable):
+
+| Metric | P2.5.2 authoritative | P2.5.3 post-correction |
+|---|---|---|
+| AI frame top | **307.9px** | **307.9px** |
+| AI section height | **1248px** | **1248px** |
+| Workflow frame top | **624.3px** | **624.3px** |
+| Workflow section height | **1029px** | **1029px** |
+| Page height | **8804px** | **8804px** |
+| Workflow head → chain gap | **48px** | **48px** |
+| Workflow chain → media gap | **28px** | **28px** |
+
+### Final QA
+
+| Gate | Result |
+|---|---|
+| Chromium | **78/78** |
+| WebKit smoke | **2/2** |
+
+### Finding status
+
+- **H-03:** **PARTIAL**
+- **H-04:** **PARTIAL**
+- AI asset class: **C**
+- Workflow asset class: **C**
+- Product Images changed: **NO**
+- Production deployed: **NO**
+- P2.6 started: **NO**
+
+### P2.5.3 commit SHA
+
+**Implementation commit:** `9c1d016`  
+**Documentation commit:** *(after push)*
