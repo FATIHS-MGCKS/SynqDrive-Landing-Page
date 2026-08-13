@@ -7,6 +7,7 @@
 > **Production runtime source SHA:** `92392d23ca9f12c4d18befdcd06c611a593dd3a9`  
 > **Release artefact SHA-256:** `37abe53e1564542854b68ea57f1893c914645eb54ebc21f872680efc61326e09`  
 > **Acceptance:** P2.8C **PASS WITH INFRASTRUCTURE-LIMITED PRODUCTION TESTING** — see [`docs/audits/landing-page-phase-2.8c-production-acceptance-2026-08.md`](audits/landing-page-phase-2.8c-production-acceptance-2026-08.md)  
+> **Post-release incident (E1):** Real-device Mobile Safari unstyled presentation reported 2026-08-13 — see [`docs/audits/landing-page-mobile-safari-css-delivery-incident-2026-08.md`](audits/landing-page-mobile-safari-css-delivery-incident-2026-08.md). **Remediation NOT DEPLOYED.**
 > **Rollback (local; not used):** `rollback/synqdrive.eu-pre-p2.8-20260813_095611.tar.gz` + [`rollback/README.md`](../rollback/README.md)  
 > **Previous P1.6.1 deploy:** **2026-08-12T14:46:48Z** — see [`docs/audits/landing-page-phase-1.6.1-production-hygiene-2026-08.md`](audits/landing-page-phase-1.6.1-production-hygiene-2026-08.md)
 
@@ -352,7 +353,8 @@ screenshots are byte-identical to the locally approved build.
 - **P2.8A:** Pre-deployment freeze, rollback capture, release artefact verification — **PASS** (2026-08-13).
 - **P2.8B:** Phase-2 Production deployment — **PASS** (2026-08-13); Phase 2 **live** on `synqdrive.eu`.
 - **P2.8C:** Production acceptance — **PASS WITH INFRASTRUCTURE-LIMITED PRODUCTION TESTING** (2026-08-13); exhaustive Production replay stopped due Hostinger rate limiting; critical serial smoke **PASS**.
-- **Phase 2 Production Accepted:** **YES**
+- **Phase 2 Production Accepted:** **YES** (P2.8C; pre-E1)
+- **E1 (Mobile Safari CSS delivery):** Remediation implemented on branch `cursor/mobile-safari-css-delivery-incident`; **NOT DEPLOYED**. Real-device unstyled presentation incident exposes missing asset-versioning / stylesheet resilience controls. Production may not be healthy for all real-device clients until E2 deploy.
 - Solutions, Resources, and Pricing top-level navigation remain deferred until real destination pages exist (DEC-004).
 - Taxi & Mobility may become a future Solutions page; it does not imply generally available Taxi Dispatch (DEC-009).
 - The product visuals are English on both locales. German screenshot variants deferred.
@@ -559,5 +561,7 @@ Mobile chain links use `.surface--compact` divider rows; desktop restores full c
 | Phase 2 Production Accepted | **YES** |
 
 Pre-deployment exact-artefact QA: Chromium **100/100**, WebKit **2/2**. Production exhaustive replay **not completed** (Hostinger rate limiting during parallel QA). Targeted serial Production smoke **PASS**.
+
+**Post-release note (E1):** A real-device Mobile Safari unstyled presentation incident was reported after P2.8 acceptance. Remediation is tracked separately; Production health for all clients should not be assumed until E2 deploy.
 
 **Known non-blocking manual assets:** AI Class C, Workflow Class C, Communication Class C.

@@ -20,6 +20,26 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+---
+
+## Mobile Safari CSS delivery incident (E1) — 2026-08-13
+
+**Incident:** Real iPhone Safari unstyled / partially styled Production presentation  
+**Audit:** [`docs/audits/landing-page-mobile-safari-css-delivery-incident-2026-08.md`](audits/landing-page-mobile-safari-css-delivery-incident-2026-08.md)
+
+### Result
+
+- **E1:** PASS (local release candidate; **NOT DEPLOYED**)
+- Root cause class: stylesheet delivery / cache-versioning failure (stable `/styles.css` architecture weakness)
+- Remediation: fingerprinted CSS/JS, transitional aliases, catastrophic inline fallback, WebKit/Chromium guards
+
+### Production status
+
+- Production runtime unchanged (`92392d2` artefact still live)
+- E2 controlled deploy pending external review
+
+---
+
 ## Phase 2 production acceptance (P2.8C) — 2026-08-13
 
 **Phase:** P2.8C — Production acceptance (infrastructure-limited)  
