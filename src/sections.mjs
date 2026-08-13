@@ -108,7 +108,7 @@ function renderMobileNav(c, other, site) {
             >
               <span class="mobilenav__back-icon">${icon('arrow-right')}</span>
             </button>
-            <h2 id="mobile-nav-${id}-title">${esc(title)}</h2>
+            <p class="mobilenav__subhead-title" id="mobile-nav-${id}-title">${esc(title)}</p>
           </div>
           <ul class="mobilenav__sublist">${items.map(submenuItem).join('')}</ul>
         </section>`;
@@ -155,7 +155,7 @@ function renderMobileNav(c, other, site) {
             data-nav-view="root"
             aria-labelledby="mobile-nav-title"
           >
-            <h2 class="sr-only" id="mobile-nav-title">${esc(mobile.rootTitle)}</h2>
+            <p class="sr-only" id="mobile-nav-title">${esc(mobile.rootTitle)}</p>
             <ul class="mobilenav__root-list">
               ${rootSubmenuRow('platform', c.nav.platform)}
               ${rootSubmenuRow('solutions', mobile.categories.solutions)}
