@@ -344,10 +344,10 @@ screenshots are byte-identical to the locally approved build.
 - **P1.6 / P1.6.1:** Production deployment, live acceptance, and artefact hygiene — **complete** (2026-08-12).
 - **P2.1:** Mobile experience baseline audit — **complete** (2026-08-12).
 - **P2.2:** Global mobile layout system — **merged to main** (PR #2, 2026-08-12).
-- **P2.3:** Hero mobile composition — **merged to main** (PR #3, 2026-08-12).
-- **P2.4:** Platform + Vehicle mobile composition — **merged to main** (PR #4, 2026-08-13); not deployed — see [`docs/audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md`](audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md).
-- **P2.5:** AI + Workflow mobile composition — **merged to main** (PR #5, 2026-08-13); **not deployed** — see [`docs/audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md`](audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md).
-- **P2.6:** Communication + Integrations + closing/footer mobile composition — **merged to main** (PR #6, 2026-08-13); **not deployed** — see [`docs/audits/landing-page-phase-2.6-communication-integrations-closure-2026-08.md`](audits/landing-page-phase-2.6-communication-integrations-closure-2026-08.md).
+- **P2.3:** Hero mobile composition — **merged to main** (PR #3, 2026-08-12); included in Phase-2 Production release — see [`docs/audits/landing-page-phase-2.3-hero-mobile-composition-2026-08.md`](audits/landing-page-phase-2.3-hero-mobile-composition-2026-08.md).
+- **P2.4:** Platform + Vehicle mobile composition — **merged to main** (PR #4, 2026-08-13); included in Phase-2 Production release — see [`docs/audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md`](audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md).
+- **P2.5:** AI + Workflow mobile composition — **merged to main** (PR #5, 2026-08-13); included in Phase-2 Production release — see [`docs/audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md`](audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md).
+- **P2.6:** Communication + Integrations + closing/footer mobile composition — **merged to main** (PR #6, 2026-08-13); included in Phase-2 Production release — see [`docs/audits/landing-page-phase-2.6-communication-integrations-closure-2026-08.md`](audits/landing-page-phase-2.6-communication-integrations-closure-2026-08.md).
 - **P2.7 / P2.7.1:** Phase-2 integration QA & release-gate evidence — **complete** (2026-08-13); Chromium **100/100**, WebKit **2/2** on exact artefact.
 - **P2.8A:** Pre-deployment freeze, rollback capture, release artefact verification — **PASS** (2026-08-13).
 - **P2.8B:** Phase-2 Production deployment — **PASS** (2026-08-13); Phase 2 **live** on `synqdrive.eu`.
@@ -410,7 +410,7 @@ Phase 2.2 introduces a shared responsive foundation in `src/styles.css` without 
 - WebKit smoke: **2/2**
 - P2.2 screenshots: `qa/p22-*` (gitignored)
 
-## Hero mobile composition (P2.3 — merged to main, not deployed)
+## Hero mobile composition (P2.3 — merged to main; included in Phase-2 Production release)
 
 **Audit:** [`docs/audits/landing-page-phase-2.3-hero-mobile-composition-2026-08.md`](audits/landing-page-phase-2.3-hero-mobile-composition-2026-08.md)
 
@@ -434,10 +434,10 @@ P2.3 restructures Hero markup and CSS only — no navigation, asset, or downstre
 - Chromium: **50/50**
 - WebKit smoke: **2/2**
 - H-01: **RESOLVED**
-- Production: **NOT DEPLOYED**
+- Included in Phase-2 Production release (P2.8B)
 - 390×844 DE frame top: **508px** (P2.2 **716px**)
 
-## Platform + Vehicle mobile composition (P2.4 — merged to main, not deployed)
+## Platform + Vehicle mobile composition (P2.4 — merged to main; included in Phase-2 Production release)
 
 **Audit:** [`docs/audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md`](audits/landing-page-phase-2.4-platform-vehicle-mobile-composition-2026-08.md)
 
@@ -461,7 +461,7 @@ Mobile capabilities use `.capability--compact` divider rows (0 full card surface
 - WebKit smoke: **2/2**
 - 390×844 DE Platform frame distance: **284px** (was **962px**)
 
-## AI + Workflow mobile composition (P2.5 — merged to main, not deployed)
+## AI + Workflow mobile composition (P2.5 — merged to main; included in Phase-2 Production release)
 
 **Audit:** [`docs/audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md`](audits/landing-page-phase-2.5-ai-workflow-mobile-composition-2026-08.md)
 
@@ -492,7 +492,7 @@ Mobile chain links use `.surface--compact` divider rows; desktop restores full c
 - 390×844 DE Workflow frame top: **624.3px** (was **715.7px**)
 - 390×844 DE page height: **8804px** (was **8975px**)
 
-## Communication + Integrations + closing/footer (P2.6 — merged to main, not deployed)
+## Communication + Integrations + closing/footer (P2.6 — merged to main; included in Phase-2 Production release)
 
 **Audit:** [`docs/audits/landing-page-phase-2.6-communication-integrations-closure-2026-08.md`](audits/landing-page-phase-2.6-communication-integrations-closure-2026-08.md)
 
@@ -540,3 +540,24 @@ Mobile chain links use `.surface--compact` divider rows; desktop restores full c
 - `--section-y` 1179/1180/1181 boundary explicitly asserted
 - CLS release matrix PASS (DE/EN × 390/768/1440)
 - JavaScript-off DE/EN PASS; anchor offset PASS
+
+---
+
+## Phase 2 production release (P2.8 — deployed 2026-08-13)
+
+**Audits:**
+
+- [`docs/audits/landing-page-phase-2.8a-production-predeploy-2026-08.md`](audits/landing-page-phase-2.8a-production-predeploy-2026-08.md)
+- [`docs/audits/landing-page-phase-2.8b-production-deployment-2026-08.md`](audits/landing-page-phase-2.8b-production-deployment-2026-08.md)
+- [`docs/audits/landing-page-phase-2.8c-production-acceptance-2026-08.md`](audits/landing-page-phase-2.8c-production-acceptance-2026-08.md)
+
+| Gate | Result |
+|---|---|
+| P2.8A pre-deploy freeze | **PASS** |
+| P2.8B deployment | **PASS** |
+| P2.8C acceptance | **PASS WITH INFRASTRUCTURE-LIMITED PRODUCTION TESTING** |
+| Phase 2 Production Accepted | **YES** |
+
+Pre-deployment exact-artefact QA: Chromium **100/100**, WebKit **2/2**. Production exhaustive replay **not completed** (Hostinger rate limiting during parallel QA). Targeted serial Production smoke **PASS**.
+
+**Known non-blocking manual assets:** AI Class C, Workflow Class C, Communication Class C.
