@@ -22,6 +22,25 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+## E1.1 post-review delivery hardening — 2026-08-13
+
+**Scope:** External review corrections on Draft PR #9 — **NOT DEPLOYED**
+
+### Added
+
+- Intrinsic `width="24" height="24"` on generated Lucide SVG roots
+- Strengthened catastrophic fallback (`html`/`body` white canvas, `color-scheme: light`, bounded SVG, `.nav-panel[inert]{display:none}`)
+- One-time primary CSS failure recovery via `/styles.css?v=<cssFingerprint>` (exactly once, no loop)
+- WebKit forced-failure, dark-mode, and incident-signature regression guards
+- Chromium primary-failure recovery and total-failure guards
+
+### QA (local)
+
+- Chromium **107/107 PASS**
+- WebKit **10/10 PASS**
+
+---
+
 ## Mobile Safari CSS delivery incident (E1) — 2026-08-13
 
 **Incident:** Real iPhone Safari unstyled / partially styled Production presentation  

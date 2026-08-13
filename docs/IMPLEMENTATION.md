@@ -354,7 +354,7 @@ screenshots are byte-identical to the locally approved build.
 - **P2.8B:** Phase-2 Production deployment — **PASS** (2026-08-13); Phase 2 **live** on `synqdrive.eu`.
 - **P2.8C:** Production acceptance — **PASS WITH INFRASTRUCTURE-LIMITED PRODUCTION TESTING** (2026-08-13); exhaustive Production replay stopped due Hostinger rate limiting; critical serial smoke **PASS**.
 - **Phase 2 Production Accepted:** **YES** (P2.8C; pre-E1)
-- **E1 (Mobile Safari CSS delivery):** Remediation implemented on branch `cursor/mobile-safari-css-delivery-incident`; **NOT DEPLOYED**. Real-device unstyled presentation incident exposes missing asset-versioning / stylesheet resilience controls. Production may not be healthy for all real-device clients until E2 deploy.
+- **E1 / E1.1 (Mobile Safari CSS delivery):** Remediation on branch `cursor/mobile-safari-css-delivery-incident`; **NOT DEPLOYED**. Real-device unstyled presentation incident; Production health for all real-device clients not assumed until E2 deploy.
 - Solutions, Resources, and Pricing top-level navigation remain deferred until real destination pages exist (DEC-004).
 - Taxi & Mobility may become a future Solutions page; it does not imply generally available Taxi Dispatch (DEC-009).
 - The product visuals are English on both locales. German screenshot variants deferred.
@@ -558,10 +558,11 @@ Mobile chain links use `.surface--compact` divider rows; desktop restores full c
 | P2.8A pre-deploy freeze | **PASS** |
 | P2.8B deployment | **PASS** |
 | P2.8C acceptance | **PASS WITH INFRASTRUCTURE-LIMITED PRODUCTION TESTING** |
-| Phase 2 Production Accepted | **YES** |
+| Phase 2 Production Accepted (P2.8C historical gate) | **YES** |
+| E1 / E1.1 remediation | **NOT DEPLOYED** — real-device Safari delivery incident open |
 
 Pre-deployment exact-artefact QA: Chromium **100/100**, WebKit **2/2**. Production exhaustive replay **not completed** (Hostinger rate limiting during parallel QA). Targeted serial Production smoke **PASS**.
 
-**Post-release note (E1):** A real-device Mobile Safari unstyled presentation incident was reported after P2.8 acceptance. Remediation is tracked separately; Production health for all clients should not be assumed until E2 deploy.
+**Post-release note (E1 / E1.1):** A real-device Mobile Safari unstyled presentation incident was reported after P2.8 acceptance. Remediation is on Draft PR #9; **NOT DEPLOYED**. Production health for all real-device clients should not be assumed until E2 deploy.
 
 **Known non-blocking manual assets:** AI Class C, Workflow Class C, Communication Class C.

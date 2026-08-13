@@ -3,7 +3,7 @@
 **Date:** 2026-08-13 (UTC)  
 **Incident:** E1 — Mobile Safari CSS delivery / asset versioning  
 **Production:** `https://synqdrive.eu` (**NOT modified during E1**)  
-**Result:** **E1 PASS** — release candidate built and verified locally; **NOT DEPLOYED**
+**Result:** **E1.1 PASS** — release candidate hardened after external review; **NOT DEPLOYED**
 
 ---
 
@@ -107,16 +107,16 @@ Live HTML references (stable, non-versioned):
 
 | Cause | Classification | Notes |
 |---|---|---|
-| **A.** Stylesheet request failed / 429 | **STRONGLY SUPPORTED** | Hostinger rate limiting/throttling observed during P2.8C parallel QA; transient 429 class can prevent CSS load |
-| **B.** Stale cached `/styles.css` | **POSSIBLE** | CSS served with `Cache-Control: public, max-age=604800` (7 days) |
+| **A.** Stylesheet request failed / 429 | **STRONGLY SUPPORTED** | Hostinger rate limiting/throttling observed during P2.8C parallel QA; transient failure class can prevent CSS load |
+| **B.** Stale cached `/styles.css` | **POSSIBLE** | CSS served with `Cache-Control: public, max-age=604800` (7 days); not proven as sole cause of fully browser-default presentation |
 | **C.** Stale HTML + incompatible new CSS | **POSSIBLE** | Non-versioned URLs increase cross-release cache mismatch risk |
 | **D.** New HTML + stale CSS | **POSSIBLE** | Same architecture weakness |
 | **E.** Wrong MIME / delivery | **EXCLUDED** | Current responses: `text/css`, `application/x-javascript` |
 | **F.** Safari-specific application bug | **POSSIBLE** | Not reproduced on current serial fetch; cannot confirm historical session |
 | **G.** Unknown transient delivery failure | **POSSIBLE** | Cannot reconstruct exact failing request |
-| **Stable `/styles.css` architecture weakness** | **CONFIRMED** | Regardless of current 200 responses |
+| **Stable `/styles.css` architecture weakness** | **CONFIRMED ARCHITECTURE WEAKNESS** | Regardless of current 200 responses |
 
-**Incident root cause (summary):** **Stylesheet delivery / cache-versioning failure class** — strongly supported by symptom match, Hostinger throttling history, and confirmed non-versioned asset architecture. Exact historical HTTP status not reconstructable.
+**Incident root cause (summary):** **EXTERNAL STYLESHEET UNAVAILABLE / NOT APPLIED** — most directly consistent with the user screenshot. Historical exact HTTP status remains unproven. Primary remediation now covers **release mismatch** and **transient primary CSS fetch failure** (one-time alias retry).
 
 ---
 
@@ -131,13 +131,14 @@ Live HTML references (stable, non-versioned):
 
 ## Local Failure Reproduction
 
-Playwright WebKit/Chromium at **390×844**:
+Playwright WebKit and Chromium at **390×844** (E1.1):
 
 1. **Normal load** — release stylesheet sentinel `--synqdrive-release-css: 1` applied; composed layout present.
-2. **Abort fingerprinted CSS request** — sentinel absent; masthead loses `position: sticky`; browser-default-like presentation markers appear.
-3. **With E1 inline fallback** — abort CSS → **safe degraded state** (light background, no list bullets, no link underline, skip link off-screen, no horizontal overflow, bounded icons).
+2. **Abort fingerprinted CSS only** — one-time alias retry succeeds; sentinel restored; composed layout returns.
+3. **Abort fingerprinted CSS + alias retry** — sentinel absent; **safe degraded state** via inline fallback (light canvas, no bullets/underlines, skip link off-screen, inert nav panel hidden, SVG icons bounded ≤32px).
+4. **WebKit dark mode (`colorScheme: dark`)** — normal CSS and total CSS failure both preserve intentional light canvas.
 
-This proves structurally that **loss of external CSS can create the reported failure class**.
+This proves structurally that **loss of external CSS can create the reported failure class**, and that E1.1 prevents catastrophic recurrence.
 
 ---
 
@@ -162,6 +163,18 @@ This proves structurally that **loss of external CSS can create the reported fai
 
 - Minimal `<style id="synqdrive-catastrophic-fallback">` in `<head>` before external stylesheet link.
 - Foundational safety rules only — **not** a second responsive design system.
+- E1.1 adds: `html{background:#fff;color-scheme:light}`, explicit white `body`, `svg{width:24px;height:24px}`, `.nav-panel[inert]{display:none}`.
+
+### One-Time Stylesheet Recovery (E1.1)
+
+- Primary `<link>` references fingerprinted CSS.
+- On **one** `error` event only, inject retry `<link href="/styles.css?v=<cssFingerprint>">`.
+- `retried` guard prevents loops; no polling.
+
+### Intrinsic Icon Safety (E1.1)
+
+- Generated Lucide SVG roots include `width="24" height="24"` in addition to `viewBox`.
+- External CSS remains authoritative for composed icon sizing when CSS loads.
 
 ---
 
@@ -181,10 +194,14 @@ This proves structurally that **loss of external CSS can create the reported fai
 |---|---|---|
 | Stylesheet sentinel + composed mobile layout | 390×844 DE | **PASS** |
 | Stylesheet sentinel + composed mobile layout | 390×844 EN | **PASS** |
-| Full-page review screenshots | 390×844 DE/EN | **PASS** (local `qa/e1-webkit-*-390-css-applied.png`) |
+| Primary CSS blocked → alias retry → sentinel restored | 390×844 DE | **PASS** |
+| Primary + retry CSS blocked → safe degraded state | 390×844 DE | **PASS** |
+| Dark mode + normal CSS → light canvas | 390×844 DE | **PASS** |
+| Dark mode + all CSS blocked → safe fallback | 390×844 DE | **PASS** |
+| Incident screenshot-signature guard | 390×844 DE dark | **PASS** |
 | Existing mobile nav smoke | 390×844 | **PASS** |
 
-**WebKit suite:** **5/5 PASS**
+**WebKit suite:** **10/10 PASS**
 
 ---
 
@@ -192,8 +209,10 @@ This proves structurally that **loss of external CSS can create the reported fai
 
 | Test | Result |
 |---|---|
-| Full existing landing QA | **105/105 PASS** |
-| Stylesheet delivery contract + sentinel + CSS-failure resilience | **PASS** |
+| Full existing landing QA | **100/100 PASS** |
+| Stylesheet delivery contract + recovery + resilience | **7/7 PASS** |
+
+**Chromium suite total:** **107/107 PASS**
 
 ---
 
@@ -219,9 +238,10 @@ Forced abort of fingerprinted CSS at 390×844:
 | Step | Result |
 |---|---|
 | `npm ci` | **PASS** |
+| `npm run icons` | **PASS** |
 | `npm run build` | **PASS** |
-| `npm run qa` | **105/105 PASS** |
-| `npm run qa:webkit` | **5/5 PASS** |
+| `npm run qa` | **107/107 PASS** |
+| `npm run qa:webkit` | **10/10 PASS** |
 | `npm run package` | **PASS** |
 
 ### Dist contract (E1 candidate)
@@ -239,8 +259,8 @@ Forced abort of fingerprinted CSS at 390×844:
 | Field | Value |
 |---|---|
 | File | `synqdrive-landing-page.tar.gz` |
-| Size | **1,032,842 bytes** |
-| SHA-256 | `454b13c80e92d82d354f31bc6e9a31f6b814ab177eed7c7e56da9c38a9cdd9b0` |
+| Size | **1,033,438 bytes** |
+| SHA-256 | `8092d9c326110f3d1ed0ca32e5f360fd38bf2f4f5a5d9f4affe1156504160c23` |
 | Extract verification | HTML → fingerprinted asset references resolve **PASS** |
 
 ---
@@ -254,9 +274,11 @@ Forced abort of fingerprinted CSS at 390×844:
 | `tools/build-site.mjs` | Fingerprinted assets, aliases, inline fallback |
 | `src/styles.css` | `--synqdrive-release-css: 1` sentinel |
 | `package.json` | Build invokes fingerprint verifier |
-| `e2e/stylesheet-delivery-helpers.ts` | **NEW** — shared QA helpers |
-| `e2e/stylesheet-delivery.spec.ts` | **NEW** — Chromium/build/resilience tests |
-| `e2e/stylesheet-delivery-webkit.spec.ts` | **NEW** — WebKit CSS application tests |
+| `tools/build-icons.mjs` | Intrinsic 24×24 SVG root dimensions |
+| `src/icons.generated.mjs` | Regenerated icons |
+| `e2e/stylesheet-delivery-helpers.ts` | Incident-state helpers, light canvas guards |
+| `e2e/stylesheet-delivery.spec.ts` | Chromium recovery/resilience tests |
+| `e2e/stylesheet-delivery-webkit.spec.ts` | WebKit failure/dark-mode/incident-signature tests |
 | `e2e/playwright.landing-qa.config.ts` | Include delivery spec |
 | `e2e/playwright.landing-qa-webkit.config.ts` | Include WebKit delivery spec |
 
@@ -268,8 +290,8 @@ Forced abort of fingerprinted CSS at 390×844:
 
 | Suite | Result |
 |---|---|
-| Chromium | **105/105 PASS** |
-| WebKit | **5/5 PASS** |
+| Chromium | **107/107 PASS** |
+| WebKit | **10/10 PASS** |
 | Asset fingerprint contract | **PASS** |
 | Alias byte-equivalence | **PASS** |
 | Package verification | **PASS** |
@@ -308,15 +330,29 @@ No rollback executed during E1.
 
 ---
 
+## E1.1 Post-Review Hardening (2026-08-13)
+
+External review of Draft PR #9 identified four release blockers. E1.1 addresses all without redesign:
+
+1. WebKit forced CSS failure coverage — **ADDED**
+2. Intrinsic SVG icon safety + strengthened fallback bounds — **ADDED**
+3. WebKit dark-mode light-canvas guards — **ADDED**
+4. One-time alias stylesheet recovery on primary failure — **ADDED**
+
+**E1.1 result:** **PASS** (local; **NOT DEPLOYED**)
+
+---
+
 ## E2 Deployment Readiness
 
 | Gate | Status |
 |---|---|
 | E1 implementation complete | **YES** |
-| Local QA green | **YES** |
+| E1.1 review blockers resolved | **YES** |
+| Local QA green (107 Chromium / 10 WebKit) | **YES** |
 | Release package verified | **YES** |
 | Production touched | **NO** |
-| **E2 READY (pending PR review)** | **YES** |
+| **E2 READY (pending PR #9 review)** | **YES** |
 
 ---
 
@@ -335,5 +371,5 @@ No rollback executed during E1.
 | Item | SHA |
 |---|---|
 | Build fingerprinting | `d9b0bbc` |
-| QA guards | *(this commit)* |
+| QA guards | `4abcc20` |
 | Incident documentation | *(this commit)* |
