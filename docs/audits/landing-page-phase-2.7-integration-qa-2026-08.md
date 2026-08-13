@@ -439,5 +439,5 @@ P2.8 owns deployment preparation and release execution only.
 ## Commit SHAs
 
 **Starting SHA:** `9571aee`  
-**QA/test commit:** *(after push)*  
-**Documentation commit:** *(after push)*
+**QA/test commit:** `7c1db16`  
+**Documentation commit:** `894714c`
