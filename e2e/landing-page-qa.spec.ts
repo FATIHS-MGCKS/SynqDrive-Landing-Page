@@ -877,10 +877,14 @@ test.describe('public landing page', () => {
 
   test('layout stays stable while images load', async ({ page }) => {
     await page.setViewportSize({ width: 1440, height: 900 });
-    await page.goto('/', { waitUntil: 'commit' });
+    const cls = await measurePageCls(page, '/');
+    expect(cls).toBeLessThan(0.1);
+  });
 
-    const shift = await page.evaluate(
-      () =>
+  async function measurePageCls(page: Page, url: string, waitMs = 3500) {
+    await page.goto(url, { waitUntil: 'commit' });
+    return page.evaluate(
+      (timeoutMs) =>
         new Promise<number>((resolve) => {
           let total = 0;
           new PerformanceObserver((list) => {
@@ -891,12 +895,11 @@ test.describe('public landing page', () => {
               if (!entry.hadRecentInput) total += entry.value;
             }
           }).observe({ type: 'layout-shift', buffered: true });
-          setTimeout(() => resolve(total), 3500);
+          setTimeout(() => resolve(total), timeoutMs);
         }),
+      waitMs,
     );
-
-    expect(shift).toBeLessThan(0.1);
-  });
+  }
 
   test('captures P1.3 desktop navigation screenshots', async ({ page }) => {
     for (const width of NAV_SCREENSHOT_WIDTHS) {
@@ -3127,6 +3130,11 @@ test.describe('public landing page', () => {
       });
 
       expect(state.overflowOk, `${width}px overflow`).toBe(true);
+
+      const expectedY = expectedSectionY(width);
+      expect(state.sectionY, `${width}px section-y`).toBeGreaterThanOrEqual(expectedY - 0.5);
+      expect(state.sectionY, `${width}px section-y`).toBeLessThanOrEqual(expectedY + 0.5);
+
       if (width <= 1024) {
         expect(state.mobileBand, `${width}px mobile band`).toBe(true);
         expect(state.aiBorderTop, `${width}px AI compact border`).toBe(0);
@@ -3134,12 +3142,6 @@ test.describe('public landing page', () => {
       } else {
         expect(state.mobileBand, `${width}px desktop band`).toBe(false);
         expect(state.hubFullCards, `${width}px hub desktop cards`).toBe(6);
-      }
-      if (width <= 760) {
-        expect(state.sectionY, `${width}px section-y`).toBeLessThanOrEqual(56.5);
-      }
-      if (width >= 761 && width <= 1024) {
-        expect(state.sectionY, `${width}px section-y`).toBeGreaterThanOrEqual(71);
       }
     }
   });
@@ -3243,6 +3245,175 @@ test.describe('public landing page', () => {
         fullPage: true,
         animations: 'disabled',
       });
+    }
+  });
+
+  test('P2.7.1 CLS release matrix', async ({ page }) => {
+    const matrix = [
+      ['de', '/', 390, 844],
+      ['de', '/', 768, 1024],
+      ['de', '/', 1440, 1000],
+      ['en', '/en/', 390, 844],
+      ['en', '/en/', 768, 1024],
+      ['en', '/en/', 1440, 1000],
+    ] as const;
+
+    const results: Record<string, number> = {};
+
+    for (const [locale, url, width, height] of matrix) {
+      await page.setViewportSize({ width, height });
+      const cls = await measurePageCls(page, url);
+      const key = `${locale}-${width}`;
+      results[key] = cls;
+      expect(cls, `${locale} ${width}×${height} CLS`).toBeLessThan(0.1);
+    }
+
+    await fs.mkdir(OUT, { recursive: true });
+    await fs.writeFile(
+      path.join(OUT, `${LABEL}p271-cls-matrix.json`),
+      `${JSON.stringify(results, null, 2)}\n`,
+    );
+  });
+
+  test('P2.7.1 marketing page readable without JavaScript', async ({ browser }) => {
+    for (const [locale, url] of [
+      ['de', '/'],
+      ['en', '/en/'],
+    ] as const) {
+      const context = await browser.newContext({
+        javaScriptEnabled: false,
+        viewport: { width: 390, height: 844 },
+      });
+      const page = await context.newPage();
+
+      await page.goto(url, { waitUntil: 'load' });
+
+      await expect(page.locator('html')).toHaveAttribute('lang', locale);
+      await expect(page.locator('html')).not.toHaveClass(/js/);
+      await expect(page.locator('h1')).toHaveCount(1);
+
+      for (const id of SECTION_IDS) {
+        await expect(page.locator(`#${id}`)).toHaveCount(1);
+      }
+
+      for (const id of SECTION_IDS) {
+        const heading = page.locator(`#${id} h2, #${id} .section-title`).first();
+        await expect(heading, `${id} heading`).toBeVisible();
+      }
+
+      await expect(page.locator('.frame--product')).toHaveCount(6);
+      await expect(page.locator('.frame--product img')).toHaveCount(6);
+
+      await expect(page.locator('.hero__actions a[href^="mailto:"]')).toHaveCount(1);
+      await expect(page.locator('.closing a[href^="mailto:"]')).toHaveCount(1);
+      await expect(page.locator('.sitefooter')).toHaveCount(1);
+      await expect(page.locator('.sitefooter__legal a[href^="mailto:"]')).toHaveCount(1);
+
+      const overflow = await page.evaluate(() => ({
+        scrollWidth: document.documentElement.scrollWidth,
+        clientWidth: document.documentElement.clientWidth,
+      }));
+      expect(overflow.scrollWidth).toBeLessThanOrEqual(overflow.clientWidth + 1);
+
+      const hiddenReveal = await page.$$eval('[data-reveal]', (nodes) =>
+        nodes
+          .filter((node) => {
+            const styles = window.getComputedStyle(node);
+            return (
+              parseFloat(styles.opacity) < 0.99 ||
+              styles.visibility === 'hidden' ||
+              styles.display === 'none'
+            );
+          })
+          .map(
+            (node) =>
+              `${node.closest('section')?.id ?? 'hero'} ${node.tagName.toLowerCase()}.${node.className}`,
+          ),
+      );
+      expect(hiddenReveal, hiddenReveal.join('\n')).toEqual([]);
+
+      await context.close();
+    }
+  });
+
+  async function assertPlatformAnchorOffset(page: Page, hash: string) {
+    const sectionId = hash.slice(1);
+    await expect(page).toHaveURL(new RegExp(`${hash.replace('#', '\\#')}$`));
+
+    const heading = page
+      .locator(`#${sectionId}-title, #${sectionId} h2.section-title, #${sectionId} h2`)
+      .first();
+    await expect(heading, `${hash} heading`).toBeAttached();
+
+    await page.waitForFunction(
+      (id) => {
+        const title =
+          document.querySelector(`#${id}-title`) ??
+          document.querySelector(`#${id} h2.section-title`) ??
+          document.querySelector(`#${id} h2`);
+        const masthead = document.querySelector('.masthead');
+        if (!title || !masthead) return false;
+        const styles = window.getComputedStyle(title);
+        if (parseFloat(styles.opacity) < 0.99) return false;
+        const top = title.getBoundingClientRect().top;
+        const mastheadBottom = masthead.getBoundingClientRect().bottom;
+        return (
+          top >= mastheadBottom - 2 &&
+          top < window.innerHeight &&
+          document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1
+        );
+      },
+      sectionId,
+      { timeout: 8000, message: `${hash} anchor offset settle` },
+    );
+
+    const geometry = await page.evaluate((id) => {
+      const masthead = document.querySelector('.masthead');
+      const title =
+        document.querySelector(`#${id}-title`) ??
+        document.querySelector(`#${id} h2.section-title`) ??
+        document.querySelector(`#${id} h2`);
+      if (!masthead || !title) return null;
+      const mastheadRect = masthead.getBoundingClientRect();
+      const titleRect = title.getBoundingClientRect();
+      return {
+        mastheadBottom: Math.round(mastheadRect.bottom * 10) / 10,
+        headingTop: Math.round(titleRect.top * 10) / 10,
+        overflowOk:
+          document.documentElement.scrollWidth <= document.documentElement.clientWidth + 1,
+      };
+    }, sectionId);
+
+    expect(geometry, `${hash} geometry`).not.toBeNull();
+    expect(geometry!.headingTop, `${hash} masthead offset`).toBeGreaterThanOrEqual(
+      geometry!.mastheadBottom - 2,
+    );
+    expect(geometry!.overflowOk, `${hash} overflow`).toBe(true);
+  }
+
+  test('P2.7.1 platform anchor offset release guard', async ({ page }) => {
+    const anchors = PLATFORM_NAV.de.links.map((link) => link.href);
+
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'load' });
+
+    for (const hash of anchors) {
+      await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+      await page.getByRole('button', { name: 'Menü öffnen' }).click();
+      const panel = page.locator('[data-nav-panel]');
+      await expect(panel).toBeVisible();
+
+      const label = PLATFORM_NAV.de.links.find((link) => link.href === hash)!.label;
+      await panel.getByRole('link', { name: label }).click();
+      await expect(panel).toBeHidden();
+
+      await assertPlatformAnchorOffset(page, hash);
+    }
+
+    await page.setViewportSize({ width: 1440, height: 900 });
+    for (const hash of anchors) {
+      await page.goto(`/${hash}`, { waitUntil: 'load' });
+      await assertPlatformAnchorOffset(page, hash);
     }
   });
 });
