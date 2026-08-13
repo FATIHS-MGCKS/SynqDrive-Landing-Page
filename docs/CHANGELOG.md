@@ -18,9 +18,35 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
-## Communication + Integrations + closing/footer (P2.6) — 2026-08-13
+## Phase-2 integration QA (P2.7) — 2026-08-13
 
-**Phase:** P2.6 — Communication, Integrations hub, closing CTA, and footer mobile composition (Draft PR; **not deployed**)  
+**Phase:** P2.7 — Full Phase-2 integration QA & release-candidate hardening (Draft PR; **not deployed**)  
+**Audit:** [`docs/audits/landing-page-phase-2.7-integration-qa-2026-08.md`](audits/landing-page-phase-2.7-integration-qa-2026-08.md)
+
+### Added
+
+- P2.7 breakpoint boundary band tests (759–1181)
+- Consolidated Phase-2 source ownership guard
+- Full-page key metrics regression (390 DE)
+- Full-page screenshot matrix (`qa/p27-full-*`)
+
+### Result
+
+- Release candidate decision: **PASS WITH NON-BLOCKING LIMITATIONS**
+- P2.8 deployment readiness: **YES**
+- No runtime/CSS changes required
+
+### Verified
+
+- Chromium **97/97**; WebKit **2/2**
+- Build, dist hygiene, package verification — **PASS**
+- 390 DE page height: **8626px**
+
+---
+
+## Communication + Integrations + closing/footer (P2.6) — merged to main — 2026-08-13
+
+**Phase:** P2.6 — Communication, Integrations hub, closing CTA, and footer mobile composition (**merged to main** via PR #6; **not deployed**)  
 **Audit:** [`docs/audits/landing-page-phase-2.6-communication-integrations-closure-2026-08.md`](audits/landing-page-phase-2.6-communication-integrations-closure-2026-08.md)
 
 ### Changed
