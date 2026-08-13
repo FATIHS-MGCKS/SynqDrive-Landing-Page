@@ -2319,6 +2319,72 @@ test.describe('public landing page', () => {
     }
   });
 
+  test('P2.5.3 workflow CSS source ownership', async () => {
+    const cssPath = path.resolve(
+      path.dirname(new URL(import.meta.url).pathname),
+      '..',
+      'src',
+      'styles.css',
+    );
+    const css = await fs.readFile(cssPath, 'utf8');
+
+    const sectionStart = css.indexOf('/* P2.5 — Workflow compact chain */');
+    expect(sectionStart, 'workflow compact chain section').toBeGreaterThan(-1);
+    const sectionEnd = css.indexOf('/* Gap before workflow product visual', sectionStart);
+    const workflowSection = css.slice(sectionStart, sectionEnd);
+
+    const mobileStart = workflowSection.indexOf('@media (max-width: 1024px)');
+    const mobileEnd = workflowSection.indexOf('@media (min-width: 1025px)', mobileStart);
+    const mobileBlock = workflowSection.slice(mobileStart, mobileEnd);
+
+    const forbiddenMobilePatterns = [
+      /padding:\s*14px\s+0/,
+      /border-radius:\s*0/,
+      /background:\s*transparent/,
+      /border-bottom:\s*1px\s+solid\s+var\(--hairline\)/,
+    ] as const;
+
+    for (const pattern of forbiddenMobilePatterns) {
+      expect(
+        mobileBlock,
+        `mobile workflow rules must not duplicate compact surface chrome (${pattern})`,
+      ).not.toMatch(pattern);
+    }
+
+    expect(mobileBlock, 'no workflow surface--compact:last-child rule').not.toMatch(
+      /\.surface--compact:last-child/,
+    );
+
+    const desktopStart = workflowSection.indexOf('@media (min-width: 1025px)');
+    const desktopBlock = workflowSection.slice(desktopStart);
+    const desktopOwnerMatches = [
+      ...desktopBlock.matchAll(/\.workflow--compact\s+\.chain__link\s*\{([^}]+)\}/g),
+    ];
+    expect(desktopOwnerMatches, 'exactly one desktop workflow card-chrome owner').toHaveLength(1);
+
+    const ownerBody = desktopOwnerMatches[0]![1]!;
+    expect(ownerBody).toContain('padding: var(--surface-padding)');
+    expect(ownerBody).toContain('border: 1px solid var(--hairline)');
+    expect(ownerBody).toContain('border-radius: var(--surface-radius)');
+    expect(ownerBody).toContain('background: var(--canvas-alt)');
+
+    const duplicateCompactOwners = [
+      ...desktopBlock.matchAll(/\.workflow--compact\s+\.chain__link--compact\s*\{[^}]+\}/g),
+    ];
+    expect(duplicateCompactOwners, 'no duplicate chain__link--compact desktop owner').toHaveLength(
+      0,
+    );
+
+    const baseChainMatch = css.match(/^\.chain__link\s*\{([^}]+)\}/m);
+    expect(baseChainMatch, 'base .chain__link rule').toBeTruthy();
+    const baseBody = baseChainMatch![1]!;
+    expect(baseBody).toContain('position: relative');
+    expect(baseBody).not.toMatch(/padding:/);
+    expect(baseBody).not.toMatch(/border:/);
+    expect(baseBody).not.toMatch(/border-radius:/);
+    expect(baseBody).not.toMatch(/background:/);
+  });
+
   test('P2.5.1 workflow desktop all-three-card borders', async ({ page }) => {
     for (const width of P25_DESKTOP_WIDTHS) {
       await page.setViewportSize({ width, height: 900 });
