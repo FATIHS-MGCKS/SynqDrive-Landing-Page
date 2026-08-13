@@ -338,4 +338,70 @@ Product image files unchanged in this phase.
 
 **Starting SHA:** `fe96a49`  
 **Implementation commit:** `94d1acd`  
+**Documentation commit:** `571169d`  
+**SHA finalizer:** `42bbf76`
+
+---
+
+## Post-review mobile integration-row continuity correction (P2.6.1)
+
+**Date:** 2026-08-13  
+**Scope:** Integrations mobile list seam only — no Communication, CTA, footer, or asset changes
+
+### Two-list mobile seam discovered
+
+External review found that P2.6 mobile Integrations visually split into two groups of three rows:
+
+1. **Diagram stack gap:** `.hub__diagram { gap: var(--stack-gap) }` inserted an 18px break between the left and right `<ul>` columns
+2. **Independent `:last-child` behaviour:** `.surface--compact:last-child` removed item 3's bottom divider inside the left list
+
+### Continuity fix
+
+| Rule | Mobile ≤1024 | Desktop ≥1025 |
+|---|---|---|
+| `.hub--compact .hub__diagram` | `gap: 0` | unchanged three-column gap |
+| `.hub--compact .hub__core` | `margin-bottom: var(--stack-gap)` | `margin-bottom: 0` |
+| `.hub--compact .hub__column--right` | `border-top: 1px solid var(--hairline)` (layout seam) | `border-top: 0` |
+
+Canonical `.surface--compact` remains sole owner of row padding/divider chrome — the column seam is section layout bridging only.
+
+### Rendered spacing (390×844 DE, post-settle)
+
+| Metric | P2.6 | P2.6.1 |
+|---|---|---|
+| Core → item 1 gap | — | **18px** |
+| Item 3 → item 4 gap | ~18px (broken) | **1px** (hairline seam only) |
+| Item 3/4 separator | **FAIL** (missing divider + large gap) | **PASS** |
+| Integrations section height | 983px | **966px** |
+| Page height | 8643px | **8626px** |
+
+Communication authoritative values unchanged: section **1042px**, frame top **233.7px**.
+
+### Regression tests
+
+| Test | Result |
+|---|---|
+| P2.6.1 integrations mobile row continuity (320–1024) | **PASS** |
+| P2.6 integrations desktop hub restored | **PASS** (seam/margin reset verified) |
+| P2.6 integrations CSS source ownership | **PASS** |
+
+### Final QA
+
+| Gate | Result |
+|---|---|
+| Chromium | **93/93** |
+| WebKit smoke | **2/2** |
+
+### Finding status
+
+- **H-05:** **PARTIAL**
+- **M-02:** **RESOLVED** (six-item mobile collection visually continuous; desktop hub intact)
+- **L-01:** **RESOLVED**
+- **L-02:** **RESOLVED**
+- Product Images changed: **NO**
+- Production deployed: **NO**
+
+### P2.6.1 commit SHA
+
+**Implementation commit:** *(after push)*  
 **Documentation commit:** *(after push)*
