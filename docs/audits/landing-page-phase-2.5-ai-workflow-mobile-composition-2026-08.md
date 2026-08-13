@@ -396,5 +396,96 @@ P2.5 duplicated `.surface--compact` chrome inside `.workflow--compact .chain__li
 
 ### P2.5.1 commit SHA
 
+**Implementation commit:** `33b5501`  
+**Documentation commit:** `0e2ec79`
+
+---
+
+## Post-review desktop ownership and metric reconciliation (P2.5.2)
+
+**Date:** 2026-08-13  
+**Scope:** Workflow desktop card-chrome consolidation + authoritative 390 metric reconciliation — no composition change
+
+### Duplicate desktop Workflow card-chrome ownership
+
+P2.5.1 scoped `.chain__link` card chrome to `@media (min-width: 1025px)` and duplicated the same properties on `.workflow--compact .chain__link--compact`.
+
+### Final single desktop owner
+
+```css
+@media (min-width: 1025px) {
+  .workflow--compact .chain__link {
+    padding: var(--surface-padding);
+    border: 1px solid var(--hairline);
+    border-radius: var(--surface-radius);
+    background: var(--canvas-alt);
+  }
+}
+```
+
+Mobile canonical `.surface--compact` ownership retained unchanged from P2.5.1.
+
+### Regression tests
+
+| Test | Result |
+|---|---|
+| P2.5.1 mobile compact surface ownership | **PASS** |
+| P2.5.1 desktop all-three-card borders (1100 / 1280 / 1440 / 1920) | **PASS** |
+
+### Commit-pinned measurement method
+
+Chromium · viewport **390×844** · `deviceScaleFactor: 2` · locale **DE /** · built dist at `http://127.0.0.1:4321/` · canonical QA `settle()` scroll pass + **1100ms** wait · `#platform` / `#ai-orchestration` / `#workflow-automation` `getBoundingClientRect()` (same probe as P2.4+ QA).
+
+### Measured values
+
+| Metric | Original P2.5 audit prose (`004c8d0` doc) | Commit-pinned `004c8d0` CSS (settle probe) | P2.5.2 current (settle probe) |
+|---|---|---|---|
+| AI frame top | 307.9px | **307.9px** | **307.9px** |
+| AI section height | 1248px | **1248px** | **1248px** |
+| Workflow frame top | **660.3px** | **624.3px** | **624.3px** |
+| Workflow section height | **1065px** | **1029px** | **1029px** |
+| Page height | **8840px** | **8804px** | **8804px** |
+| Workflow head → chain gap | — | **48px** | **48px** |
+| Workflow chain → media gap | — | **28px** | **28px** |
+| Chain `margin-top` | — | **48px** | **48px** |
+| Media `margin-top` | — | **28px** | **28px** |
+
+### Explanation of the 36px discrepancy
+
+**Conclusion: A — the original P2.5 audit measurements were inaccurate.**
+
+Re-measurement of commit-pinned **`004c8d0`** CSS with the canonical settle probe yields **624.3px / 1029px / 8804px** — identical to **P2.5.1** and **P2.5.2**. The Workflow/Page delta is exactly **36px** in frame top, section height, and page height.
+
+**P2.5.1 did not change layout by 36px** (C ruled out). Spacing tokens (`margin-top: 48px` / `28px`) are unchanged across all pinned commits.
+
+The original P2.5 audit prose (**660.3px / 1065px / 8840px**) was recorded before the canonical settle measurement method was enforced on this branch. Historical tables above retain those figures as written evidence; **authoritative current metrics** use the settle probe values in this section.
+
+### Final authoritative 390×844 DE metrics
+
+| Section | Frame top (rel.) | Section height |
+|---|---|---|
+| AI | **307.9px** | **1248px** |
+| Workflow | **624.3px** | **1029px** |
+| Page | — | **8804px** |
+
+### Final QA
+
+| Gate | Result |
+|---|---|
+| Chromium | **77/77** |
+| WebKit smoke | **2/2** |
+
+### Finding status
+
+- **H-03:** **PARTIAL**
+- **H-04:** **PARTIAL**
+- AI asset class: **C**
+- Workflow asset class: **C**
+- Product Images changed: **NO**
+- Production deployed: **NO**
+- P2.6 started: **NO**
+
+### P2.5.2 commit SHA
+
 **Implementation commit:** *(recorded after commit)*  
 **Documentation commit:** *(recorded after commit)*
