@@ -3,15 +3,15 @@
 **Date:** 2026-08-11 (original report); Phase-1 navigation updates through P1.5  
 **Production URL:** <https://synqdrive.eu> (German), <https://synqdrive.eu/en/> (English)
 
-> **Current Production:** Einsatzwelten and hero hierarchy deployed **2026-08-14T11:00:15Z** (source `f529f45`, PR #14)
-> **Prior deploy:** Hero typography refinement **2026-08-14T07:33:00Z** (main `74000aa`, PR #13)
-> **Production runtime source SHA:** `f529f453a66b6e01d9488bf5dba7cba5fdaf6e96`
-> **Release artefact SHA-256:** `843dc410718e5abf7b28384a8b8cb30598e0a2b1cac6ae79998352d90c431791` (1,897,483 bytes)
-> **Runtime fingerprints:** `styles.884ce095fb73.css`, `script.f02f7dcbd4a4.js`
-> **Acceptance:** Pre-deploy Chromium **119/119** and WebKit **11/11**; live HTML/runtime/assets exact-byte **PASS**. Broader Production replay infrastructure-limited by transient provider responses.
+> **Current Production:** Hero fleet background deployed **2026-08-14T12:44:46Z** (source `ff01212`, PR #15)
+> **Prior deploy:** Einsatzwelten and hero hierarchy **2026-08-14T11:00:15Z** (source `f529f45`, PR #14)
+> **Production runtime source SHA:** `ff01212b28ba417dfdae458ba12b4e95973cfcc8`
+> **Release artefact SHA-256:** `8b0862336e592aaf7c5dd019a56a5e29bbb2fe2d7d3d7126a745fb112daee36d` (2,065,922 bytes)
+> **Runtime fingerprints:** `styles.d065d81b865a.css`, `script.f02f7dcbd4a4.js`
+> **Acceptance:** Pre-deploy Chromium **119/119** and WebKit **11/11**; live hero background assets and markup **PASS**
 > **Mobile navigation:** PR #10, PR #11, and iOS interaction fixes **MERGED** and **DEPLOYED** — see [`docs/audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md`](audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md). **Real-iPhone acceptance remains owner-controlled.**
 > **Post-release incident (E1–E2):** Real-device Mobile Safari unstyled presentation reported 2026-08-13 — see the [incident audit](audits/landing-page-mobile-safari-css-delivery-incident-2026-08.md) and [E2 deployment audit](audits/landing-page-mobile-safari-css-delivery-e2-production-2026-08.md). **Technical remediation deployed; real-iPhone acceptance remains owner-controlled.**
-> **Rollback (local; not used):** `rollback/synqdrive.eu-pre-einsatzwelten-20260814_105923.tar.gz` (SHA-256 `b22e87737f2e7855d9135bcdf0251d93418ab8b8b366f2c3d52c45fd92d819a5`)
+> **Rollback (local; not used):** prior Einsatzwelten release SHA-256 `843dc410718e5abf7b28384a8b8cb30598e0a2b1cac6ae79998352d90c431791`
 > **Previous P1.6.1 deploy:** **2026-08-12T14:46:48Z** — see [`docs/audits/landing-page-phase-1.6.1-production-hygiene-2026-08.md`](audits/landing-page-phase-1.6.1-production-hygiene-2026-08.md)
 
 > **Note on paths.** This report was written while the site still lived inside the SynqDrive

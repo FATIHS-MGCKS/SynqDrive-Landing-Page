@@ -8,6 +8,22 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+## Hero fleet background — Production deployment — 2026-08-14
+
+**Scope:** Full-bleed responsive hero backgrounds on `https://synqdrive.eu` (PR #15)
+
+- Replaced the visible hero product frame with art-directed fleet background images (desktop landscape, mobile portrait)
+- Hero copy overlay unchanged: eyebrow underline, split H1, two-part subline, existing CTAs
+- `<picture class="hero__background">` with 760px breakpoint, LCP preloads, and decorative empty `alt`
+- Legacy hero operations assets retained for rollback; five product frames remain in later sections
+- Exact artefact deployed via Hostinger static deploy; package SHA-256 `8b0862336e592aaf7c5dd019a56a5e29bbb2fe2d7d3d7126a745fb112daee36d` (2,065,922 bytes)
+- Runtime fingerprints: `styles.d065d81b865a.css`, `script.f02f7dcbd4a4.js`
+- Pre-deploy exact-artefact QA: Chromium **119/119**, WebKit **11/11**
+- Live German HTML verified: fleet background assets return HTTP 200; hero markup includes art-directed `<picture>`
+- Rollback artefact: prior Einsatzwelten release (`843dc410718e5abf7b28384a8b8cb30598e0a2b1cac6ae79998352d90c431791`)
+
+---
+
 ## Einsatzwelten and hero hierarchy — Production deployment — 2026-08-14
 
 **Scope:** Five fleet use cases plus German and English hero hierarchy refinement on `https://synqdrive.eu` (PR #14)
