@@ -1080,7 +1080,7 @@ html[data-nav-scroll-lock='true'] {
   text-decoration-line: underline;
   text-decoration-color: var(--ink);
   text-decoration-thickness: 1px;
-  text-underline-offset: 4px;
+  text-underline-offset: 6px;
 }
 
 .hero__intro h1 {
@@ -1149,7 +1149,7 @@ html[data-nav-scroll-lock='true'] {
   display: flex;
   flex-wrap: wrap;
   gap: var(--stack-gap-tight);
-  margin-top: var(--stack-gap-loose);
+  margin-top: 44px;
 }
 
 /* ── Einsatzwelten ───────────────────────────────────────────────────────── */
@@ -2340,7 +2340,7 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .hero__actions {
-    margin-top: var(--stack-gap);
+    margin-top: 32px;
   }
 
   .section-body {
