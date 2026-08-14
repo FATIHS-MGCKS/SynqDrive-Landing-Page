@@ -3,11 +3,11 @@
 **Date:** 2026-08-11 (original report); Phase-1 navigation updates through P1.5  
 **Production URL:** <https://synqdrive.eu> (German), <https://synqdrive.eu/en/> (English)
 
-> **Current Production:** Hero copy refresh + proof-list removal deployed **2026-08-14T07:08:40Z** (main `e8954e1`, PR #12)  
-> **Prior deploy:** Mobile navigation Products + iOS fixes **2026-08-14T06:36:56Z** (main `34cb029`)  
-> **Production runtime source SHA:** `e8954e170323e539fe23804d5fb0bc0f75174e5a`  
-> **Release artefact SHA-256:** `bb7eb5ed6421a0051c9a75d91d061486bfb22e6f11ac36d6e562892c2dc47a19` (1,030,309 bytes)  
-> **Runtime fingerprints:** `styles.ae22ca0824d4.css`, `script.f02f7dcbd4a4.js`  
+> **Current Production:** Hero typography refinement deployed **2026-08-14T07:33:00Z** (main `74000aa`, PR #13)  
+> **Prior deploy:** Hero copy simplification **2026-08-14T07:08:40Z** (main `e8954e1`, PR #12)  
+> **Production runtime source SHA:** `74000aa0e5cf1598c9119e74e1dcd075d935af2c`  
+> **Release artefact SHA-256:** `b22e87737f2e7855d9135bcdf0251d93418ab8b8b366f2c3d52c45fd92d819a5` (1,030,440 bytes)  
+> **Runtime fingerprints:** `styles.d9399b98f95d.css`, `script.f02f7dcbd4a4.js`  
 > **Acceptance:** P2.8C **PASS WITH INFRASTRUCTURE-LIMITED PRODUCTION TESTING** — see [`docs/audits/landing-page-phase-2.8c-production-acceptance-2026-08.md`](audits/landing-page-phase-2.8c-production-acceptance-2026-08.md)  
 > **Mobile navigation:** PR #10, PR #11, and iOS interaction fixes **MERGED** and **DEPLOYED** — see [`docs/audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md`](audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md). **Real-iPhone acceptance remains owner-controlled.**
 > **Post-release incident (E1–E2):** Real-device Mobile Safari unstyled presentation reported 2026-08-13 — see the [incident audit](audits/landing-page-mobile-safari-css-delivery-incident-2026-08.md) and [E2 deployment audit](audits/landing-page-mobile-safari-css-delivery-e2-production-2026-08.md). **Technical remediation deployed; real-iPhone acceptance remains owner-controlled.**

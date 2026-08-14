@@ -8,6 +8,20 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+## Hero typography refinement — Production deployment — 2026-08-14
+
+**Scope:** German hero copy and typography refresh on `https://synqdrive.eu` (PR #13)
+
+- Updated DE hero title and body; simplified hero eyebrow to plain text styling
+- Hero H1 font-weight 600; mobile subheadline reduced at ≤760px
+- EN hero copy, meta, navigation, product frame, and CTAs unchanged
+- Exact artefact deployed via Hostinger static deploy; package SHA-256 `b22e87737f2e7855d9135bcdf0251d93418ab8b8b366f2c3d52c45fd92d819a5` (1,030,440 bytes)
+- Runtime fingerprints: `styles.d9399b98f95d.css`, `script.f02f7dcbd4a4.js`
+- Pre-deploy exact-artefact QA: Chromium **114/114**, WebKit **11/11**
+- `app.synqdrive.eu` isolation **PASS**
+
+---
+
 ## Hero copy simplification — Production deployment — 2026-08-14
 
 **Scope:** German hero copy refresh and removal of hero proof list on `https://synqdrive.eu` (PR #12)
