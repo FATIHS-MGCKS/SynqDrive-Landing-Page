@@ -1932,6 +1932,106 @@ test.describe('public landing page', () => {
     });
   }
 
+  for (const locale of ['de', 'en'] as const) {
+    const url = locale === 'de' ? '/' : '/en/';
+    const expected =
+      locale === 'de'
+        ? {
+            eyebrow: 'Connected Vehicle Intelligence Plattform',
+            title: 'Alles, was Ihre Flotte braucht. In Echtzeit.',
+            lines: [
+              'SynqDrive verbindet Fahrzeuge,',
+              'Prozesse und KI in einer',
+              'Plattform',
+            ],
+          }
+        : {
+            eyebrow: 'Connected Vehicle Intelligence Platform',
+            title: 'Everything your fleet needs. In real time.',
+            lines: [
+              'SynqDrive connects vehicles,',
+              'processes and AI in one',
+              'platform',
+            ],
+          };
+
+    test(`hero differentiated copy structure (${locale})`, async ({ page }) => {
+      for (const [width, height] of [
+        [1440, 900],
+        [1024, 900],
+        [760, 900],
+        [430, 932],
+        [390, 844],
+      ] as const) {
+        await page.setViewportSize({ width, height });
+        await page.goto(url, { waitUntil: 'load' });
+        await settle(page);
+
+        const state = await page.locator('.hero').evaluate((hero) => {
+          const h1 = hero.querySelector('h1');
+          const main = hero.querySelector('.hero__title-main');
+          const emphasis = hero.querySelector('.hero__title-emphasis');
+          const body = hero.querySelector('.hero__body');
+          const secondary = hero.querySelector('.hero__body-secondary');
+          const lines = Array.from(hero.querySelectorAll('.hero__body-line'));
+          const actions = hero.querySelector('.hero__actions');
+          const rangeLineCount = (element: Element) => {
+            const range = document.createRange();
+            range.selectNodeContents(element);
+            return range.getClientRects().length;
+          };
+          const rect = (element: Element | null) => element?.getBoundingClientRect() ?? null;
+          const bodyRect = rect(body);
+          const secondaryRect = rect(secondary);
+          const finalLineRect = rect(lines.at(-1) ?? null);
+          const actionsRect = rect(actions);
+
+          return {
+            eyebrow: hero.querySelector('.eyebrow')?.textContent?.trim() ?? '',
+            title: h1?.textContent?.trim().replace(/\s+/g, ' ') ?? '',
+            h1Children: h1?.children.length ?? 0,
+            mainWeight: Number(main ? getComputedStyle(main).fontWeight : 0),
+            emphasisWeight: Number(emphasis ? getComputedStyle(emphasis).fontWeight : 0),
+            mainColor: main ? getComputedStyle(main).color : '',
+            emphasisColor: emphasis ? getComputedStyle(emphasis).color : '',
+            bodyTag: body?.tagName ?? '',
+            lines: lines.map((line) => line.textContent?.trim() ?? ''),
+            visualLineCounts: lines.map(rangeLineCount),
+            secondaryChildren: secondary?.children.length ?? 0,
+            secondaryWidth: secondaryRect?.width ?? 0,
+            bodyWidth: bodyRect?.width ?? 0,
+            secondaryGap:
+              secondaryRect && finalLineRect ? secondaryRect.top - finalLineRect.bottom : 0,
+            actionsGap:
+              actionsRect && secondaryRect ? actionsRect.top - secondaryRect.bottom : 0,
+            overflow:
+              document.documentElement.scrollWidth - document.documentElement.clientWidth,
+          };
+        });
+
+        expect(state.eyebrow, `${width}px eyebrow`).toBe(expected.eyebrow);
+        expect(state.title, `${width}px h1`).toBe(expected.title);
+        expect(state.h1Children, `${width}px h1 span count`).toBe(2);
+        expect(state.emphasisWeight, `${width}px emphasis weight`).toBeGreaterThan(
+          state.mainWeight,
+        );
+        expect(state.emphasisColor, `${width}px emphasis color`).not.toBe(state.mainColor);
+        expect(state.bodyTag, `${width}px semantic body`).toBe('P');
+        expect(state.lines, `${width}px primary copy`).toEqual(expected.lines);
+        expect(state.visualLineCounts, `${width}px deliberate primary lines`).toEqual([1, 1, 1]);
+        expect(state.secondaryChildren, `${width}px natural secondary wrapping`).toBe(0);
+        expect(
+          Math.abs(state.secondaryWidth - state.bodyWidth),
+          `${width}px secondary full width`,
+        ).toBeLessThanOrEqual(1);
+        expect(state.secondaryGap, `${width}px primary-secondary gap`).toBeGreaterThanOrEqual(16);
+        expect(state.secondaryGap, `${width}px primary-secondary gap`).toBeLessThanOrEqual(24);
+        expect(state.actionsGap, `${width}px secondary-actions gap`).toBeGreaterThanOrEqual(16);
+        expect(state.overflow, `${width}px overflow`).toBeLessThanOrEqual(1);
+      }
+    });
+  }
+
   test('P2.3 hero tablet and desktop regression', async ({ page }) => {
     for (const width of P23_TABLET_WIDTHS) {
       await page.setViewportSize({ width, height: 1024 });
@@ -1973,8 +2073,8 @@ test.describe('public landing page', () => {
     await settle(page);
 
     const state = await readHeroComposition(page);
-    expect(state.frameTop, '390px frame top').toBeGreaterThanOrEqual(430);
-    expect(state.frameTop, '390px frame top').toBeLessThanOrEqual(490);
+    expect(state.frameTop, '390px frame top').toBeGreaterThanOrEqual(500);
+    expect(state.frameTop, '390px frame top').toBeLessThanOrEqual(550);
     expect(state.introMediaGap, '390px intro-media gap').not.toBeNull();
     expect(state.introMediaGap!, '390px intro-media gap min').toBeGreaterThanOrEqual(16);
   });
@@ -3634,8 +3734,8 @@ test.describe('public landing page', () => {
     await settle(page);
 
     const metrics = await readPhase2KeyMetrics(page);
-    expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(10200);
-    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(10230);
+    expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(10270);
+    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(10310);
     expect(metrics.heroFrameTop!, '390px hero frame top').toBeGreaterThan(360);
     expect(metrics.platform.frameTopRel!, '390px platform frame top').toBeGreaterThan(250);
     expect(metrics.ai.frameTopRel!, '390px AI frame top').toBeGreaterThan(300);

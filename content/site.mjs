@@ -242,9 +242,16 @@ const en = {
     },
   },
   hero: {
-    eyebrow: 'Fleet and rental operations platform',
-    title: 'The operating system for modern mobility operations',
-    body: 'SynqDrive runs rental, fleet, bookings, customers, billing and connected vehicle data in one operational system.',
+    eyebrow: 'Connected Vehicle Intelligence Platform',
+    title: {
+      main: 'Everything your fleet needs.',
+      emphasis: 'In real time.',
+    },
+    body: {
+      primary: ['SynqDrive connects vehicles,', 'processes and AI in one', 'platform'],
+      secondary:
+        'for automated workflows, greater efficiency, better utilisation and less effort in day-to-day operations.',
+    },
     primary: 'Book a demo',
     secondary: 'See the platform',
     media: MEDIA.hero,
@@ -586,9 +593,16 @@ const de = {
     },
   },
   hero: {
-    eyebrow: 'Das Betriebssystem für moderne Mobilitätsbetriebe',
-    title: 'Alles, was Ihre Flotte braucht. In Echtzeit.',
-    body: 'SynqDrive verbindet Fahrzeuge, Prozesse und KI in einer Plattform - für automatisierte Abläufe, bessere Auslastung und weniger Aufwand im Tagesgeschäft.',
+    eyebrow: 'Connected Vehicle Intelligence Plattform',
+    title: {
+      main: 'Alles, was Ihre Flotte braucht.',
+      emphasis: 'In Echtzeit.',
+    },
+    body: {
+      primary: ['SynqDrive verbindet Fahrzeuge,', 'Prozesse und KI in einer', 'Plattform'],
+      secondary:
+        'für automatisierte Abläufe, Effizienzsteigerung, bessere Auslastung und weniger Aufwand im Tagesgeschäft.',
+    },
     primary: 'Demo anfragen',
     secondary: 'Plattform entdecken',
     media: MEDIA.hero,
