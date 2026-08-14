@@ -2357,6 +2357,7 @@ html[data-nav-scroll-lock='true'] {
 
   .hero__intro {
     max-width: none;
+    text-align: center;
   }
 
   .hero__actions {

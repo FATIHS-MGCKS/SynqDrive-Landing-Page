@@ -1911,6 +1911,7 @@ test.describe('public landing page', () => {
             : null,
         isMobile,
         isDesktop,
+        introTextAlign: intro ? getComputedStyle(intro).textAlign : '',
       };
     });
   }
@@ -1937,6 +1938,7 @@ test.describe('public landing page', () => {
           state.clientWidth - 1,
         );
         expect(state.contentInUpperHero, `${width}px hero content upper`).toBe(true);
+        expect(state.introTextAlign, `${width}px hero intro alignment`).toBe('center');
         expect(state.mobileSourceMedia, `${width}px hero mobile source`).toContain('760px');
         expect(state.heroImgLoading, `${width}px hero loading`).toBe('eager');
         expect(state.heroImgFetchPriority, `${width}px hero fetchpriority`).toBe('high');
