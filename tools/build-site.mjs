@@ -111,7 +111,7 @@ const CATASTROPHIC_FALLBACK_STYLE = [
 
 /** Inline fix when edge cache serves pre-merge hero markup without refreshed CSS/JS. */
 const HERO_STALE_HTML_FIX_STYLE =
-  '.hero__body .hero__body-line,.hero__body .hero__body-primary,.hero__body .hero__body-secondary{display:inline}.hero__body .hero__body-secondary{margin-top:0;color:inherit;font-size:inherit;line-height:inherit;font-weight:inherit}.hero__body .hero__body-line::after{content:" ";white-space:pre}';
+  '.hero__body .hero__body-line,.hero__body .hero__body-primary,.hero__body .hero__body-secondary,.hero__body .hero__body-lead,.hero__body .hero__body-tail{display:inline}.hero__body .hero__body-primary,.hero__body .hero__body-lead{color:#111827;font-weight:550}.hero__body .hero__body-secondary,.hero__body .hero__body-tail{margin-top:0;color:#6b7280;font-size:inherit;line-height:inherit;font-weight:500}.hero__body .hero__body-line::after{content:" ";white-space:pre}';
 const HERO_STALE_HTML_FIX_SCRIPT =
   '(function(){var b=document.querySelector(".hero .hero__body");if(!b||!b.querySelector(".hero__body-secondary"))return;b.textContent=b.textContent.replace(/\\s+/g," ").trim();})();';
 
