@@ -158,7 +158,7 @@ function renderMobileNav(c, other, site) {
             <p class="sr-only" id="mobile-nav-title">${esc(mobile.rootTitle)}</p>
             <ul class="mobilenav__root-list">
               ${rootSubmenuRow('platform', c.nav.platform)}
-              ${rootSubmenuRow('solutions', mobile.categories.solutions)}
+              ${rootSubmenuRow('products', mobile.categories.products)}
               ${rootSubmenuRow('industries', mobile.categories.industries)}
               <li>
                 <a class="mobilenav__row" href="#${site.sectionIds.integrations}">
@@ -197,7 +197,7 @@ function renderMobileNav(c, other, site) {
             </div>
           </section>
           ${submenu('platform', c.nav.platform, platformItems)}
-          ${submenu('solutions', mobile.categories.solutions, mobile.solutions)}
+          ${submenu('products', mobile.categories.products, mobile.products)}
           ${submenu('industries', mobile.categories.industries, mobile.industries)}
           ${submenu('resources', mobile.categories.resources, mobile.resources)}
         </div>

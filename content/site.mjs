@@ -187,19 +187,17 @@ const en = {
       available: 'Available',
       sales: 'Contact sales',
       categories: {
-        solutions: 'Solutions',
+        products: 'Products',
         industries: 'Industries',
         integrations: 'Integrations',
         resources: 'Resources',
         pricing: 'Pricing',
       },
-      solutions: [
-        { label: 'Rental Operations', status: 'inProgress' },
+      products: [
+        { label: 'Rental Operations', href: LINKS.app },
         { label: 'Fleet Operations', status: 'inProgress' },
-        { label: 'Booking & Dispatch', status: 'inProgress' },
-        { label: 'Customer & Driver Communication', href: `#${SECTION_IDS.communication}` },
-        { label: 'Billing & Payment Processes', status: 'inProgress' },
-        { label: 'Automation & AI', href: `#${SECTION_IDS.ai}` },
+        { label: 'Delivery Operations', status: 'inProgress' },
+        { label: 'Mobility Operations', status: 'inProgress' },
       ],
       industries: [
         { label: 'Car Rental', status: 'available' },
@@ -492,19 +490,17 @@ const de = {
       available: 'Verfügbar',
       sales: 'Vertrieb kontaktieren',
       categories: {
-        solutions: 'Lösungen',
+        products: 'Produkte',
         industries: 'Branchen',
         integrations: 'Integrationen',
         resources: 'Ressourcen',
         pricing: 'Preise',
       },
-      solutions: [
-        { label: 'Rental Operations', status: 'inProgress' },
+      products: [
+        { label: 'Rental Operations', href: LINKS.app },
         { label: 'Fleet Operations', status: 'inProgress' },
-        { label: 'Buchung & Disposition', status: 'inProgress' },
-        { label: 'Kunden- & Fahrerkommunikation', href: `#${SECTION_IDS.communication}` },
-        { label: 'Abrechnung & Zahlungsprozesse', status: 'inProgress' },
-        { label: 'Automatisierung & KI', href: `#${SECTION_IDS.ai}` },
+        { label: 'Delivery Operations', status: 'inProgress' },
+        { label: 'Mobility Operations', status: 'inProgress' },
       ],
       industries: [
         { label: 'Autovermietung', status: 'available' },
