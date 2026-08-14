@@ -171,12 +171,37 @@
     return window.scrollY || window.pageYOffset || document.documentElement.scrollTop || 0;
   }
 
+  function capturePendingScroll() {
+    if (masthead && masthead.dataset.navOpen !== 'true') pendingScrollY = readScrollY();
+  }
+
+  function clearScrollLockStyles() {
+    document.documentElement.removeAttribute('data-nav-scroll-lock');
+    document.body.style.position = '';
+    document.body.style.top = '';
+    document.body.style.left = '';
+    document.body.style.right = '';
+    document.body.style.width = '';
+  }
+
+  function restoreScrollPosition(restoreY) {
+    var root = document.documentElement;
+    var previousBehavior = root.style.scrollBehavior;
+    root.style.scrollBehavior = 'auto';
+    window.scrollTo(0, restoreY);
+    document.documentElement.scrollTop = restoreY;
+    document.body.scrollTop = restoreY;
+    root.style.scrollBehavior = previousBehavior;
+    requestAnimationFrame(function () {
+      root.style.scrollBehavior = 'auto';
+      window.scrollTo(0, restoreY);
+      root.style.scrollBehavior = previousBehavior;
+    });
+  }
+
   function lockPageScroll() {
     if (scrollLockActive) return;
     savedScrollY = pendingScrollY !== null ? pendingScrollY : readScrollY();
-    if (pendingScrollY !== null && Math.abs(savedScrollY - readScrollY()) > 48) {
-      savedScrollY = readScrollY();
-    }
     pendingScrollY = null;
     scrollLockActive = true;
     document.documentElement.dataset.navScrollLock = 'true';
@@ -188,23 +213,29 @@
   }
 
   function unlockPageScroll() {
-    if (!scrollLockActive) return;
-    var restoreY = savedScrollY;
+    var restoreY = scrollLockActive
+      ? savedScrollY
+      : Math.abs(parseInt(document.body.style.top || '0', 10)) || savedScrollY;
     scrollLockActive = false;
     savedScrollY = 0;
     pendingScrollY = null;
-    document.documentElement.removeAttribute('data-nav-scroll-lock');
-    document.body.style.position = '';
-    document.body.style.top = '';
-    document.body.style.left = '';
-    document.body.style.right = '';
-    document.body.style.width = '';
-    window.scrollTo(0, restoreY);
-    document.documentElement.scrollTop = restoreY;
-    document.body.scrollTop = restoreY;
-    requestAnimationFrame(function () {
-      if (Math.abs(readScrollY() - restoreY) > 2) window.scrollTo(0, restoreY);
-    });
+    clearScrollLockStyles();
+    restoreScrollPosition(restoreY);
+  }
+
+  function navigateToHash(hash) {
+    if (!hash || hash.charAt(0) !== '#') return;
+    var target = document.querySelector(hash);
+    if (target) {
+      target.scrollIntoView({ block: 'start' });
+      if (window.history && window.history.pushState) {
+        window.history.pushState(null, '', hash);
+      } else {
+        window.location.hash = hash;
+      }
+      return;
+    }
+    window.location.hash = hash;
   }
 
   function setBackgroundInert(state) {
@@ -271,8 +302,30 @@
     lockPageScroll();
     setBackgroundInert(true);
     showRootView(false);
-    var firstTarget = navClose || navPanel.querySelector('[data-nav-submenu]') || navPanel;
-    if (firstTarget) firstTarget.focus();
+    if (navClose) {
+      navClose.style.pointerEvents = 'none';
+      window.setTimeout(function () {
+        navClose.style.pointerEvents = '';
+      }, 450);
+    }
+    var coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    var firstTarget = coarsePointer
+      ? navPanel.querySelector('[data-nav-submenu]') || navPanel
+      : navClose || navPanel.querySelector('[data-nav-submenu]') || navPanel;
+    if (firstTarget === navPanel && !navPanel.hasAttribute('tabindex')) {
+      navPanel.setAttribute('tabindex', '-1');
+    }
+    if (firstTarget) {
+      if (coarsePointer) {
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            if (masthead.dataset.navOpen === 'true') firstTarget.focus({ preventScroll: true });
+          });
+        });
+      } else {
+        firstTarget.focus({ preventScroll: true });
+      }
+    }
     navPanel.addEventListener('keydown', trapDrawerFocus);
   }
 
@@ -304,9 +357,8 @@
   if (masthead && navToggle && navPanel) {
     initMobileNav();
 
-    navToggle.addEventListener('pointerdown', function () {
-      if (masthead.dataset.navOpen !== 'true') pendingScrollY = readScrollY();
-    });
+    navToggle.addEventListener('pointerdown', capturePendingScroll);
+    navToggle.addEventListener('touchstart', capturePendingScroll, { passive: true });
 
     navToggle.addEventListener('click', function () {
       var open = masthead.dataset.navOpen === 'true';
@@ -334,7 +386,21 @@
 
     navPanel.addEventListener('click', function (event) {
       if (event.target.closest('[data-nav-close]')) return;
-      if (event.target.closest('a')) closeDrawer(false);
+      var link = event.target.closest('a[href]');
+      if (!link) return;
+      var href = link.getAttribute('href') || '';
+      if (href.charAt(0) === '#') {
+        event.preventDefault();
+        var hash = href;
+        closeDrawer(false);
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            navigateToHash(hash);
+          });
+        });
+        return;
+      }
+      closeDrawer(false);
     });
 
     window.addEventListener('resize', function () {
