@@ -257,9 +257,8 @@ export function header(c, other, site) {
           </button>
         </div>
       </div>
-
-      ${mobileNav}
-    </header>`;
+    </header>
+    ${mobileNav}`;
 }
 
 export function hero(c) {

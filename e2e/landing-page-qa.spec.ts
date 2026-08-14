@@ -924,6 +924,34 @@ test.describe('public landing page', () => {
       .toBeGreaterThan(120);
   });
 
+  test('mobile navigation covers full viewport when opened while scrolled', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'load' });
+    await page.evaluate(() => window.scrollTo(0, 2200));
+    await page.waitForTimeout(100);
+
+    await page.evaluate(() => {
+      document.querySelector('[data-nav-toggle]')?.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+      document.querySelector('[data-nav-toggle]')?.click();
+    });
+
+    const panel = page.locator('[data-nav-panel]');
+    await expect(panel).toBeVisible();
+
+    const geometry = await page.evaluate(() => {
+      const panelEl = document.querySelector('[data-nav-panel]');
+      const rect = panelEl?.getBoundingClientRect();
+      return {
+        insideMasthead: Boolean(panelEl?.closest('.masthead')),
+        panelHeight: rect?.height ?? 0,
+        viewportHeight: window.innerHeight,
+      };
+    });
+
+    expect(geometry.insideMasthead).toBe(false);
+    expect(geometry.panelHeight).toBeGreaterThanOrEqual(geometry.viewportHeight * 0.95);
+  });
+
   test('mobile navigation shields close control from phantom open tap when scrolled', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/', { waitUntil: 'load' });

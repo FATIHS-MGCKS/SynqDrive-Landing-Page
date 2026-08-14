@@ -549,6 +549,10 @@ svg {
   display: flex;
   flex-direction: column;
   background: var(--canvas);
+  height: 100vh;
+  height: 100dvh;
+  max-height: 100vh;
+  max-height: 100dvh;
 }
 
 .mobilenav[hidden] {
