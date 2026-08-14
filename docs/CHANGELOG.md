@@ -8,6 +8,19 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+## Hero fleet background mobile fix — Production deployment — 2026-08-14
+
+**Scope:** Mobile hero rendering and spacing correction on `https://synqdrive.eu` (PR #16)
+
+- Fixed Safari/mobile `<picture>` cover rendering for the fleet background
+- Restored previous hero text padding rhythm; removed excessive bottom padding
+- Eyebrow underline switched to thin ink (`1px`, tight offset) instead of brand blue
+- Mobile `<img>` fallback now uses the portrait fleet asset
+- Package SHA-256 `7bddc5a1ccc4b21e012c30f7813098d150105a87224e5abb2c6c0eaeea4d66c9` (2,065,906 bytes)
+- Runtime fingerprints: `styles.48fed002b23d.css`, `script.f02f7dcbd4a4.js`
+
+---
+
 ## Hero fleet background — Production deployment — 2026-08-14
 
 **Scope:** Full-bleed responsive hero backgrounds on `https://synqdrive.eu` (PR #15)

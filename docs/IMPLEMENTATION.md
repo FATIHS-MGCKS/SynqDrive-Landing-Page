@@ -3,11 +3,11 @@
 **Date:** 2026-08-11 (original report); Phase-1 navigation updates through P1.5  
 **Production URL:** <https://synqdrive.eu> (German), <https://synqdrive.eu/en/> (English)
 
-> **Current Production:** Hero fleet background deployed **2026-08-14T12:44:46Z** (source `ff01212`, PR #15)
-> **Prior deploy:** Einsatzwelten and hero hierarchy **2026-08-14T11:00:15Z** (source `f529f45`, PR #14)
-> **Production runtime source SHA:** `ff01212b28ba417dfdae458ba12b4e95973cfcc8`
-> **Release artefact SHA-256:** `8b0862336e592aaf7c5dd019a56a5e29bbb2fe2d7d3d7126a745fb112daee36d` (2,065,922 bytes)
-> **Runtime fingerprints:** `styles.d065d81b865a.css`, `script.f02f7dcbd4a4.js`
+> **Current Production:** Hero fleet mobile fix deployed **2026-08-14T13:05:00Z** (source `85d90b2`, PR #16)
+> **Prior deploy:** Hero fleet background **2026-08-14T12:44:46Z** (PR #15)
+> **Production runtime source SHA:** `85d90b2` (merge commit on `main`)
+> **Release artefact SHA-256:** `7bddc5a1ccc4b21e012c30f7813098d150105a87224e5abb2c6c0eaeea4d66c9` (2,065,906 bytes)
+> **Runtime fingerprints:** `styles.48fed002b23d.css`, `script.f02f7dcbd4a4.js`
 > **Acceptance:** Pre-deploy Chromium **119/119** and WebKit **11/11**; live hero background assets and markup **PASS**
 > **Mobile navigation:** PR #10, PR #11, and iOS interaction fixes **MERGED** and **DEPLOYED** — see [`docs/audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md`](audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md). **Real-iPhone acceptance remains owner-controlled.**
 > **Post-release incident (E1–E2):** Real-device Mobile Safari unstyled presentation reported 2026-08-13 — see the [incident audit](audits/landing-page-mobile-safari-css-delivery-incident-2026-08.md) and [E2 deployment audit](audits/landing-page-mobile-safari-css-delivery-e2-production-2026-08.md). **Technical remediation deployed; real-iPhone acceptance remains owner-controlled.**
