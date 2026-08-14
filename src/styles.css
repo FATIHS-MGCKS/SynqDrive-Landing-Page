@@ -1033,8 +1033,23 @@ html[data-nav-scroll-lock='true'] {
   grid-row: 1;
 }
 
+.hero__intro .eyebrow {
+  display: inline-block;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: var(--ink);
+  font-size: 13.5px;
+  font-weight: 650;
+  line-height: 1.35;
+  letter-spacing: -0.006em;
+  margin-bottom: 20px;
+}
+
 .hero__intro h1 {
   font-size: var(--type-display);
+  font-weight: 600;
   letter-spacing: -0.03em;
 }
 
@@ -2105,10 +2120,6 @@ html[data-nav-scroll-lock='true'] {
     grid-row: auto;
   }
 
-  .hero__intro .eyebrow {
-    margin-bottom: 16px;
-  }
-
   .hero__actions {
     margin-top: var(--stack-gap);
   }
@@ -2254,6 +2265,11 @@ html[data-nav-scroll-lock='true'] {
   .hero {
     gap: var(--stack-gap);
     padding-block: clamp(32px, 6vw, 44px) clamp(36px, 6vw, 52px);
+  }
+
+  .hero__body {
+    font-size: 1rem;
+    line-height: 1.55;
   }
 
   .notes {

@@ -124,7 +124,7 @@ export function expectReleaseStylesheetApplied(state: Awaited<ReturnType<typeof 
   expect(state.linkDecoration).toBe('none');
   expect(state.skipTop ?? 0).toBeLessThan(0);
   expect(Number.parseFloat(state.h1FontSize ?? '0')).toBeGreaterThan(20);
-  expect(Number(state.h1FontWeight ?? '0')).toBeGreaterThanOrEqual(700);
+  expect(Number(state.h1FontWeight ?? '0')).toBe(600);
   expect(state.mastheadPosition).toBe('sticky');
   expect(state.scrollWidth).toBeLessThanOrEqual(state.viewportWidth + 1);
 }

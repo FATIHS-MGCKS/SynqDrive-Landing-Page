@@ -513,8 +513,8 @@ const de = {
   },
   hero: {
     eyebrow: 'Das Betriebssystem für moderne Mobilitätsbetriebe',
-    title: 'Steuern Sie heute, was Ihren Betrieb morgen bewegt.',
-    body: 'SynqDrive macht aus Fahrzeugdaten, Prozessen und täglicher Koordination einen intelligent vernetzten Betrieb - für bessere Auslastung, automatisierte Abläufe und weniger Aufwand im Tagesgeschäft.',
+    title: 'Alles, was Ihre Flotte braucht. In Echtzeit.',
+    body: 'SynqDrive verbindet Fahrzeuge, Prozesse und KI in einer Plattform - für automatisierte Abläufe, bessere Auslastung und weniger Aufwand im Tagesgeschäft.',
     primary: 'Demo anfragen',
     secondary: 'Plattform entdecken',
     media: MEDIA.hero,
