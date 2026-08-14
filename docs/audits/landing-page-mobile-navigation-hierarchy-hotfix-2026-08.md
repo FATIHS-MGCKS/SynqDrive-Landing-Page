@@ -59,7 +59,7 @@ Root order (DE / EN):
 
 Platform, Solutions, Industries, and Resources open nested views. Integrations and Login are direct real destinations. Pricing is a non-link **In Arbeit / In progress** row.
 
-DEC-011 explicitly permits mobile to preview planned IA without dead routes. DEC-004 remains binding for desktop, which stays Platform-only.
+DEC-011 is a scoped mobile exception to **both DEC-003 and DEC-004**. It does not globally supersede DEC-003; desktop remains Platform-only under staged activation until a separate accepted decision authorizes desktop IA expansion. DEC-008 dead-link authority is preserved.
 
 ## Destination Availability Matrix
 
@@ -210,10 +210,10 @@ The hotfix retains:
 | WebKit (`npm run qa:webkit`) | **11/11 PASS** |
 | Deterministic package (`npm run package`) | **PASS** |
 | Fingerprint / alias contract | **PASS** |
-| CSS | `styles.5ee38946a39d.css` |
-| JavaScript | `script.ef9f979034ea.js` |
+| CSS | `styles.478b7a069726.css` |
+| JavaScript | `script.0501a8359cb4.js` |
 
-The package contains 36 archive entries at the site root, verified by `tools/package-site.mjs`. Its local QA identity is 1,030,284 bytes, SHA-256 `9bad77e259084e1e3da1143cb2b866dda5c8a2ae46f1b1c8ac0c1a3bb57a1b57`; it is **not deployed**.
+The package contains 36 archive entries at the site root, verified by `tools/package-site.mjs`. Its local QA identity is 1,030,289 bytes, SHA-256 `606ca121ab261765017a4923c2c933fd5769e659f6a686b66f0d4adbc4f1c2f4`; it is **not deployed**.
 
 ## Production Deployment Status
 
@@ -222,6 +222,18 @@ The package contains 36 archive entries at the site root, verified by `tools/pac
 **`app.synqdrive.eu` touched:** **NO**
 
 This hotfix is a local/Draft-PR release candidate only.
+
+## P10.1 Closure (2026-08-13)
+
+External review identified three interaction/governance gaps and one visual alignment item. Scope remained mobile navigation only.
+
+| Item | Change |
+|---|---|
+| Governance | DEC-011 consequences clarified as a scoped mobile exception to **both DEC-003 and DEC-004**; DEC-003 remains long-term/default IA outside mobile |
+| Initial focus | `openDrawer()` now focuses `[data-nav-close]` first; first Tab reaches Platform |
+| Resources QA | DE/EN hierarchy tests verify Resources subview, three real destinations, Back focus restoration |
+| Close control | Default soft neutral surface on `.mobilenav__close`; hover/focus slightly stronger |
+| Production | Still untouched |
 
 ## Known Limitations
 
