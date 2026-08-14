@@ -8,9 +8,23 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+## Mobile navigation Products + iOS fixes Production deployment — 2026-08-14
+
+**Scope:** Deploy PR #11 Products correction plus merged iOS scroll/full-screen mobile menu fixes to `https://synqdrive.eu`  
+**Audit:** [`docs/audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md`](audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md)
+
+- Combined release: PR #11 squash (`da72c6f`) + iOS interaction merge (`34cb029`)
+- Exact artefact deployed via Hostinger static deploy; package SHA-256 `fa8751cc9bf892a8aa96b9f35b2bc12a013f5891b9c38767963424fa8a1426f5` (1,030,724 bytes)
+- Runtime fingerprints: `styles.a434037ccad4.css`, `script.f02f7dcbd4a4.js`
+- Pre-deploy exact-artefact QA: Chromium **114/114**, WebKit **11/11**
+- Serial Production smoke **PASS** (DE/EN HTML, fingerprinted CSS/JS, `app.synqdrive.eu` health)
+- Real-iPhone acceptance **pending owner test**
+
+---
+
 ## Mobile navigation Products correction — 2026-08-14
 
-**Scope:** Mobile navigation only — **NOT DEPLOYED**
+**Scope:** Mobile navigation only — merged via PR #11; **deployed 2026-08-14**
 
 - Renamed mobile root **Lösungen / Solutions** → **Produkte / Products**
 - Replaced Solutions submenu with Products submenu (four product rows)

@@ -272,7 +272,7 @@ External review identified three interaction/governance gaps and one visual alig
 
 ## Products submenu correction (2026-08-14)
 
-Mobile-only correction; **NOT DEPLOYED**.
+Mobile-only correction; merged via PR #11; **deployed 2026-08-14**.
 
 | Item | Change |
 |---|---|
@@ -281,6 +281,32 @@ Mobile-only correction; **NOT DEPLOYED**.
 | Rental Operations | Active link to `https://app.synqdrive.eu` |
 | Fleet / Delivery / Mobility Operations | Non-link **In Arbeit / In progress** rows |
 | Removed | Previous Solutions entries (Booking & Dispatch, Communication, Billing, Automation & AI, DE variants) |
+
+## Combined Production deployment — PR #11 + iOS fixes (2026-08-14)
+
+**PR #11:** **MERGED** (squash) — `da72c6f`  
+**iOS interaction merge:** `34cb029` (scroll-lock, phantom-close shield, full-viewport menu outside masthead)  
+**Production touched:** **YES** — `https://synqdrive.eu`  
+**Deployed UTC:** **2026-08-14T06:36:56Z**  
+**Mechanism:** Hostinger `hosting_deployStaticWebsite` → `/home/u700268787/domains/synqdrive.eu/public_html`  
+**Archive deployed:** `synqdrive-landing-page.tar.gz` (SHA-256 `fa8751cc…`, 1,030,724 bytes)  
+**Runtime fingerprints:** `styles.a434037ccad4.css`, `script.f02f7dcbd4a4.js`  
+**Pre-deploy exact-artefact QA:** Chromium **114/114**, WebKit **11/11**  
+**Hostinger cache purged:** **NO** — cache-busted fetch served new HTML immediately  
+**`app.synqdrive.eu` touched:** **NO** (read-only health verified post-deploy)
+
+### Post-deploy verification (serial)
+
+| Check | Result |
+|---|---|
+| DE HTML — **Produkte** root label | **PASS** |
+| EN HTML — **Products** root label | **PASS** |
+| DE/EN fingerprinted CSS/JS HTTP 200 | **PASS** — `/styles.a434037ccad4.css`, `/script.f02f7dcbd4a4.js` |
+| Compatibility aliases HTTP 200 | **PASS** — `/styles.css`, `/script.js` |
+| `app.synqdrive.eu/api/v1/health` | **PASS** — `status: ok` |
+| Rollback artefact valid (not executed) | **PASS** — `rollback/synqdrive.eu-pre-p2.8-20260813_095611.tar.gz` |
+
+**Real-iPhone acceptance:** **PENDING OWNER TEST**
 
 ## Known Limitations
 

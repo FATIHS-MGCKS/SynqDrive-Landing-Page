@@ -3,13 +3,14 @@
 **Date:** 2026-08-11 (original report); Phase-1 navigation updates through P1.5  
 **Production URL:** <https://synqdrive.eu> (German), <https://synqdrive.eu/en/> (English)
 
-> **Current Production (Phase 2 + mobile navigation hotfix):** Phase-2 mobile composition plus mobile navigation hierarchy hotfix live; mobile nav deployed **2026-08-14T03:43:49Z** (PR #10 squash `4d16ed0`)  
+> **Current Production (Phase 2 + mobile navigation):** Phase-2 mobile composition plus mobile navigation hierarchy, Products correction, and iOS interaction fixes live; deployed **2026-08-14T06:36:56Z** (main `34cb029` — PR #11 + iOS scroll/full-screen merge)  
+> **Prior mobile nav deploy:** **2026-08-14T03:43:49Z** (PR #10 squash `4d16ed0`)  
 > **Prior Phase-2 deploy:** **2026-08-13T10:24:25Z** (P2.8B)  
-> **Production runtime source SHA:** `4d16ed0aedf24584ad140962dc66712fbedad907` (mobile nav hotfix)  
-> **Release artefact SHA-256:** `606ca121ab261765017a4923c2c933fd5769e659f6a686b66f0d4adbc4f1c2f4` (1,030,289 bytes)  
-> **Runtime fingerprints:** `styles.478b7a069726.css`, `script.0501a8359cb4.js`  
+> **Production runtime source SHA:** `34cb029adf8e39509321148e013c44a3864ccc05`  
+> **Release artefact SHA-256:** `fa8751cc9bf892a8aa96b9f35b2bc12a013f5891b9c38767963424fa8a1426f5` (1,030,724 bytes)  
+> **Runtime fingerprints:** `styles.a434037ccad4.css`, `script.f02f7dcbd4a4.js`  
 > **Acceptance:** P2.8C **PASS WITH INFRASTRUCTURE-LIMITED PRODUCTION TESTING** — see [`docs/audits/landing-page-phase-2.8c-production-acceptance-2026-08.md`](audits/landing-page-phase-2.8c-production-acceptance-2026-08.md)  
-> **Mobile navigation hotfix:** PR #10 **MERGED** and **DEPLOYED** — see [`docs/audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md`](audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md). **Real-iPhone acceptance remains owner-controlled.**
+> **Mobile navigation:** PR #10, PR #11, and iOS interaction fixes **MERGED** and **DEPLOYED** — see [`docs/audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md`](audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md). **Real-iPhone acceptance remains owner-controlled.**
 > **Post-release incident (E1–E2):** Real-device Mobile Safari unstyled presentation reported 2026-08-13 — see the [incident audit](audits/landing-page-mobile-safari-css-delivery-incident-2026-08.md) and [E2 deployment audit](audits/landing-page-mobile-safari-css-delivery-e2-production-2026-08.md). **Technical remediation deployed; real-iPhone acceptance remains owner-controlled.**
 > **Rollback (local; not used):** `rollback/synqdrive.eu-pre-p2.8-20260813_095611.tar.gz` + [`rollback/README.md`](../rollback/README.md)  
 > **Previous P1.6.1 deploy:** **2026-08-12T14:46:48Z** — see [`docs/audits/landing-page-phase-1.6.1-production-hygiene-2026-08.md`](audits/landing-page-phase-1.6.1-production-hygiene-2026-08.md)
@@ -361,6 +362,7 @@ screenshots are byte-identical to the locally approved build.
 - **Phase 2 Production Accepted:** **YES** (P2.8C; pre-E1)
 - **E1 / E1.1 / E1.2 / E2 (Mobile Safari CSS delivery):** Fingerprinting, recovery, fallback, WebKit guards, and deterministic packaging deployed in E2; technical Production gate **PASS**. Real-iPhone acceptance remains owner-controlled.
 - **Mobile navigation hierarchy hotfix (PR #10 / DEC-011):** **merged to main** and **deployed to Production** (2026-08-14) — see [`docs/audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md`](audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md). Real-iPhone acceptance **pending owner test**.
+- **Mobile navigation Products correction (PR #11) + iOS scroll/full-screen fixes:** **merged to main** and **deployed to Production** (2026-08-14T06:36:56Z, main `34cb029`) — Products submenu live; scroll-lock, phantom-close shield, and full-viewport menu retained.
 - Desktop Solutions, Resources, and Pricing remain deferred (DEC-004). Mobile may preview planned IA as non-link **In Arbeit** rows under DEC-011; no dead routes.
 - Taxi & Mobility may become a future Solutions page; it does not imply generally available Taxi Dispatch (DEC-009).
 - The product visuals are English on both locales. German screenshot variants deferred.
