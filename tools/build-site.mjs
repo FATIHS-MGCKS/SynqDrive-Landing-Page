@@ -67,6 +67,8 @@ const HTML_CACHE_HEADERS = `# SynqDrive landing page — locale HTML must never 
 </IfModule>
 
 <IfModule LiteSpeed>
+  RewriteEngine On
+  RewriteRule ^(en/)?index\\.html$ - [E=cache-control:no-cache,E=no-brotli:1]
   <FilesMatch "index\\.html$">
     Cache-Control no-cache
   </FilesMatch>
