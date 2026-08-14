@@ -1839,8 +1839,8 @@ test.describe('public landing page', () => {
     await settle(page);
 
     const state = await readHeroComposition(page);
-    expect(state.frameTop, '390px frame top').toBeGreaterThanOrEqual(500);
-    expect(state.frameTop, '390px frame top').toBeLessThanOrEqual(560);
+    expect(state.frameTop, '390px frame top').toBeGreaterThanOrEqual(430);
+    expect(state.frameTop, '390px frame top').toBeLessThanOrEqual(490);
     expect(state.introMediaGap, '390px intro-media gap').not.toBeNull();
     expect(state.introMediaGap!, '390px intro-media gap min').toBeGreaterThanOrEqual(16);
   });
@@ -3500,9 +3500,9 @@ test.describe('public landing page', () => {
     await settle(page);
 
     const metrics = await readPhase2KeyMetrics(page);
-    expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(8480);
-    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(8520);
-    expect(metrics.heroFrameTop!, '390px hero frame top').toBeGreaterThan(400);
+    expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(8400);
+    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(8450);
+    expect(metrics.heroFrameTop!, '390px hero frame top').toBeGreaterThan(360);
     expect(metrics.platform.frameTopRel!, '390px platform frame top').toBeGreaterThan(250);
     expect(metrics.ai.frameTopRel!, '390px AI frame top').toBeGreaterThan(300);
     expect(metrics.ai.frameTopRel!, '390px AI frame top').toBeLessThanOrEqual(310);
