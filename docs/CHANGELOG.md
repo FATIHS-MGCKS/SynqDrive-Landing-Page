@@ -38,7 +38,7 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 - Desktop navigation unchanged
 - Landing sections and Product Images unchanged
 - Safari fingerprinting, stylesheet recovery, catastrophic fallback, CSS sentinel, and intrinsic SVG protections retained
-- Production untouched
+- Production untouched during hotfix development (Production deployment performed separately 2026-08-14)
 
 ### QA
 
