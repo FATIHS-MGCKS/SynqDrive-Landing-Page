@@ -302,8 +302,30 @@
     lockPageScroll();
     setBackgroundInert(true);
     showRootView(false);
-    var firstTarget = navClose || navPanel.querySelector('[data-nav-submenu]') || navPanel;
-    if (firstTarget) firstTarget.focus();
+    if (navClose) {
+      navClose.style.pointerEvents = 'none';
+      window.setTimeout(function () {
+        navClose.style.pointerEvents = '';
+      }, 450);
+    }
+    var coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+    var firstTarget = coarsePointer
+      ? navPanel.querySelector('[data-nav-submenu]') || navPanel
+      : navClose || navPanel.querySelector('[data-nav-submenu]') || navPanel;
+    if (firstTarget === navPanel && !navPanel.hasAttribute('tabindex')) {
+      navPanel.setAttribute('tabindex', '-1');
+    }
+    if (firstTarget) {
+      if (coarsePointer) {
+        requestAnimationFrame(function () {
+          requestAnimationFrame(function () {
+            if (masthead.dataset.navOpen === 'true') firstTarget.focus({ preventScroll: true });
+          });
+        });
+      } else {
+        firstTarget.focus({ preventScroll: true });
+      }
+    }
     navPanel.addEventListener('keydown', trapDrawerFocus);
   }
 
