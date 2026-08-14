@@ -928,7 +928,6 @@ html[data-nav-scroll-lock='true'] {
 
 /* ── Section scaffolding ─────────────────────────────────────────────────── */
 
-.hero,
 .section,
 .closing__inner,
 .masthead__inner,
@@ -1019,18 +1018,43 @@ html[data-nav-scroll-lock='true'] {
 
 /* ── Hero ────────────────────────────────────────────────────────────────── */
 
-.hero {
-  display: grid;
-  grid-template-columns: minmax(0, 0.88fr) minmax(0, 1.12fr);
-  align-items: center;
-  column-gap: 56px;
-  row-gap: 0;
-  padding-block: 96px 120px;
+.hero.hero--fleet-background {
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  max-width: none;
+  margin-inline: 0;
+  padding-inline: 0;
+  min-height: clamp(520px, 56vw, 720px);
+  overflow: hidden;
+}
+
+.hero__background {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.hero__background img {
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: 78% 92%;
+}
+
+.hero__shell {
+  position: relative;
+  z-index: 1;
+  max-width: var(--shell);
+  margin-inline: auto;
+  padding-inline: var(--gutter);
+  padding-block: clamp(72px, 7.5vw, 104px) clamp(56px, 6vw, 88px);
 }
 
 .hero__intro {
-  grid-column: 1;
-  grid-row: 1;
+  max-width: min(34rem, 100%);
 }
 
 .hero__intro .eyebrow {
@@ -1045,6 +1069,10 @@ html[data-nav-scroll-lock='true'] {
   line-height: 1.35;
   letter-spacing: -0.006em;
   margin-bottom: 20px;
+  text-decoration-line: underline;
+  text-decoration-color: var(--brand);
+  text-decoration-thickness: 2px;
+  text-underline-offset: 6px;
 }
 
 .hero__intro h1 {
@@ -1053,12 +1081,40 @@ html[data-nav-scroll-lock='true'] {
   letter-spacing: -0.03em;
 }
 
+.hero__title-main,
+.hero__title-emphasis {
+  font-weight: inherit;
+}
+
+.hero__title-emphasis {
+  color: var(--ink-soft);
+  font-weight: 650;
+}
+
 .hero__body {
+  width: 100%;
   margin-top: var(--space-m);
-  max-width: var(--measure-copy-narrow);
+  max-width: none;
   color: var(--ink-soft);
   font-size: var(--type-body-large);
   line-height: 1.62;
+}
+
+.hero__body-primary,
+.hero__body-secondary,
+.hero__body-line {
+  display: block;
+}
+
+.hero__body-primary {
+  font-weight: 500;
+}
+
+.hero__body-secondary {
+  margin-top: 22px;
+  color: var(--muted);
+  font-size: var(--type-body);
+  line-height: 1.65;
 }
 
 .hero__actions {
@@ -1068,14 +1124,146 @@ html[data-nav-scroll-lock='true'] {
   margin-top: var(--stack-gap-loose);
 }
 
-/* The frame sits inside the shell: the wider grid share already gives the
-   product enough presence, and bleeding past the gutter creates page-level
-   horizontal scroll on every viewport wider than the shell. */
-.hero__media {
+/* ── Einsatzwelten ───────────────────────────────────────────────────────── */
+
+.use-cases .section-head {
+  max-width: var(--measure-wide);
+}
+
+.use-cases__grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) repeat(2, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 56px;
+}
+
+.use-case-card {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--hairline);
+  border-radius: var(--surface-radius);
+  background: var(--canvas);
+  box-shadow: var(--frame-shadow);
+}
+
+.use-case-card--lead {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  grid-template-rows: minmax(0, 1fr) auto;
+  background: var(--canvas-alt);
+}
+
+.use-case-card--fleet {
   grid-column: 2;
   grid-row: 1;
-  align-self: center;
+}
+
+.use-case-card--taxi {
+  grid-column: 3;
+  grid-row: 1;
+}
+
+.use-case-card--passenger-transport {
+  grid-column: 2;
+  grid-row: 2;
+}
+
+.use-case-card--delivery-logistics {
+  grid-column: 3;
+  grid-row: 2;
+}
+
+.use-case-card__media {
+  min-height: 0;
+  overflow: hidden;
+  border-bottom: 1px solid var(--hairline);
+  background: var(--canvas-alt);
+  aspect-ratio: 16 / 7.6;
+}
+
+.use-case-card--lead .use-case-card__media {
+  aspect-ratio: auto;
+  min-height: 360px;
+}
+
+.use-case-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.use-case-card--rental img {
+  object-position: 42% center;
+}
+
+.use-case-card--fleet img {
+  object-position: center;
+}
+
+.use-case-card--taxi img {
+  object-position: center 58%;
+}
+
+.use-case-card--passenger-transport img {
+  object-position: center 56%;
+}
+
+.use-case-card--delivery-logistics img {
+  object-position: 64% center;
+}
+
+.use-case-card__content {
+  align-content: start;
+  padding: 17px 18px 19px;
+}
+
+.use-case-card--lead .use-case-card__content {
+  padding: 22px 24px 25px;
+}
+
+.use-case-card__heading {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px 12px;
+}
+
+.use-case-card h3 {
   min-width: 0;
+  font-size: 16px;
+  letter-spacing: -0.014em;
+  overflow-wrap: anywhere;
+}
+
+.use-case-card--lead h3 {
+  font-size: 20px;
+}
+
+.use-case-card__status {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  min-height: 24px;
+  padding: 0 8px;
+  border: 1px solid rgba(79, 134, 232, 0.18);
+  border-radius: var(--radius-sm);
+  background: rgba(79, 134, 232, 0.08);
+  color: var(--brand-ink);
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.use-case-card p {
+  margin-top: 7px;
+  color: var(--muted);
+  font-size: var(--type-small);
+  line-height: 1.55;
 }
 
 /* ── Layout primitives (mobile composition system) ─────────────────────────── */
@@ -1089,7 +1277,6 @@ html[data-nav-scroll-lock='true'] {
 }
 
 @media (max-width: 1024px) {
-  .layout-split--mobile-visual-first .hero__media,
   .layout-split--mobile-visual-first .split__media,
   .layout-split--mobile-visual-first .layout-split__visual {
     order: -1;
@@ -2108,25 +2295,56 @@ html[data-nav-scroll-lock='true'] {
     min-height: 100dvh;
   }
 
-  .hero {
-    grid-template-columns: minmax(0, 1fr);
-    gap: var(--stack-gap-loose);
-    padding-block: clamp(40px, 7vw, 56px) clamp(48px, 8vw, 72px);
+  .hero.hero--fleet-background {
+    min-height: clamp(620px, 112vw, 820px);
   }
 
-  .hero__intro,
-  .hero__media {
-    grid-column: 1;
-    grid-row: auto;
+  .hero__shell {
+    padding-block: clamp(40px, 7vw, 56px) clamp(220px, 48vw, 300px);
+  }
+
+  .hero__background img {
+    object-position: center 94%;
+  }
+
+  .hero__intro {
+    max-width: none;
   }
 
   .hero__actions {
     margin-top: var(--stack-gap);
   }
 
-  .hero__body,
   .section-body {
     max-width: min(var(--measure-copy), 100%);
+  }
+
+  .use-cases__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-rows: auto;
+    gap: var(--stack-gap);
+    margin-top: var(--stack-copy-visual);
+  }
+
+  .use-case-card,
+  .use-case-card--lead,
+  .use-case-card--fleet,
+  .use-case-card--taxi,
+  .use-case-card--passenger-transport,
+  .use-case-card--delivery-logistics {
+    grid-column: auto;
+    grid-row: auto;
+  }
+
+  .use-case-card--lead {
+    grid-column: 1 / -1;
+    grid-template-rows: auto minmax(0, 1fr);
+  }
+
+  .use-case-card__media,
+  .use-case-card--lead .use-case-card__media {
+    aspect-ratio: 16 / 7.2;
+    min-height: 0;
   }
 
   .split,
@@ -2262,14 +2480,49 @@ html[data-nav-scroll-lock='true'] {
     margin-bottom: 16px;
   }
 
-  .hero {
-    gap: var(--stack-gap);
-    padding-block: clamp(32px, 6vw, 44px) clamp(36px, 6vw, 52px);
+  .hero.hero--fleet-background {
+    min-height: clamp(660px, 128vw, 880px);
+  }
+
+  .hero__shell {
+    padding-block: clamp(32px, 6vw, 44px) clamp(240px, 52vw, 320px);
   }
 
   .hero__body {
     font-size: 1rem;
     line-height: 1.55;
+  }
+
+  .hero__body-secondary {
+    margin-top: 18px;
+  }
+
+  .use-cases__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 14px;
+    margin-top: var(--stack-copy-visual);
+  }
+
+  .use-case-card--lead {
+    grid-column: auto;
+  }
+
+  .use-case-card__media,
+  .use-case-card--lead .use-case-card__media {
+    aspect-ratio: 16 / 7.4;
+  }
+
+  .use-case-card--lead .use-case-card__media {
+    aspect-ratio: 16 / 8.6;
+  }
+
+  .use-case-card__content,
+  .use-case-card--lead .use-case-card__content {
+    padding: 16px 17px 18px;
+  }
+
+  .use-case-card--lead h3 {
+    font-size: 17px;
   }
 
   .notes {

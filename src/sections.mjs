@@ -1,11 +1,12 @@
 /**
  * Section templates for the public SynqDrive landing page.
  *
- * Seven content sections plus a closing call to action, in the order the page
+ * Eight content sections plus a closing call to action, in the order the page
  * renders them. Each section deliberately uses a different composition so the
  * page does not read as six repeated text-beside-screenshot rows:
  *
  *   hero            text column beside an upright product frame
+ *   use cases       one lead industry beside a four-cell image grid
  *   unified         header beside a 2x2 capability grid, full width frame below
  *   vehicle         one composed panel holding the product frame and its notes
  *   ai              mirrored split, product frame first, flow rail under text
@@ -21,8 +22,9 @@ import { icon } from './icons.generated.mjs';
 import { flattenPlatformMenu } from '../content/site.mjs';
 import { action, esc, iconMark, productFrame, sectionHead } from './primitives.mjs';
 
-/** Exported so the <link rel="preload"> in the document head cannot drift. */
-export const HERO_SIZES = '(max-width: 900px) 92vw, 50vw';
+/** Exported so hero background preloads cannot drift from the picture art direction. */
+export const HERO_BACKGROUND_MOBILE_MEDIA = '(max-width: 760px)';
+export const HERO_BACKGROUND_DESKTOP_MEDIA = '(min-width: 761px)';
 
 function renderPlatformPanel(c) {
   const menu = c.nav.platformMenu;
@@ -263,27 +265,90 @@ export function header(c, other, site) {
 
 export function hero(c) {
   const h = c.hero;
+  const bg = h.background;
+  const bodyPrimary = h.body.primary
+    .map((line) => `<span class="hero__body-line">${esc(line)} </span>`)
+    .join('');
 
-  /* Mobile source order: intro → product. Desktop grid keeps copy in the left column
-     and the product frame in the right column. */
-  return `<section class="hero layout-split" aria-labelledby="hero-title">
-      <div class="hero__intro">
-        <p class="eyebrow" data-reveal>${esc(h.eyebrow)}</p>
-        <h1 id="hero-title" data-reveal>${esc(h.title)}</h1>
-        <p class="hero__body" data-reveal>${esc(h.body)}</p>
-        <div class="hero__actions" data-reveal>
-          ${action({ href: 'mailto:info@synqdrive.eu?subject=SynqDrive%20demo%20request', label: h.primary, variant: 'primary' })}
-          ${action({ href: `#${c.unified.id}`, label: h.secondary, variant: 'secondary' })}
+  return `<section class="hero hero--fleet-background" aria-labelledby="hero-title">
+      <picture class="hero__background" aria-hidden="true">
+        <source
+          media="${HERO_BACKGROUND_MOBILE_MEDIA}"
+          srcset="/assets/${esc(bg.mobile.file)}.webp"
+          width="${bg.mobile.width}"
+          height="${bg.mobile.height}"
+        />
+        <source
+          media="${HERO_BACKGROUND_DESKTOP_MEDIA}"
+          srcset="/assets/${esc(bg.file)}.webp"
+          width="${bg.width}"
+          height="${bg.height}"
+        />
+        <img
+          src="/assets/${esc(bg.file)}.webp"
+          width="${bg.width}"
+          height="${bg.height}"
+          alt=""
+          loading="eager"
+          decoding="sync"
+          fetchpriority="high"
+        />
+      </picture>
+      <div class="hero__shell">
+        <div class="hero__intro">
+          <p class="eyebrow" data-reveal>${esc(h.eyebrow)}</p>
+          <h1 id="hero-title" data-reveal>
+            <span class="hero__title-main">${esc(h.title.main)}</span>
+            <span class="hero__title-emphasis">${esc(h.title.emphasis)}</span>
+          </h1>
+          <p class="hero__body" data-reveal>
+            <span class="hero__body-primary">${bodyPrimary}</span>
+            <span class="hero__body-secondary">${esc(h.body.secondary)}</span>
+          </p>
+          <div class="hero__actions" data-reveal>
+            ${action({ href: 'mailto:info@synqdrive.eu?subject=SynqDrive%20demo%20request', label: h.primary, variant: 'primary' })}
+            ${action({ href: `#${c.unified.id}`, label: h.secondary, variant: 'secondary' })}
+          </div>
         </div>
       </div>
-      <div class="hero__media" data-reveal>
-        ${productFrame({
-          media: h.media,
-          alt: h.mediaAlt,
-          priority: true,
-          sizes: HERO_SIZES,
-        })}
-      </div>
+    </section>`;
+}
+
+export function useCases(c) {
+  const s = c.useCases;
+  const items = s.items
+    .map((item, index) => {
+      const media = item.media;
+      const status = item.status
+        ? `<span class="use-case-card__status">${esc(item.status)}</span>`
+        : '';
+      const leadClass = index === 0 ? ' use-case-card--lead' : '';
+
+      return `<li class="use-case-card use-case-card--${esc(item.key)}${leadClass}" data-reveal>
+          <div class="use-case-card__media">
+            <img
+              src="/assets/${esc(media.file)}.webp"
+              width="${media.width}"
+              height="${media.height}"
+              alt="${esc(item.mediaAlt)}"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div class="use-case-card__content">
+            <div class="use-case-card__heading">
+              <h3>${esc(item.title)}</h3>
+              ${status}
+            </div>
+            <p>${esc(item.body)}</p>
+          </div>
+        </li>`;
+    })
+    .join('');
+
+  return `<section class="section use-cases" id="${s.id}" aria-labelledby="${s.id}-title">
+      ${sectionHead({ eyebrow: null, title: s.title, body: s.body, id: s.id })}
+      <ul class="use-cases__grid">${items}</ul>
     </section>`;
 }
 
