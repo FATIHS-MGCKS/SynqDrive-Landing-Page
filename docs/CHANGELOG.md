@@ -8,6 +8,19 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+## Hero copy simplification — Production deployment — 2026-08-14
+
+**Scope:** German hero copy refresh and removal of hero proof list on `https://synqdrive.eu` (PR #12)
+
+- Updated DE hero eyebrow, title, and body; removed three-item hero proof list
+- EN hero copy, product frame, CTAs, alt text, and links unchanged
+- Exact artefact deployed via Hostinger static deploy; package SHA-256 `bb7eb5ed6421a0051c9a75d91d061486bfb22e6f11ac36d6e562892c2dc47a19` (1,030,309 bytes)
+- Runtime fingerprints: `styles.ae22ca0824d4.css`, `script.f02f7dcbd4a4.js`
+- Pre-deploy exact-artefact QA: Chromium **114/114**, WebKit **11/11**
+- `app.synqdrive.eu` isolation **PASS**
+
+---
+
 ## Mobile navigation Products + iOS fixes Production deployment — 2026-08-14
 
 **Scope:** Deploy PR #11 Products correction plus merged iOS scroll/full-screen mobile menu fixes to `https://synqdrive.eu`  

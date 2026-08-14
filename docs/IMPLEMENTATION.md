@@ -3,12 +3,11 @@
 **Date:** 2026-08-11 (original report); Phase-1 navigation updates through P1.5  
 **Production URL:** <https://synqdrive.eu> (German), <https://synqdrive.eu/en/> (English)
 
-> **Current Production (Phase 2 + mobile navigation):** Phase-2 mobile composition plus mobile navigation hierarchy, Products correction, and iOS interaction fixes live; deployed **2026-08-14T06:36:56Z** (main `34cb029` — PR #11 + iOS scroll/full-screen merge)  
-> **Prior mobile nav deploy:** **2026-08-14T03:43:49Z** (PR #10 squash `4d16ed0`)  
-> **Prior Phase-2 deploy:** **2026-08-13T10:24:25Z** (P2.8B)  
-> **Production runtime source SHA:** `34cb029adf8e39509321148e013c44a3864ccc05`  
-> **Release artefact SHA-256:** `fa8751cc9bf892a8aa96b9f35b2bc12a013f5891b9c38767963424fa8a1426f5` (1,030,724 bytes)  
-> **Runtime fingerprints:** `styles.a434037ccad4.css`, `script.f02f7dcbd4a4.js`  
+> **Current Production:** Hero copy refresh + proof-list removal deployed **2026-08-14T07:08:40Z** (main `e8954e1`, PR #12)  
+> **Prior deploy:** Mobile navigation Products + iOS fixes **2026-08-14T06:36:56Z** (main `34cb029`)  
+> **Production runtime source SHA:** `e8954e170323e539fe23804d5fb0bc0f75174e5a`  
+> **Release artefact SHA-256:** `bb7eb5ed6421a0051c9a75d91d061486bfb22e6f11ac36d6e562892c2dc47a19` (1,030,309 bytes)  
+> **Runtime fingerprints:** `styles.ae22ca0824d4.css`, `script.f02f7dcbd4a4.js`  
 > **Acceptance:** P2.8C **PASS WITH INFRASTRUCTURE-LIMITED PRODUCTION TESTING** — see [`docs/audits/landing-page-phase-2.8c-production-acceptance-2026-08.md`](audits/landing-page-phase-2.8c-production-acceptance-2026-08.md)  
 > **Mobile navigation:** PR #10, PR #11, and iOS interaction fixes **MERGED** and **DEPLOYED** — see [`docs/audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md`](audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md). **Real-iPhone acceptance remains owner-controlled.**
 > **Post-release incident (E1–E2):** Real-device Mobile Safari unstyled presentation reported 2026-08-13 — see the [incident audit](audits/landing-page-mobile-safari-css-delivery-incident-2026-08.md) and [E2 deployment audit](audits/landing-page-mobile-safari-css-delivery-e2-production-2026-08.md). **Technical remediation deployed; real-iPhone acceptance remains owner-controlled.**
