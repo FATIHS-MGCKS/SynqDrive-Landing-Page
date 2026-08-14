@@ -598,7 +598,7 @@ svg {
   padding: 0;
   border: 0;
   border-radius: var(--radius);
-  background: transparent;
+  background: rgba(17, 24, 39, 0.035);
   color: var(--ink);
   cursor: pointer;
   flex: 0 0 auto;
@@ -607,7 +607,7 @@ svg {
 
 .mobilenav__close:hover,
 .mobilenav__close:focus-visible {
-  background: rgba(17, 24, 39, 0.04);
+  background: rgba(17, 24, 39, 0.06);
 }
 
 .mobilenav__close svg {

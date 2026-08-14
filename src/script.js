@@ -271,7 +271,7 @@
     lockPageScroll();
     setBackgroundInert(true);
     showRootView(false);
-    var firstTarget = navPanel.querySelector('[data-nav-submenu]') || navClose || navPanel;
+    var firstTarget = navClose || navPanel.querySelector('[data-nav-submenu]') || navPanel;
     if (firstTarget) firstTarget.focus();
     navPanel.addEventListener('keydown', trapDrawerFocus);
   }
