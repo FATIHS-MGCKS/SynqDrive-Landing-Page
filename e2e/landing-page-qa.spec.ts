@@ -225,6 +225,9 @@ test.describe('public landing page', () => {
       const images = await page.$$eval('img', (nodes) =>
         nodes.map((node) => ({
           alt: node.getAttribute('alt'),
+          decorative:
+            node.closest('[aria-hidden="true"]') !== null ||
+            node.closest('.hero__background') !== null,
           width: node.getAttribute('width'),
           height: node.getAttribute('height'),
           lazy: node.getAttribute('loading') === 'lazy',
@@ -234,7 +237,11 @@ test.describe('public landing page', () => {
       );
       expect(images.length).toBeGreaterThan(0);
       for (const image of images) {
-        expect(image.alt, `alt for ${image.src}`).toBeTruthy();
+        if (image.decorative) {
+          expect(image.alt, `decorative alt for ${image.src}`).toBe('');
+        } else {
+          expect(image.alt, `alt for ${image.src}`).toBeTruthy();
+        }
         expect(image.width, `width for ${image.src}`).toBeTruthy();
         expect(image.height, `height for ${image.src}`).toBeTruthy();
         if (!image.lazy) expect(image.loaded, `eager image loaded: ${image.src}`).toBe(true);
@@ -1536,45 +1543,45 @@ test.describe('public landing page', () => {
         const layout = await page.evaluate(() => {
           const root = document.documentElement;
           const styles = getComputedStyle(root);
-          const shell = document.querySelector('.hero');
-          const shellStyles = shell ? getComputedStyle(shell) : null;
-          const heroFrame = document.querySelector('.hero__media .frame--product');
-          const heroFrameRect = heroFrame?.getBoundingClientRect();
+          const hero = document.querySelector('.hero');
+          const heroStyles = hero ? getComputedStyle(hero) : null;
+          const heroBackground = document.querySelector('.hero__background img');
+          const heroBackgroundRect = heroBackground?.getBoundingClientRect();
           const primary = document.querySelector('.hero .action--primary');
           const primaryRect = primary?.getBoundingClientRect();
-          const heroPicture = document.querySelector('.hero picture source[media]');
+          const heroPicture = document.querySelector('.hero__background source[media]');
           return {
             scrollWidth: root.scrollWidth,
             clientWidth: root.clientWidth,
-            gutterPx: shellStyles ? parseFloat(shellStyles.paddingInlineStart) : 0,
+            gutterPx: heroStyles ? parseFloat(heroStyles.paddingInlineStart) : 0,
             sectionY: parseFloat(styles.getPropertyValue('--section-y')),
             typeDisplay: styles.getPropertyValue('--type-display').trim(),
-            frameWidth: heroFrameRect?.width ?? 0,
-            frameLeft: heroFrameRect?.left ?? 0,
-            frameRight: heroFrameRect?.right ?? 0,
+            backgroundWidth: heroBackgroundRect?.width ?? 0,
+            backgroundLeft: heroBackgroundRect?.left ?? 0,
+            backgroundRight: heroBackgroundRect?.right ?? 0,
             primaryHeight: primaryRect?.height ?? 0,
-            hasProductFrameClass: Boolean(document.querySelector('.frame--product')),
-            hasLayoutSplit: Boolean(document.querySelector('.layout-split')),
+            hasHeroBackground: Boolean(document.querySelector('.hero__background')),
+            hasHeroProductFrame: Boolean(document.querySelector('.hero__media .frame--product')),
+            hasLayoutSplit: Boolean(document.querySelector('.split.layout-split, .brief.layout-split')),
             mobileSourceMedia: heroPicture?.getAttribute('media') ?? null,
           };
         });
 
         expect(layout.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(layout.clientWidth + 1);
-        expect(layout.hasProductFrameClass, `${width}px frame--product`).toBe(true);
-        expect(layout.hasLayoutSplit, `${width}px layout-split`).toBe(true);
-        expect(layout.gutterPx, `${width}px gutter range`).toBeGreaterThanOrEqual(15);
-        expect(layout.gutterPx, `${width}px gutter range`).toBeLessThanOrEqual(25);
+        expect(layout.hasHeroBackground, `${width}px hero background`).toBe(true);
+        expect(layout.hasHeroProductFrame, `${width}px hero product frame`).toBe(false);
+        expect(layout.hasLayoutSplit, `${width}px layout-split sections`).toBe(true);
         expect(layout.sectionY, `${width}px section-y token`).toBe(expectedSectionY(width));
         expect(layout.typeDisplay, `${width}px type-display token`).toBeTruthy();
-        expect(layout.frameWidth, `${width}px product frame width`).toBeGreaterThan(0);
-        expect(layout.frameLeft, `${width}px hero frame left`).toBeGreaterThanOrEqual(-1);
-        expect(layout.frameRight, `${width}px hero frame right`).toBeLessThanOrEqual(width + 1);
+        expect(layout.backgroundWidth, `${width}px hero background width`).toBeGreaterThan(0);
+        expect(layout.backgroundLeft, `${width}px hero background left`).toBeGreaterThanOrEqual(-1);
+        expect(layout.backgroundRight, `${width}px hero background right`).toBeLessThanOrEqual(width + 1);
         expect(layout.primaryHeight, `${width}px CTA height`).toBeGreaterThanOrEqual(44);
 
         if (width <= 760) {
           expect(layout.mobileSourceMedia, `${width}px hero mobile source`).toContain('760px');
-          expect(layout.frameLeft, `${width}px hero bleed left`).toBeLessThanOrEqual(1);
-          expect(layout.frameRight, `${width}px hero bleed right`).toBeGreaterThanOrEqual(width - 1);
+          expect(layout.backgroundLeft, `${width}px hero bleed left`).toBeLessThanOrEqual(1);
+          expect(layout.backgroundRight, `${width}px hero bleed right`).toBeGreaterThanOrEqual(width - 1);
         }
       }
     });
@@ -1587,9 +1594,9 @@ test.describe('public landing page', () => {
       await settle(page);
 
       const geometry = await page.evaluate(() => {
-        const heroFrame = document.querySelector('.hero__media .frame--product:not(.frame--flush)');
-        const heroStyles = heroFrame ? getComputedStyle(heroFrame) : null;
-        const heroRect = heroFrame?.getBoundingClientRect();
+        const heroBackground = document.querySelector('.hero__background img');
+        const heroBgStyles = heroBackground ? getComputedStyle(heroBackground) : null;
+        const heroBgRect = heroBackground?.getBoundingClientRect();
         const flushFrame = document.querySelector('.stage__media .frame--flush');
         const flushStyles = flushFrame ? getComputedStyle(flushFrame) : null;
         const flushRect = flushFrame?.getBoundingClientRect();
@@ -1599,11 +1606,10 @@ test.describe('public landing page', () => {
           scrollWidth: document.documentElement.scrollWidth,
           clientWidth: document.documentElement.clientWidth,
           hero: {
-            marginLeft: heroStyles ? parseFloat(heroStyles.marginLeft) : null,
-            marginRight: heroStyles ? parseFloat(heroStyles.marginRight) : null,
-            left: heroRect?.left ?? null,
-            right: heroRect?.right ?? null,
-            width: heroRect?.width ?? null,
+            objectFit: heroBgStyles?.objectFit ?? null,
+            left: heroBgRect?.left ?? null,
+            right: heroBgRect?.right ?? null,
+            width: heroBgRect?.width ?? null,
           },
           flush: {
             marginLeft: flushStyles ? parseFloat(flushStyles.marginLeft) : null,
@@ -1618,10 +1624,12 @@ test.describe('public landing page', () => {
       });
 
       expect(geometry.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(geometry.clientWidth + 1);
-      expect(geometry.hero.marginLeft!, `${width}px hero margin-left`).toBeLessThan(0);
-      expect(geometry.hero.marginRight!, `${width}px hero margin-right`).toBeLessThan(0);
+      expect(geometry.hero.objectFit, `${width}px hero object-fit`).toBe('cover');
       expect(geometry.hero.left!, `${width}px hero left edge`).toBeGreaterThanOrEqual(-1);
       expect(geometry.hero.right!, `${width}px hero right edge`).toBeLessThanOrEqual(width + 1);
+      expect(geometry.hero.width!, `${width}px hero background width`).toBeGreaterThanOrEqual(
+        geometry.clientWidth - 1,
+      );
 
       expect(geometry.flush.marginLeft!, `${width}px flush margin-left`).toBe(0);
       expect(geometry.flush.marginRight!, `${width}px flush margin-right`).toBe(0);
@@ -1715,13 +1723,13 @@ test.describe('public landing page', () => {
       await settle(page);
 
       const state = await page.evaluate(() => {
-        const heroFrame = document.querySelector('.hero__media .frame--product:not(.frame--flush)');
+        const heroBackground = document.querySelector('.hero__background img');
         const flushFrame = document.querySelector('.stage__media .frame--flush');
         const h1 = document.querySelector('.hero h1');
         return {
           scrollWidth: document.documentElement.scrollWidth,
           clientWidth: document.documentElement.clientWidth,
-          heroFrameWidth: heroFrame?.getBoundingClientRect().width ?? 0,
+          heroBackgroundWidth: heroBackground?.getBoundingClientRect().width ?? 0,
           flushContained:
             flushFrame && document.querySelector('.stage__media')
               ? flushFrame.getBoundingClientRect().right <=
@@ -1736,7 +1744,7 @@ test.describe('public landing page', () => {
       expect(state.scrollWidth, `${width}x${height} overflow`).toBeLessThanOrEqual(
         state.clientWidth + 1,
       );
-      expect(state.heroFrameWidth, `${width}x${height} hero frame`).toBeGreaterThan(0);
+      expect(state.heroBackgroundWidth, `${width}x${height} hero background`).toBeGreaterThan(0);
       expect(state.flushContained, `${width}x${height} flush contained`).toBe(true);
       expect(state.h1FontSize, `${width}x${height} h1 size`).toBeGreaterThanOrEqual(16);
 
@@ -1852,56 +1860,57 @@ test.describe('public landing page', () => {
     return page.evaluate(() => {
       const hero = document.querySelector('.hero');
       const intro = document.querySelector('.hero__intro');
-      const media = document.querySelector('.hero__media');
+      const background = document.querySelector('.hero__background img');
       const h1 = document.querySelector('.hero h1');
       const primary = document.querySelector('.hero .action--primary');
-      const frame = document.querySelector('.hero__media .frame--product');
-      const heroPicture = document.querySelector('.hero picture source[media]');
-      const heroImg = document.querySelector('.hero__media img');
+      const heroPicture = document.querySelector('.hero__background source[media]');
 
       const rect = (el: Element | null) => el?.getBoundingClientRect() ?? null;
       const heroRect = rect(hero);
-      const frameRect = rect(frame);
-      const mediaRect = rect(media);
+      const backgroundRect = rect(background);
       const primaryRect = rect(primary);
-
-      const introBeforeMedia =
-        !!intro &&
-        !!media &&
-        (intro.compareDocumentPosition(media) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
-
       const introRect = rect(intro);
-      const mediaTop = mediaRect?.top ?? 0;
-      const introMediaGap =
-        introRect && mediaRect
-          ? Math.round((mediaRect.top - introRect.bottom) * 10) / 10
+      const isMobile = window.matchMedia('(max-width: 760px)').matches;
+      const isDesktop = window.matchMedia('(min-width: 1025px)').matches;
+
+      const heroHeight = heroRect?.height ?? 0;
+      const heroTop = heroRect?.top ?? 0;
+      const introBottomRel =
+        introRect && heroRect
+          ? Math.round((introRect.bottom - heroRect.top) * 10) / 10
           : null;
 
       return {
         scrollWidth: document.documentElement.scrollWidth,
         clientWidth: document.documentElement.clientWidth,
-        heroHeight: heroRect?.height ?? 0,
+        heroHeight,
         h1Height: rect(h1)?.height ?? 0,
         ctaHeight: primaryRect?.height ?? 0,
-        frameTop: frameRect?.top ?? 0,
-        frameWidth: frameRect?.width ?? 0,
-        frameLeft: frameRect?.left ?? 0,
-        frameRight: frameRect?.right ?? 0,
+        backgroundWidth: backgroundRect?.width ?? 0,
+        backgroundHeight: backgroundRect?.height ?? 0,
+        backgroundTop: backgroundRect?.top ?? 0,
         introBottom: introRect?.bottom ?? 0,
-        introMediaGap,
-        mediaTop,
-        introBeforeMedia,
+        introBottomRel,
+        introRight: introRect?.right ?? 0,
+        heroWidth: heroRect?.width ?? 0,
+        heroTop,
         primaryVisible: primaryRect ? primaryRect.height >= 44 && primaryRect.width > 0 : false,
         h1Visible: !!h1 && (rect(h1)?.height ?? 0) > 0,
         mobileSourceMedia: heroPicture?.getAttribute('media') ?? null,
-        heroImgLoading: heroImg?.getAttribute('loading') ?? null,
-        heroImgFetchPriority: heroImg?.getAttribute('fetchpriority') ?? null,
-        desktopMediaColumn:
-          !!media &&
-          !!intro &&
-          window.matchMedia('(min-width: 1025px)').matches
-            ? media.getBoundingClientRect().left > intro.getBoundingClientRect().right - 8
+        heroImgLoading: background?.getAttribute('loading') ?? null,
+        heroImgFetchPriority: background?.getAttribute('fetchpriority') ?? null,
+        hasHeroBackground: Boolean(document.querySelector('.hero__background')),
+        hasHeroProductFrame: Boolean(document.querySelector('.hero__media .frame--product')),
+        contentInUpperHero:
+          introRect && heroHeight > 0
+            ? introRect.bottom <= heroTop + heroHeight * 0.74
             : null,
+        contentOnLeft:
+          introRect && heroRect && isDesktop
+            ? introRect.right <= heroRect.left + heroRect.width * 0.58
+            : null,
+        isMobile,
+        isDesktop,
       };
     });
   }
@@ -1922,9 +1931,12 @@ test.describe('public landing page', () => {
         );
         expect(state.h1Visible, `${width}px hero h1`).toBe(true);
         expect(state.primaryVisible, `${width}px hero primary CTA`).toBe(true);
-        expect(state.frameWidth, `${width}px hero frame width`).toBeGreaterThan(0);
-        expect(state.introBeforeMedia, `${width}px intro before media DOM`).toBe(true);
-        expect(state.frameTop, `${width}px frame top`).toBeGreaterThan(state.introBottom - 1);
+        expect(state.hasHeroBackground, `${width}px hero background`).toBe(true);
+        expect(state.hasHeroProductFrame, `${width}px hero product frame`).toBe(false);
+        expect(state.backgroundWidth, `${width}px hero background width`).toBeGreaterThanOrEqual(
+          state.clientWidth - 1,
+        );
+        expect(state.contentInUpperHero, `${width}px hero content upper`).toBe(true);
         expect(state.mobileSourceMedia, `${width}px hero mobile source`).toContain('760px');
         expect(state.heroImgLoading, `${width}px hero loading`).toBe('eager');
         expect(state.heroImgFetchPriority, `${width}px hero fetchpriority`).toBe('high');
@@ -2040,7 +2052,10 @@ test.describe('public landing page', () => {
 
       const state = await readHeroComposition(page);
       expect(state.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(state.clientWidth + 1);
-      expect(state.frameWidth, `${width}px frame width`).toBeGreaterThan(0);
+      expect(state.hasHeroBackground, `${width}px hero background`).toBe(true);
+      expect(state.backgroundWidth, `${width}px background width`).toBeGreaterThanOrEqual(
+        state.clientWidth - 1,
+      );
     }
 
     for (const width of P23_DESKTOP_WIDTHS) {
@@ -2050,33 +2065,36 @@ test.describe('public landing page', () => {
 
       const state = await readHeroComposition(page);
       expect(state.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(state.clientWidth + 1);
-      expect(state.desktopMediaColumn, `${width}px desktop media column`).toBe(true);
-      expect(state.frameWidth, `${width}px desktop frame width`).toBeGreaterThan(0);
+      expect(state.contentOnLeft, `${width}px desktop content left`).toBe(true);
+      expect(state.backgroundWidth, `${width}px desktop background width`).toBeGreaterThanOrEqual(
+        state.clientWidth - 1,
+      );
     }
   });
 
-  test('P2.3.1 hero desktop copy-media split', async ({ page }) => {
+  test('P2.3.1 hero desktop content-left composition', async ({ page }) => {
     for (const width of P23_DESKTOP_WIDTHS) {
       await page.setViewportSize({ width, height: 900 });
       await page.goto('/', { waitUntil: 'load' });
       await settle(page);
 
       const state = await readHeroComposition(page);
-      expect(state.desktopMediaColumn, `${width}px desktop media column`).toBe(true);
+      expect(state.contentOnLeft, `${width}px desktop content left`).toBe(true);
+      expect(state.hasHeroProductFrame, `${width}px hero product frame`).toBe(false);
       await expect(page.locator('.hero__proof')).toHaveCount(0);
     }
   });
 
-  test('P2.3.1 hero mobile frame position regression', async ({ page }) => {
+  test('P2.3.1 hero mobile content-above-fleet regression', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.goto('/', { waitUntil: 'load' });
     await settle(page);
 
     const state = await readHeroComposition(page);
-    expect(state.frameTop, '390px frame top').toBeGreaterThanOrEqual(500);
-    expect(state.frameTop, '390px frame top').toBeLessThanOrEqual(550);
-    expect(state.introMediaGap, '390px intro-media gap').not.toBeNull();
-    expect(state.introMediaGap!, '390px intro-media gap min').toBeGreaterThanOrEqual(16);
+    expect(state.contentInUpperHero, '390px content in upper hero').toBe(true);
+    expect(state.introBottomRel, '390px intro bottom rel').not.toBeNull();
+    expect(state.introBottomRel!, '390px intro bottom rel min').toBeGreaterThanOrEqual(280);
+    expect(state.introBottomRel!, '390px intro bottom rel max').toBeLessThanOrEqual(520);
   });
 
   test('P2.3.1 EN hero H1 measurement at 430px', async ({ page }) => {
@@ -2114,7 +2132,8 @@ test.describe('public landing page', () => {
       expect(state.scrollWidth, `${width}x${height} overflow`).toBeLessThanOrEqual(
         state.clientWidth + 1,
       );
-      expect(state.frameTop, `${width}x${height} frame top`).toBeGreaterThan(0);
+      expect(state.backgroundWidth, `${width}x${height} background width`).toBeGreaterThan(0);
+      expect(state.contentInUpperHero, `${width}x${height} content upper`).toBe(true);
       expect(state.primaryVisible, `${width}x${height} CTA target`).toBe(true);
     }
   });
@@ -2126,9 +2145,10 @@ test.describe('public landing page', () => {
 
     const metrics = await readHeroComposition(page);
     expect(metrics.heroHeight).toBeGreaterThan(0);
-    expect(metrics.frameTop).toBeGreaterThan(0);
-    expect(metrics.frameTop).toBeLessThan(844);
-    expect(metrics.introBeforeMedia).toBe(true);
+    expect(metrics.backgroundHeight).toBeGreaterThan(0);
+    expect(metrics.backgroundWidth).toBeGreaterThanOrEqual(metrics.clientWidth - 1);
+    expect(metrics.contentInUpperHero).toBe(true);
+    expect(metrics.hasHeroProductFrame).toBe(false);
   });
 
   test('captures P2.3 hero composition screenshots', async ({ page }) => {
@@ -3580,9 +3600,9 @@ test.describe('public landing page', () => {
         };
       };
       const hero = document.querySelector('.hero');
-      const heroFrame = hero?.querySelector('.frame--product');
+      const heroIntro = hero?.querySelector('.hero__intro');
       const heroRect = hero?.getBoundingClientRect();
-      const heroFrameRect = heroFrame?.getBoundingClientRect();
+      const heroIntroRect = heroIntro?.getBoundingClientRect();
       const integ = document.getElementById('integrations');
       const core = integ?.querySelector('.hub__core');
       const tiles = integ?.querySelectorAll('.hub__tile');
@@ -3593,9 +3613,9 @@ test.describe('public landing page', () => {
       const footer = document.querySelector('.sitefooter');
       return {
         pageHeight: Math.round(document.documentElement.scrollHeight),
-        heroFrameTop:
-          heroRect && heroFrameRect
-            ? Math.round((heroFrameRect.top - heroRect.top) * 10) / 10
+        heroContentBottomRel:
+          heroRect && heroIntroRect
+            ? Math.round((heroIntroRect.bottom - heroRect.top) * 10) / 10
             : null,
         platform: rel('platform', '.stack__media .frame--product'),
         ai: rel('ai-orchestration', '.split__media .frame--product'),
@@ -3734,9 +3754,10 @@ test.describe('public landing page', () => {
     await settle(page);
 
     const metrics = await readPhase2KeyMetrics(page);
-    expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(10270);
-    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(10310);
-    expect(metrics.heroFrameTop!, '390px hero frame top').toBeGreaterThan(360);
+    expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(10000);
+    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(10050);
+    expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeGreaterThan(280);
+    expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeLessThanOrEqual(520);
     expect(metrics.platform.frameTopRel!, '390px platform frame top').toBeGreaterThan(250);
     expect(metrics.ai.frameTopRel!, '390px AI frame top').toBeGreaterThan(300);
     expect(metrics.ai.frameTopRel!, '390px AI frame top').toBeLessThanOrEqual(310);
@@ -3835,8 +3856,8 @@ test.describe('public landing page', () => {
         await expect(heading, `${id} heading`).toBeVisible();
       }
 
-      await expect(page.locator('.frame--product')).toHaveCount(6);
-      await expect(page.locator('.frame--product img')).toHaveCount(6);
+      await expect(page.locator('.frame--product')).toHaveCount(5);
+      await expect(page.locator('.frame--product img')).toHaveCount(5);
 
       await expect(page.locator('.hero__actions a[href^="mailto:"]')).toHaveCount(1);
       await expect(page.locator('.closing a[href^="mailto:"]')).toHaveCount(1);

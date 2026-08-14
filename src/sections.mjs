@@ -22,8 +22,9 @@ import { icon } from './icons.generated.mjs';
 import { flattenPlatformMenu } from '../content/site.mjs';
 import { action, esc, iconMark, productFrame, sectionHead } from './primitives.mjs';
 
-/** Exported so the <link rel="preload"> in the document head cannot drift. */
-export const HERO_SIZES = '(max-width: 900px) 92vw, 50vw';
+/** Exported so hero background preloads cannot drift from the picture art direction. */
+export const HERO_BACKGROUND_MOBILE_MEDIA = '(max-width: 760px)';
+export const HERO_BACKGROUND_DESKTOP_MEDIA = '(min-width: 761px)';
 
 function renderPlatformPanel(c) {
   const menu = c.nav.platformMenu;
@@ -264,35 +265,51 @@ export function header(c, other, site) {
 
 export function hero(c) {
   const h = c.hero;
+  const bg = h.background;
   const bodyPrimary = h.body.primary
     .map((line) => `<span class="hero__body-line">${esc(line)} </span>`)
     .join('');
 
-  /* Mobile source order: intro → product. Desktop grid keeps copy in the left column
-     and the product frame in the right column. */
-  return `<section class="hero layout-split" aria-labelledby="hero-title">
-      <div class="hero__intro">
-        <p class="eyebrow" data-reveal>${esc(h.eyebrow)}</p>
-        <h1 id="hero-title" data-reveal>
-          <span class="hero__title-main">${esc(h.title.main)}</span>
-          <span class="hero__title-emphasis">${esc(h.title.emphasis)}</span>
-        </h1>
-        <p class="hero__body" data-reveal>
-          <span class="hero__body-primary">${bodyPrimary}</span>
-          <span class="hero__body-secondary">${esc(h.body.secondary)}</span>
-        </p>
-        <div class="hero__actions" data-reveal>
-          ${action({ href: 'mailto:info@synqdrive.eu?subject=SynqDrive%20demo%20request', label: h.primary, variant: 'primary' })}
-          ${action({ href: `#${c.unified.id}`, label: h.secondary, variant: 'secondary' })}
+  return `<section class="hero hero--fleet-background" aria-labelledby="hero-title">
+      <picture class="hero__background" aria-hidden="true">
+        <source
+          media="${HERO_BACKGROUND_MOBILE_MEDIA}"
+          srcset="/assets/${esc(bg.mobile.file)}.webp"
+          width="${bg.mobile.width}"
+          height="${bg.mobile.height}"
+        />
+        <source
+          media="${HERO_BACKGROUND_DESKTOP_MEDIA}"
+          srcset="/assets/${esc(bg.file)}.webp"
+          width="${bg.width}"
+          height="${bg.height}"
+        />
+        <img
+          src="/assets/${esc(bg.file)}.webp"
+          width="${bg.width}"
+          height="${bg.height}"
+          alt=""
+          loading="eager"
+          decoding="sync"
+          fetchpriority="high"
+        />
+      </picture>
+      <div class="hero__shell">
+        <div class="hero__intro">
+          <p class="eyebrow" data-reveal>${esc(h.eyebrow)}</p>
+          <h1 id="hero-title" data-reveal>
+            <span class="hero__title-main">${esc(h.title.main)}</span>
+            <span class="hero__title-emphasis">${esc(h.title.emphasis)}</span>
+          </h1>
+          <p class="hero__body" data-reveal>
+            <span class="hero__body-primary">${bodyPrimary}</span>
+            <span class="hero__body-secondary">${esc(h.body.secondary)}</span>
+          </p>
+          <div class="hero__actions" data-reveal>
+            ${action({ href: 'mailto:info@synqdrive.eu?subject=SynqDrive%20demo%20request', label: h.primary, variant: 'primary' })}
+            ${action({ href: `#${c.unified.id}`, label: h.secondary, variant: 'secondary' })}
+          </div>
         </div>
-      </div>
-      <div class="hero__media" data-reveal>
-        ${productFrame({
-          media: h.media,
-          alt: h.mediaAlt,
-          priority: true,
-          sizes: HERO_SIZES,
-        })}
       </div>
     </section>`;
 }

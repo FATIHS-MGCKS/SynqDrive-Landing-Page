@@ -30,7 +30,8 @@ import { isPublicStaticFile } from './public-artefact-policy.mjs';
 
 import { SITE, locales } from '../content/site.mjs';
 import {
-  HERO_SIZES,
+  HERO_BACKGROUND_DESKTOP_MEDIA,
+  HERO_BACKGROUND_MOBILE_MEDIA,
   ai,
   communication,
   finalCta,
@@ -49,7 +50,7 @@ const SRC = path.join(ROOT, 'src');
 const DIST = path.join(ROOT, 'dist');
 
 /** Preloaded because it is the largest contentful paint on every page. */
-const HERO = locales[0].hero.media;
+const HERO_BG = locales[0].hero.background;
 
 /** Fixed 1200x630 JPEG, see the social card target in build-assets.mjs. */
 const SOCIAL_CARD = { url: `${SITE.origin}/assets/landing-social-card.jpg`, width: 1200, height: 630 };
@@ -159,9 +160,15 @@ function document(locale, assets) {
     <link
       rel="preload"
       as="image"
-      href="/assets/${HERO.file}.webp"
-      imagesrcset="/assets/${HERO.file}-sm.webp ${Math.round(HERO.width / 2)}w, /assets/${HERO.file}.webp ${HERO.width}w"
-      imagesizes="${HERO_SIZES}"
+      href="/assets/${HERO_BG.mobile.file}.webp"
+      media="${HERO_BACKGROUND_MOBILE_MEDIA}"
+      fetchpriority="high"
+    />
+    <link
+      rel="preload"
+      as="image"
+      href="/assets/${HERO_BG.file}.webp"
+      media="${HERO_BACKGROUND_DESKTOP_MEDIA}"
       fetchpriority="high"
     />
     <style id="synqdrive-catastrophic-fallback">${CATASTROPHIC_FALLBACK_STYLE}</style>

@@ -65,6 +65,12 @@ const MEDIA = {
     height: 1192,
     mobile: { file: 'landing-hero-operations-mobile', width: 968, height: 1104 },
   },
+  heroBackground: {
+    file: 'landing-hero-fleet-background',
+    width: 1536,
+    height: 1024,
+    mobile: { file: 'landing-hero-fleet-background-mobile', width: 1024, height: 1536 },
+  },
   useCases: {
     rental: {
       file: 'landing-industry-rental',
@@ -254,6 +260,7 @@ const en = {
     },
     primary: 'Book a demo',
     secondary: 'See the platform',
+    background: MEDIA.heroBackground,
     media: MEDIA.hero,
     mediaAlt:
       'SynqDrive operations dashboard showing fleet readiness, today\u2019s rentals, revenue and open receivables for one station group.',
@@ -605,6 +612,7 @@ const de = {
     },
     primary: 'Demo anfragen',
     secondary: 'Plattform entdecken',
+    background: MEDIA.heroBackground,
     media: MEDIA.hero,
     mediaAlt:
       'SynqDrive Betriebsübersicht mit Fahrzeugverfügbarkeit, laufenden Vermietungen, Umsatz und offenen Forderungen für eine Stationsgruppe.',

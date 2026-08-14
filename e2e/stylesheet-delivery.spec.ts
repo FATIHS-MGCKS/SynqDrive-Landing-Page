@@ -72,8 +72,8 @@ test.describe('stylesheet delivery — Chromium mobile application', () => {
     expectNormalIconGeometry(state);
     expect(state.frameWidth ?? 0).toBeGreaterThan(300);
     expect(state.hubCoreWidth ?? 0).toBeGreaterThan(120);
-    expect(state.pageHeight).toBeGreaterThanOrEqual(10270);
-    expect(state.pageHeight).toBeLessThanOrEqual(10310);
+    expect(state.pageHeight).toBeGreaterThanOrEqual(10000);
+    expect(state.pageHeight).toBeLessThanOrEqual(10050);
   });
 
   test('1440 DE retains accepted icon geometry with CSS applied', async ({ page }) => {
@@ -139,7 +139,7 @@ test.describe('stylesheet delivery — normal render tolerance', () => {
     await page.goto('/', { waitUntil: 'load' });
     const state = await readIncidentState(page);
     expectReleaseStylesheetApplied(state);
-    expect(state.pageHeight).toBeGreaterThanOrEqual(10270);
-    expect(state.pageHeight).toBeLessThanOrEqual(10310);
+    expect(state.pageHeight).toBeGreaterThanOrEqual(10000);
+    expect(state.pageHeight).toBeLessThanOrEqual(10050);
   });
 });
