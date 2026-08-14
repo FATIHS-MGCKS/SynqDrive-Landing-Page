@@ -55,6 +55,17 @@ const HERO_BG = locales[0].hero.background;
 /** Fixed 1200x630 JPEG, see the social card target in build-assets.mjs. */
 const SOCIAL_CARD = { url: `${SITE.origin}/assets/landing-social-card.jpg`, width: 1200, height: 630 };
 
+/** Keep locale HTML fresh; fingerprinted CSS/JS may stay long-lived. */
+const HTML_CACHE_HEADERS = `# SynqDrive landing page — HTML must revalidate after deploy.
+<IfModule mod_headers.c>
+  <FilesMatch "index\\.html$">
+    Header set Cache-Control "no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+  </FilesMatch>
+</IfModule>
+`;
+
 /**
  * Minimal inline safety net when the external stylesheet fails to load.
  * Not a substitute for the real design system — foundational degradation only.
@@ -131,6 +142,7 @@ function document(locale, assets) {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta http-equiv="Cache-Control" content="no-cache, must-revalidate, max-age=0" />
     <title>${locale.meta.title}</title>
     <meta name="description" content="${locale.meta.description}" />
     <meta name="theme-color" content="#ffffff" />
@@ -288,6 +300,7 @@ async function main() {
   await copyPublicAssets(path.join(ROOT, 'assets'), path.join(DIST, 'assets'));
   await writeFile(path.join(DIST, 'robots.txt'), robots(), 'utf8');
   await writeFile(path.join(DIST, 'sitemap.xml'), sitemap(), 'utf8');
+  await writeFile(path.join(DIST, '.htaccess'), HTML_CACHE_HEADERS, 'utf8');
 
   for (const locale of locales) {
     const html = await readFile(path.join(DIST, locale.dir, 'index.html'), 'utf8');

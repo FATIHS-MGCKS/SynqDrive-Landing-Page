@@ -23,13 +23,16 @@ export function isPublicStaticFile(relativePath) {
   const segments = normalized.split('/').filter(Boolean);
   const basename = path.basename(normalized);
 
-  if (basename.startsWith('.')) return false;
+  if (basename.startsWith('.')) {
+    if (basename === '.htaccess') return true;
+    return false;
+  }
   if (FORBIDDEN_EXTENSIONS.has(path.extname(basename).toLowerCase())) return false;
   if (FORBIDDEN_BASENAMES.some((pattern) => pattern.test(basename))) return false;
 
   const blockedPrefixes = ['docs/', 'audits/', '.cursor/', '.git/'];
   if (blockedPrefixes.some((prefix) => normalized.startsWith(prefix))) return false;
-  if (segments.some((segment) => segment.startsWith('.'))) return false;
+  if (segments.some((segment) => segment.startsWith('.') && segment !== '.htaccess')) return false;
 
   return true;
 }
@@ -42,7 +45,7 @@ export function forbiddenReason(relativePath) {
   if (isPublicStaticFile(relativePath)) return null;
 
   const basename = path.basename(relativePath);
-  if (basename.startsWith('.')) return 'hidden file';
+  if (basename.startsWith('.') && basename !== '.htaccess') return 'hidden file';
   if (FORBIDDEN_EXTENSIONS.has(path.extname(basename).toLowerCase())) return 'forbidden extension';
   if (FORBIDDEN_BASENAMES.some((pattern) => pattern.test(basename))) return 'repository documentation basename';
   return 'non-public path';
