@@ -52,14 +52,16 @@ const DIST = path.join(ROOT, 'dist');
 /** Runtime paths still referenced by cached locale HTML in the wild. */
 const LEGACY_RUNTIME_ALIASES = ['styles.48fed002b23d.css', 'script.f02f7dcbd4a4.js'];
 
-/** Preloaded because it is the largest contentful paint on every page. */
-const HERO_BG = locales[0].hero.background;
+/** @param {{ cssHref: string; jsHref: string }} assets */
+function htaccessContent(assets) {
+  const [legacyCss, legacyJs] = LEGACY_RUNTIME_ALIASES;
+  return `# SynqDrive landing page — never edge-cache locale HTML or fingerprinted runtime assets.
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteRule ^${legacyCss.replaceAll('.', '\\.')}$ ${assets.cssHref} [R=302,L]
+  RewriteRule ^${legacyJs.replaceAll('.', '\\.')}$ ${assets.jsHref} [R=302,L]
+</IfModule>
 
-/** Fixed 1200x630 JPEG, see the social card target in build-assets.mjs. */
-const SOCIAL_CARD = { url: `${SITE.origin}/assets/landing-social-card.jpg`, width: 1200, height: 630 };
-
-/** Keep locale HTML and runtime assets fresh; stale Brotli variants caused Mobile Safari drift. */
-const HTML_CACHE_HEADERS = `# SynqDrive landing page — never edge-cache locale HTML or fingerprinted runtime assets.
 <IfModule mod_headers.c>
   <FilesMatch "index\\.html$">
     Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
@@ -85,6 +87,13 @@ const HTML_CACHE_HEADERS = `# SynqDrive landing page — never edge-cache locale
   </FilesMatch>
 </IfModule>
 `;
+}
+
+/** Preloaded because it is the largest contentful paint on every page. */
+const HERO_BG = locales[0].hero.background;
+
+/** Fixed 1200x630 JPEG, see the social card target in build-assets.mjs. */
+const SOCIAL_CARD = { url: `${SITE.origin}/assets/landing-social-card.jpg`, width: 1200, height: 630 };
 
 /**
  * Minimal inline safety net when the external stylesheet fails to load.
@@ -326,13 +335,10 @@ async function main() {
   await writeRuntimeAsset(DIST, jsName, jsContent);
   await writeCompatibilityAlias(DIST, 'styles.css', cssContent);
   await writeCompatibilityAlias(DIST, 'script.js', jsContent);
-  for (const legacyName of LEGACY_RUNTIME_ALIASES) {
-    await writeCompatibilityAlias(DIST, legacyName, legacyName.endsWith('.css') ? cssContent : jsContent);
-  }
   await copyPublicAssets(path.join(ROOT, 'assets'), path.join(DIST, 'assets'));
   await writeFile(path.join(DIST, 'robots.txt'), robots(), 'utf8');
   await writeFile(path.join(DIST, 'sitemap.xml'), sitemap(), 'utf8');
-  await writeFile(path.join(DIST, '.htaccess'), HTML_CACHE_HEADERS, 'utf8');
+  await writeFile(path.join(DIST, '.htaccess'), htaccessContent(assets), 'utf8');
 
   for (const locale of locales) {
     const html = await readFile(path.join(DIST, locale.dir, 'index.html'), 'utf8');
