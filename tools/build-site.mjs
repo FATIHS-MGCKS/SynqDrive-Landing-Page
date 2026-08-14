@@ -39,6 +39,7 @@ import {
   hero,
   integrations,
   unified,
+  useCases,
   vehicle,
   workflow,
 } from '../src/sections.mjs';
@@ -112,6 +113,7 @@ function document(locale, assets) {
     header(locale, other, SITE),
     `<main id="main">`,
     hero(locale),
+    useCases(locale),
     unified(locale),
     vehicle(locale),
     ai(locale),

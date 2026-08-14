@@ -1,11 +1,12 @@
 /**
  * Section templates for the public SynqDrive landing page.
  *
- * Seven content sections plus a closing call to action, in the order the page
+ * Eight content sections plus a closing call to action, in the order the page
  * renders them. Each section deliberately uses a different composition so the
  * page does not read as six repeated text-beside-screenshot rows:
  *
  *   hero            text column beside an upright product frame
+ *   use cases       one lead industry beside a four-cell image grid
  *   unified         header beside a 2x2 capability grid, full width frame below
  *   vehicle         one composed panel holding the product frame and its notes
  *   ai              mirrored split, product frame first, flow rail under text
@@ -284,6 +285,44 @@ export function hero(c) {
           sizes: HERO_SIZES,
         })}
       </div>
+    </section>`;
+}
+
+export function useCases(c) {
+  const s = c.useCases;
+  const items = s.items
+    .map((item, index) => {
+      const media = item.media;
+      const status = item.status
+        ? `<span class="use-case-card__status">${esc(item.status)}</span>`
+        : '';
+      const leadClass = index === 0 ? ' use-case-card--lead' : '';
+
+      return `<li class="use-case-card use-case-card--${esc(item.key)}${leadClass}" data-reveal>
+          <div class="use-case-card__media">
+            <img
+              src="/assets/${esc(media.file)}.webp"
+              width="${media.width}"
+              height="${media.height}"
+              alt="${esc(item.mediaAlt)}"
+              loading="lazy"
+              decoding="async"
+            />
+          </div>
+          <div class="use-case-card__content">
+            <div class="use-case-card__heading">
+              <h3>${esc(item.title)}</h3>
+              ${status}
+            </div>
+            <p>${esc(item.body)}</p>
+          </div>
+        </li>`;
+    })
+    .join('');
+
+  return `<section class="section use-cases" id="${s.id}" aria-labelledby="${s.id}-title">
+      ${sectionHead({ eyebrow: null, title: s.title, body: s.body, id: s.id })}
+      <ul class="use-cases__grid">${items}</ul>
     </section>`;
 }
 

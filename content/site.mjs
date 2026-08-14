@@ -26,6 +26,7 @@ const LINKS = {
 };
 
 const SECTION_IDS = {
+  useCases: 'use-cases',
   platform: 'platform',
   vehicle: 'vehicle-intelligence',
   ai: 'ai-orchestration',
@@ -63,6 +64,33 @@ const MEDIA = {
     width: 1700,
     height: 1192,
     mobile: { file: 'landing-hero-operations-mobile', width: 968, height: 1104 },
+  },
+  useCases: {
+    rental: {
+      file: 'landing-industry-rental',
+      width: 1536,
+      height: 1024,
+    },
+    fleet: {
+      file: 'landing-industry-fleet',
+      width: 1536,
+      height: 1024,
+    },
+    taxi: {
+      file: 'landing-industry-taxi',
+      width: 1536,
+      height: 1024,
+    },
+    passengerTransport: {
+      file: 'landing-industry-passenger-transport',
+      width: 1536,
+      height: 1024,
+    },
+    deliveryLogistics: {
+      file: 'landing-industry-delivery-logistics',
+      width: 1536,
+      height: 1024,
+    },
   },
   unified: {
     file: 'landing-unified-operations',
@@ -222,6 +250,52 @@ const en = {
     media: MEDIA.hero,
     mediaAlt:
       'SynqDrive operations dashboard showing fleet readiness, today\u2019s rentals, revenue and open receivables for one station group.',
+  },
+  useCases: {
+    id: SECTION_IDS.useCases,
+    title: 'One platform for every kind of fleet.',
+    body: 'Whether rental, passenger transport or logistics: SynqDrive connects vehicles, teams and workflows on a shared foundation. Tailored to your operating model.',
+    items: [
+      {
+        key: 'rental',
+        title: 'Car rental companies',
+        body: 'Manage bookings, vehicles, customers and billing in one seamless system.',
+        media: MEDIA.useCases.rental,
+        mediaAlt: 'Employee checking a modern car rental fleet with a tablet.',
+      },
+      {
+        key: 'fleet',
+        title: 'Fleet operators',
+        body: 'Centrally coordinate availability, vehicle condition and operational tasks.',
+        status: 'In progress',
+        media: MEDIA.useCases.fleet,
+        mediaAlt: 'Professionally managed corporate fleet at an operations site.',
+      },
+      {
+        key: 'taxi',
+        title: 'Taxi fleets',
+        body: 'Coordinate vehicles, routes and dispatch intelligently.',
+        status: 'In progress',
+        media: MEDIA.useCases.taxi,
+        mediaAlt: 'Modern taxi fleet in an urban operations setting.',
+      },
+      {
+        key: 'passenger-transport',
+        title: 'School & passenger transport',
+        body: 'Reliably plan and dispatch recurring journeys.',
+        status: 'In progress',
+        media: MEDIA.useCases.passengerTransport,
+        mediaAlt: 'Minibuses for school and passenger transport at an operations site.',
+      },
+      {
+        key: 'delivery-logistics',
+        title: 'Delivery & logistics',
+        body: 'Coordinate vehicles, orders and routes throughout daily operations.',
+        status: 'In progress',
+        media: MEDIA.useCases.deliveryLogistics,
+        mediaAlt: 'Delivery vehicles at a modern logistics site.',
+      },
+    ],
   },
   unified: {
     id: SECTION_IDS.platform,
@@ -520,6 +594,52 @@ const de = {
     media: MEDIA.hero,
     mediaAlt:
       'SynqDrive Betriebsübersicht mit Fahrzeugverfügbarkeit, laufenden Vermietungen, Umsatz und offenen Forderungen für eine Stationsgruppe.',
+  },
+  useCases: {
+    id: SECTION_IDS.useCases,
+    title: 'Eine Plattform für jede Art von Flotte.',
+    body: 'Ob Vermietung, Beförderung oder Logistik: SynqDrive verbindet Fahrzeuge, Teams und Abläufe auf einer gemeinsamen Grundlage. Abgestimmt auf Ihr Betriebsmodell.',
+    items: [
+      {
+        key: 'rental',
+        title: 'Autovermietungen',
+        body: 'Buchungen, Fahrzeuge, Kunden und Abrechnung in einem durchgängigen System verwalten.',
+        media: MEDIA.useCases.rental,
+        mediaAlt: 'Mitarbeiter betrachtet eine moderne Mietwagenflotte mit einem Tablet.',
+      },
+      {
+        key: 'fleet',
+        title: 'Flottenbetriebe',
+        body: 'Verfügbarkeit, Fahrzeugzustand und operative Aufgaben zentral koordinieren.',
+        status: 'In Arbeit',
+        media: MEDIA.useCases.fleet,
+        mediaAlt: 'Professionell verwaltete Unternehmensflotte an einem Betriebsstandort.',
+      },
+      {
+        key: 'taxi',
+        title: 'Taxiflotten',
+        body: 'Fahrzeuge, Touren und Dispatching intelligent koordinieren.',
+        status: 'In Arbeit',
+        media: MEDIA.useCases.taxi,
+        mediaAlt: 'Moderne Taxiflotte in einem urbanen Betriebskontext.',
+      },
+      {
+        key: 'passenger-transport',
+        title: 'Schüler- & Personenbeförderung',
+        body: 'Wiederkehrende Fahrten zuverlässig planen und disponieren.',
+        status: 'In Arbeit',
+        media: MEDIA.useCases.passengerTransport,
+        mediaAlt: 'Kleinbusse für Schüler- und Personenbeförderung an einem Betriebsstandort.',
+      },
+      {
+        key: 'delivery-logistics',
+        title: 'Lieferung & Logistik',
+        body: 'Fahrzeuge, Aufträge und Touren im laufenden Betrieb koordinieren.',
+        status: 'In Arbeit',
+        media: MEDIA.useCases.deliveryLogistics,
+        mediaAlt: 'Lieferfahrzeuge an einem modernen Logistikstandort.',
+      },
+    ],
   },
   unified: {
     id: SECTION_IDS.platform,

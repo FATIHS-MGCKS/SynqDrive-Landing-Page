@@ -17,6 +17,7 @@ const WIDTHS = [320, 375, 390, 430, 768, 1024, 1280, 1440, 1920];
 
 /** Every section the brief requires, in page order. */
 const SECTION_IDS = [
+  'use-cases',
   'platform',
   'vehicle-intelligence',
   'ai-orchestration',
@@ -343,6 +344,139 @@ test.describe('public landing page', () => {
       expect(small, small.join('\n')).toEqual([]);
     });
   }
+
+  for (const locale of ['de', 'en'] as const) {
+    const url = locale === 'de' ? '/' : '/en/';
+    const expected =
+      locale === 'de'
+        ? {
+            title: 'Eine Plattform für jede Art von Flotte.',
+            cards: [
+              'Autovermietungen',
+              'Flottenbetriebe',
+              'Taxiflotten',
+              'Schüler- & Personenbeförderung',
+              'Lieferung & Logistik',
+            ],
+            status: 'In Arbeit',
+          }
+        : {
+            title: 'One platform for every kind of fleet.',
+            cards: [
+              'Car rental companies',
+              'Fleet operators',
+              'Taxi fleets',
+              'School & passenger transport',
+              'Delivery & logistics',
+            ],
+            status: 'In progress',
+          };
+
+    test(`use cases content and imagery (${locale})`, async ({ page }) => {
+      const { consoleErrors, failedRequests } = await collectProblems(page);
+      await page.goto(url, { waitUntil: 'load' });
+      await settle(page);
+
+      const section = page.locator('#use-cases');
+      await expect(section.getByRole('heading', { level: 2 })).toHaveText(expected.title);
+
+      const cards = section.locator('.use-case-card');
+      await expect(cards).toHaveCount(5);
+      await expect(cards.locator('h3')).toHaveText(expected.cards);
+      await expect(cards.locator('.use-case-card__status')).toHaveCount(4);
+      await expect(cards.locator('.use-case-card__status')).toHaveText(Array(4).fill(expected.status));
+      await expect(cards.first().locator('.use-case-card__status')).toHaveCount(0);
+
+      const images = await cards.locator('img').evaluateAll((nodes) =>
+        nodes.map((node) => {
+          const image = node as HTMLImageElement;
+          return {
+            alt: image.alt,
+            width: image.getAttribute('width'),
+            height: image.getAttribute('height'),
+            loading: image.loading,
+            decoding: image.decoding,
+            loaded: image.naturalWidth > 0,
+          };
+        }),
+      );
+      expect(images).toHaveLength(5);
+      for (const image of images) {
+        expect(image.alt).toBeTruthy();
+        expect(image.width).toBe('1536');
+        expect(image.height).toBe('1024');
+        expect(image.loading).toBe('lazy');
+        expect(image.decoding).toBe('async');
+        expect(image.loaded).toBe(true);
+      }
+
+      expect(consoleErrors, consoleErrors.join('\n')).toEqual([]);
+      expect(failedRequests, failedRequests.join('\n')).toEqual([]);
+    });
+  }
+
+  test('use cases responsive composition', async ({ page }) => {
+    const widths = [320, 390, 430, 760, 768, 1024, 1280, 1440] as const;
+
+    for (const width of widths) {
+      await page.setViewportSize({ width, height: width <= 760 ? 932 : 900 });
+      await page.goto('/', { waitUntil: 'load' });
+      await settle(page);
+
+      const geometry = await page.locator('#use-cases').evaluate((section) => {
+        const cards = Array.from(section.querySelectorAll('.use-case-card'));
+        const rects = cards.map((card) => {
+          const rect = card.getBoundingClientRect();
+          return {
+            left: Math.round(rect.left),
+            top: Math.round(rect.top),
+            right: Math.round(rect.right),
+            bottom: Math.round(rect.bottom),
+            width: Math.round(rect.width),
+          };
+        });
+        return {
+          clientWidth: document.documentElement.clientWidth,
+          scrollWidth: document.documentElement.scrollWidth,
+          rects,
+        };
+      });
+
+      expect(geometry.rects).toHaveLength(5);
+      expect(geometry.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(
+        geometry.clientWidth + 1,
+      );
+
+      if (width <= 760) {
+        for (let index = 1; index < geometry.rects.length; index += 1) {
+          expect(
+            geometry.rects[index].top,
+            `${width}px card ${index + 1} order`,
+          ).toBeGreaterThan(geometry.rects[index - 1].bottom);
+          expect(
+            Math.abs(geometry.rects[index].left - geometry.rects[0].left),
+            `${width}px single column left edge`,
+          ).toBeLessThanOrEqual(1);
+          expect(
+            Math.abs(geometry.rects[index].width - geometry.rects[0].width),
+            `${width}px single column width`,
+          ).toBeLessThanOrEqual(1);
+        }
+      } else if (width <= 1024) {
+        expect(geometry.rects[0].width, `${width}px lead full width`).toBeGreaterThan(
+          geometry.rects[1].width * 1.8,
+        );
+        expect(Math.abs(geometry.rects[1].top - geometry.rects[2].top)).toBeLessThanOrEqual(1);
+        expect(Math.abs(geometry.rects[3].top - geometry.rects[4].top)).toBeLessThanOrEqual(1);
+      } else {
+        expect(geometry.rects[0].left).toBeLessThan(geometry.rects[1].left);
+        expect(Math.abs(geometry.rects[0].top - geometry.rects[1].top)).toBeLessThanOrEqual(1);
+        expect(Math.abs(geometry.rects[1].top - geometry.rects[2].top)).toBeLessThanOrEqual(1);
+        expect(Math.abs(geometry.rects[3].top - geometry.rects[4].top)).toBeLessThanOrEqual(1);
+        expect(Math.abs(geometry.rects[0].bottom - geometry.rects[4].bottom)).toBeLessThanOrEqual(2);
+      }
+    }
+  });
 
   for (const locale of ['de', 'en'] as const) {
     const spec = PLATFORM_NAV[locale];
@@ -3500,8 +3634,8 @@ test.describe('public landing page', () => {
     await settle(page);
 
     const metrics = await readPhase2KeyMetrics(page);
-    expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(8400);
-    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(8450);
+    expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(10200);
+    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(10230);
     expect(metrics.heroFrameTop!, '390px hero frame top').toBeGreaterThan(360);
     expect(metrics.platform.frameTopRel!, '390px platform frame top').toBeGreaterThan(250);
     expect(metrics.ai.frameTopRel!, '390px AI frame top').toBeGreaterThan(300);
@@ -3667,6 +3801,22 @@ test.describe('public landing page', () => {
       { timeout: 8000, message: `${hash} anchor offset settle` },
     );
 
+    // The first valid geometry can occur while smooth anchor scrolling is still
+    // moving through the viewport. Wait for two consecutive samples at the same
+    // scroll position so the next hash navigation cannot interrupt this one.
+    await page.waitForFunction(
+      () => {
+        const root = document.documentElement;
+        const current = window.scrollY;
+        const previous = Number(root.dataset.qaAnchorScrollY);
+        root.dataset.qaAnchorScrollY = String(current);
+        return Number.isFinite(previous) && Math.abs(previous - current) < 1;
+      },
+      undefined,
+      { polling: 100, timeout: 8000, message: `${hash} anchor scroll stability` },
+    );
+    await page.evaluate(() => delete document.documentElement.dataset.qaAnchorScrollY);
+
     const geometry = await page.evaluate((id) => {
       const masthead = document.querySelector('.masthead');
       const title =
@@ -3713,6 +3863,10 @@ test.describe('public landing page', () => {
 
     await page.setViewportSize({ width: 1440, height: 900 });
     for (const hash of anchors) {
+      // A direct deep link starts from the document origin. Resetting here also
+      // avoids carrying the final mobile anchor's long smooth-scroll trajectory
+      // across the responsive viewport transition.
+      await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
       await page.goto(`/${hash}`, { waitUntil: 'load' });
       await assertPlatformAnchorOffset(page, hash);
     }
