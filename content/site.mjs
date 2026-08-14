@@ -222,11 +222,6 @@ const en = {
     media: MEDIA.hero,
     mediaAlt:
       'SynqDrive operations dashboard showing fleet readiness, today\u2019s rentals, revenue and open receivables for one station group.',
-    proof: [
-      'Rental, fleet and billing in one data model',
-      'Connected vehicle data on the operational record',
-      'Automation and AI with human approval',
-    ],
   },
   unified: {
     id: SECTION_IDS.platform,
@@ -517,19 +512,14 @@ const de = {
     },
   },
   hero: {
-    eyebrow: 'Plattform für Flotten- und Vermietbetrieb',
-    title: 'Das Betriebssystem für den modernen Mobilitätsbetrieb',
-    body: 'SynqDrive führt Vermietung, Flotte, Buchungen, Kunden, Abrechnung und vernetzte Fahrzeugdaten in einem operativen System zusammen.',
+    eyebrow: 'Das Betriebssystem für moderne Mobilitätsbetriebe',
+    title: 'Steuern Sie heute, was Ihren Betrieb morgen bewegt.',
+    body: 'SynqDrive macht aus Fahrzeugdaten, Prozessen und täglicher Koordination einen intelligent vernetzten Betrieb - für bessere Auslastung, automatisierte Abläufe und weniger Aufwand im Tagesgeschäft.',
     primary: 'Demo anfragen',
     secondary: 'Plattform entdecken',
     media: MEDIA.hero,
     mediaAlt:
       'SynqDrive Betriebsübersicht mit Fahrzeugverfügbarkeit, laufenden Vermietungen, Umsatz und offenen Forderungen für eine Stationsgruppe.',
-    proof: [
-      'Vermietung, Flotte und Abrechnung in einem Datenmodell',
-      'Vernetzte Fahrzeugdaten am operativen Datensatz',
-      'Automatisierung und KI mit menschlicher Freigabe',
-    ],
   },
   unified: {
     id: SECTION_IDS.platform,

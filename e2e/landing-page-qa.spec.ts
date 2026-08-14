@@ -1719,7 +1719,6 @@ test.describe('public landing page', () => {
       const hero = document.querySelector('.hero');
       const intro = document.querySelector('.hero__intro');
       const media = document.querySelector('.hero__media');
-      const proof = document.querySelector('.hero__proof');
       const h1 = document.querySelector('.hero h1');
       const primary = document.querySelector('.hero .action--primary');
       const frame = document.querySelector('.hero__media .frame--product');
@@ -1729,7 +1728,6 @@ test.describe('public landing page', () => {
       const rect = (el: Element | null) => el?.getBoundingClientRect() ?? null;
       const heroRect = rect(hero);
       const frameRect = rect(frame);
-      const proofRect = rect(proof);
       const mediaRect = rect(media);
       const primaryRect = rect(primary);
 
@@ -1737,15 +1735,12 @@ test.describe('public landing page', () => {
         !!intro &&
         !!media &&
         (intro.compareDocumentPosition(media) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
-      const mediaBeforeProof =
-        !!media &&
-        !!proof &&
-        (media.compareDocumentPosition(proof) & Node.DOCUMENT_POSITION_FOLLOWING) !== 0;
 
       const introRect = rect(intro);
-      const introProofGap =
-        introRect && proofRect
-          ? Math.round((proofRect.top - introRect.bottom) * 10) / 10
+      const mediaTop = mediaRect?.top ?? 0;
+      const introMediaGap =
+        introRect && mediaRect
+          ? Math.round((mediaRect.top - introRect.bottom) * 10) / 10
           : null;
 
       return {
@@ -1758,13 +1753,10 @@ test.describe('public landing page', () => {
         frameWidth: frameRect?.width ?? 0,
         frameLeft: frameRect?.left ?? 0,
         frameRight: frameRect?.right ?? 0,
-        proofTop: proofRect?.top ?? 0,
         introBottom: introRect?.bottom ?? 0,
-        introProofGap,
-        mediaTop: mediaRect?.top ?? 0,
-        frameBeforeProof: frameRect && proofRect ? frameRect.top < proofRect.top : false,
+        introMediaGap,
+        mediaTop,
         introBeforeMedia,
-        mediaBeforeProof,
         primaryVisible: primaryRect ? primaryRect.height >= 44 && primaryRect.width > 0 : false,
         h1Visible: !!h1 && (rect(h1)?.height ?? 0) > 0,
         mobileSourceMedia: heroPicture?.getAttribute('media') ?? null,
@@ -1773,7 +1765,6 @@ test.describe('public landing page', () => {
         desktopMediaColumn:
           !!media &&
           !!intro &&
-          !!proof &&
           window.matchMedia('(min-width: 1025px)').matches
             ? media.getBoundingClientRect().left > intro.getBoundingClientRect().right - 8
             : null,
@@ -1798,10 +1789,8 @@ test.describe('public landing page', () => {
         expect(state.h1Visible, `${width}px hero h1`).toBe(true);
         expect(state.primaryVisible, `${width}px hero primary CTA`).toBe(true);
         expect(state.frameWidth, `${width}px hero frame width`).toBeGreaterThan(0);
-        expect(state.frameBeforeProof, `${width}px product before proof`).toBe(true);
         expect(state.introBeforeMedia, `${width}px intro before media DOM`).toBe(true);
-        expect(state.mediaBeforeProof, `${width}px media before proof DOM`).toBe(true);
-        expect(state.frameTop, `${width}px frame top`).toBeLessThan(state.proofTop);
+        expect(state.frameTop, `${width}px frame top`).toBeGreaterThan(state.introBottom - 1);
         expect(state.mobileSourceMedia, `${width}px hero mobile source`).toContain('760px');
         expect(state.heroImgLoading, `${width}px hero loading`).toBe('eager');
         expect(state.heroImgFetchPriority, `${width}px hero fetchpriority`).toBe('high');
@@ -1817,7 +1806,6 @@ test.describe('public landing page', () => {
 
       const state = await readHeroComposition(page);
       expect(state.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(state.clientWidth + 1);
-      expect(state.frameBeforeProof, `${width}px product before proof`).toBe(true);
       expect(state.frameWidth, `${width}px frame width`).toBeGreaterThan(0);
     }
 
@@ -1830,23 +1818,18 @@ test.describe('public landing page', () => {
       expect(state.scrollWidth, `${width}px overflow`).toBeLessThanOrEqual(state.clientWidth + 1);
       expect(state.desktopMediaColumn, `${width}px desktop media column`).toBe(true);
       expect(state.frameWidth, `${width}px desktop frame width`).toBeGreaterThan(0);
-      expect(state.introProofGap, `${width}px intro-proof gap`).not.toBeNull();
-      expect(state.introProofGap!, `${width}px intro-proof gap min`).toBeGreaterThanOrEqual(30);
-      expect(state.introProofGap!, `${width}px intro-proof gap max`).toBeLessThanOrEqual(44);
     }
   });
 
-  test('P2.3.1 hero desktop intro-proof spacing', async ({ page }) => {
+  test('P2.3.1 hero desktop copy-media split', async ({ page }) => {
     for (const width of P23_DESKTOP_WIDTHS) {
       await page.setViewportSize({ width, height: 900 });
       await page.goto('/', { waitUntil: 'load' });
       await settle(page);
 
       const state = await readHeroComposition(page);
-      expect(state.introProofGap, `${width}px intro-proof spacing`).not.toBeNull();
-      expect(state.introProofGap!, `${width}px avoids double spacing`).toBeLessThan(60);
-      expect(state.introProofGap!, `${width}px canonical stack-gap-loose`).toBeGreaterThanOrEqual(30);
-      expect(state.introProofGap!, `${width}px canonical stack-gap-loose`).toBeLessThanOrEqual(44);
+      expect(state.desktopMediaColumn, `${width}px desktop media column`).toBe(true);
+      await expect(page.locator('.hero__proof')).toHaveCount(0);
     }
   });
 
@@ -1857,8 +1840,9 @@ test.describe('public landing page', () => {
 
     const state = await readHeroComposition(page);
     expect(state.frameTop, '390px frame top').toBeGreaterThanOrEqual(500);
-    expect(state.frameTop, '390px frame top').toBeLessThanOrEqual(525);
-    expect(state.frameBeforeProof, '390px product before proof').toBe(true);
+    expect(state.frameTop, '390px frame top').toBeLessThanOrEqual(560);
+    expect(state.introMediaGap, '390px intro-media gap').not.toBeNull();
+    expect(state.introMediaGap!, '390px intro-media gap min').toBeGreaterThanOrEqual(16);
   });
 
   test('P2.3.1 EN hero H1 measurement at 430px', async ({ page }) => {
@@ -1896,7 +1880,7 @@ test.describe('public landing page', () => {
       expect(state.scrollWidth, `${width}x${height} overflow`).toBeLessThanOrEqual(
         state.clientWidth + 1,
       );
-      expect(state.frameBeforeProof, `${width}x${height} product before proof`).toBe(true);
+      expect(state.frameTop, `${width}x${height} frame top`).toBeGreaterThan(0);
       expect(state.primaryVisible, `${width}x${height} CTA target`).toBe(true);
     }
   });
@@ -1910,7 +1894,7 @@ test.describe('public landing page', () => {
     expect(metrics.heroHeight).toBeGreaterThan(0);
     expect(metrics.frameTop).toBeGreaterThan(0);
     expect(metrics.frameTop).toBeLessThan(844);
-    expect(metrics.frameBeforeProof).toBe(true);
+    expect(metrics.introBeforeMedia).toBe(true);
   });
 
   test('captures P2.3 hero composition screenshots', async ({ page }) => {
@@ -3516,8 +3500,8 @@ test.describe('public landing page', () => {
     await settle(page);
 
     const metrics = await readPhase2KeyMetrics(page);
-    expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(8610);
-    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(8640);
+    expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(8480);
+    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(8520);
     expect(metrics.heroFrameTop!, '390px hero frame top').toBeGreaterThan(400);
     expect(metrics.platform.frameTopRel!, '390px platform frame top').toBeGreaterThan(250);
     expect(metrics.ai.frameTopRel!, '390px AI frame top').toBeGreaterThan(300);
