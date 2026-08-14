@@ -861,6 +861,69 @@ test.describe('public landing page', () => {
       .toBeLessThanOrEqual(24);
   });
 
+  test('mobile navigation restores page scroll after close from submenu', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'load' });
+    await page.evaluate(() => window.scrollTo(0, 1600));
+    await page.waitForTimeout(100);
+    const scrollBefore = await page.evaluate(() => window.scrollY);
+    expect(scrollBefore).toBeGreaterThan(400);
+
+    await page.evaluate(() => {
+      document.querySelector('[data-nav-toggle]')?.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+      document.querySelector('[data-nav-toggle]')?.click();
+    });
+
+    const panel = page.locator('[data-nav-panel]');
+    await expect(panel).toBeVisible();
+    await page.evaluate(() => {
+      document.querySelector('[data-nav-submenu="platform"]')?.click();
+      document.querySelector('[data-nav-close]')?.click();
+    });
+    await expect(panel).toBeHidden();
+    await expect(page.locator('html')).not.toHaveAttribute('data-nav-scroll-lock');
+
+    await expect
+      .poll(() => page.evaluate((expected) => Math.abs(window.scrollY - expected), scrollBefore), {
+        timeout: 3000,
+      })
+      .toBeLessThanOrEqual(48);
+
+    const scrollAfterClose = await page.evaluate(() => window.scrollY);
+    await page.evaluate((y) => window.scrollTo({ top: y + 240, behavior: 'instant' }), scrollAfterClose);
+    await expect
+      .poll(() => page.evaluate((start) => window.scrollY - start, scrollAfterClose), { timeout: 3000 })
+      .toBeGreaterThan(120);
+  });
+
+  test('mobile navigation restores page scroll after in-menu anchor selection', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto('/', { waitUntil: 'load' });
+    await page.evaluate(() => window.scrollTo(0, 2200));
+    await page.waitForTimeout(100);
+
+    await page.evaluate(() => {
+      document.querySelector('[data-nav-toggle]')?.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true }));
+      document.querySelector('[data-nav-toggle]')?.click();
+    });
+
+    const panel = page.locator('[data-nav-panel]');
+    await expect(panel).toBeVisible();
+    await page.evaluate(() => {
+      document.querySelector('[data-nav-submenu="platform"]')?.click();
+      document.querySelector('.mobilenav__subrow[href="#communication"]')?.click();
+    });
+    await expect(panel).toBeHidden();
+    await expect(page).toHaveURL(/#communication$/);
+    await expect(page.locator('html')).not.toHaveAttribute('data-nav-scroll-lock');
+
+    const scrollAfterNav = await page.evaluate(() => window.scrollY);
+    await page.evaluate((y) => window.scrollTo({ top: y + 240, behavior: 'instant' }), scrollAfterNav);
+    await expect
+      .poll(() => page.evaluate((start) => window.scrollY - start, scrollAfterNav), { timeout: 3000 })
+      .toBeGreaterThan(120);
+  });
+
   test('mobile navigation works with reduced motion preference', async ({ page }) => {
     await page.emulateMedia({ reducedMotion: 'reduce' });
     await page.setViewportSize({ width: 390, height: 844 });
