@@ -1125,6 +1125,26 @@ html[data-nav-scroll-lock='true'] {
   line-height: 1.65;
 }
 
+/* Stale HTML fallback: render split hero copy as one flowing paragraph. */
+.hero__body .hero__body-line,
+.hero__body .hero__body-primary,
+.hero__body .hero__body-secondary {
+  display: inline;
+}
+
+.hero__body .hero__body-secondary {
+  margin-top: 0;
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+}
+
+.hero__body .hero__body-line::after {
+  content: ' ';
+  white-space: pre;
+}
+
 .hero__actions {
   display: flex;
   flex-wrap: wrap;

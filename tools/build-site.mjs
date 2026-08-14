@@ -49,6 +49,9 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = path.join(ROOT, 'src');
 const DIST = path.join(ROOT, 'dist');
 
+/** Runtime paths still referenced by cached locale HTML in the wild. */
+const LEGACY_RUNTIME_ALIASES = ['styles.48fed002b23d.css', 'script.f02f7dcbd4a4.js'];
+
 /** Preloaded because it is the largest contentful paint on every page. */
 const HERO_BG = locales[0].hero.background;
 
@@ -67,6 +70,7 @@ const HTML_CACHE_HEADERS = `# SynqDrive landing page — locale HTML must never 
 </IfModule>
 
 <IfModule LiteSpeed>
+  CacheLookup off
   RewriteEngine On
   RewriteRule ^(en/)?index\\.html$ - [E=cache-control:no-cache,E=no-brotli:1]
   <FilesMatch "index\\.html$">
@@ -307,6 +311,9 @@ async function main() {
   await writeRuntimeAsset(DIST, jsName, jsContent);
   await writeCompatibilityAlias(DIST, 'styles.css', cssContent);
   await writeCompatibilityAlias(DIST, 'script.js', jsContent);
+  for (const legacyName of LEGACY_RUNTIME_ALIASES) {
+    await writeCompatibilityAlias(DIST, legacyName, legacyName.endsWith('.css') ? cssContent : jsContent);
+  }
   await copyPublicAssets(path.join(ROOT, 'assets'), path.join(DIST, 'assets'));
   await writeFile(path.join(DIST, 'robots.txt'), robots(), 'utf8');
   await writeFile(path.join(DIST, 'sitemap.xml'), sitemap(), 'utf8');
