@@ -58,11 +58,17 @@ const HERO_BG = locales[0].hero.background;
 /** Fixed 1200x630 JPEG, see the social card target in build-assets.mjs. */
 const SOCIAL_CARD = { url: `${SITE.origin}/assets/landing-social-card.jpg`, width: 1200, height: 630 };
 
-/** Keep locale HTML fresh; fingerprinted CSS/JS may stay long-lived. */
-const HTML_CACHE_HEADERS = `# SynqDrive landing page — locale HTML must never be edge-cached.
+/** Keep locale HTML and runtime assets fresh; stale Brotli variants caused Mobile Safari drift. */
+const HTML_CACHE_HEADERS = `# SynqDrive landing page — never edge-cache locale HTML or fingerprinted runtime assets.
 <IfModule mod_headers.c>
   <FilesMatch "index\\.html$">
     Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+    Header set Vary "Accept-Encoding"
+  </FilesMatch>
+  <FilesMatch "\\.(css|js)$">
+    Header set Cache-Control "no-cache, must-revalidate, max-age=0"
     Header set Pragma "no-cache"
     Header set Expires "0"
     Header set Vary "Accept-Encoding"
@@ -73,7 +79,8 @@ const HTML_CACHE_HEADERS = `# SynqDrive landing page — locale HTML must never 
   CacheLookup off
   RewriteEngine On
   RewriteRule ^(en/)?index\\.html$ - [E=cache-control:no-cache,E=no-brotli:1]
-  <FilesMatch "index\\.html$">
+  RewriteRule \\.(css|js)$ - [E=no-brotli:1,E=cache-control:no-cache]
+  <FilesMatch "(index\\.html|\\.css$|\\.js$)">
     Cache-Control no-cache
   </FilesMatch>
 </IfModule>
@@ -95,6 +102,12 @@ const CATASTROPHIC_FALLBACK_STYLE = [
   '.skip-link:focus-visible{top:14px}',
   '.nav-panel[inert]{display:none}',
 ].join('');
+
+/** Inline fix when edge cache serves pre-merge hero markup without refreshed CSS/JS. */
+const HERO_STALE_HTML_FIX_STYLE =
+  '.hero__body .hero__body-line,.hero__body .hero__body-primary,.hero__body .hero__body-secondary{display:inline}.hero__body .hero__body-secondary{margin-top:0;color:inherit;font-size:inherit;line-height:inherit;font-weight:inherit}.hero__body .hero__body-line::after{content:" ";white-space:pre}';
+const HERO_STALE_HTML_FIX_SCRIPT =
+  '(function(){var b=document.querySelector(".hero .hero__body");if(!b||!b.querySelector(".hero__body-secondary"))return;b.textContent=b.textContent.replace(/\\s+/g," ").trim();})();';
 
 function stylesheetRecoveryScript(assets) {
   return `(function(){var primary=${JSON.stringify(assets.cssHref)};var fingerprint=${JSON.stringify(assets.cssFingerprint)};var link=document.querySelector('link[data-synqdrive-primary-stylesheet]');if(!link||link.getAttribute('href')!==primary)return;var retried=false;link.addEventListener('error',function(){if(retried)return;retried=true;var retry=document.createElement('link');retry.rel='stylesheet';retry.href='/styles.css?v='+encodeURIComponent(fingerprint);retry.setAttribute('data-synqdrive-stylesheet-retry','');link.after(retry);});})();`;
@@ -198,6 +211,8 @@ function document(locale, assets) {
       fetchpriority="high"
     />
     <style id="synqdrive-catastrophic-fallback">${CATASTROPHIC_FALLBACK_STYLE}</style>
+    <style id="synqdrive-hero-stale-html-fix">${HERO_STALE_HTML_FIX_STYLE}</style>
+    <script>${HERO_STALE_HTML_FIX_SCRIPT}</script>
     <link rel="stylesheet" href="${assets.cssHref}" data-synqdrive-primary-stylesheet />
     <script>${stylesheetRecoveryScript(assets)}</script>
     <script>
