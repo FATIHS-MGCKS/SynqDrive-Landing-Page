@@ -8,6 +8,23 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+## Einsatzwelten and hero hierarchy — Production deployment — 2026-08-14
+
+**Scope:** Five fleet use cases plus German and English hero hierarchy refinement on `https://synqdrive.eu` (PR #14)
+
+- Added the image-led Einsatzwelten section after the hero with five local WebP industry assets
+- Added synchronized German and English use-case copy and four clearly scoped work-in-progress badges
+- Split the hero H1 and subline into semantic spans with responsive typographic differentiation
+- Preserved navigation, CTA targets, product visuals, runtime architecture, and reduced-motion behavior
+- Exact artefact deployed via Hostinger static deploy; package SHA-256 `843dc410718e5abf7b28384a8b8cb30598e0a2b1cac6ae79998352d90c431791` (1,897,483 bytes)
+- Runtime fingerprints: `styles.884ce095fb73.css`, `script.f02f7dcbd4a4.js`
+- Pre-deploy exact-artefact QA: Chromium **119/119**, WebKit **11/11**
+- Live German and English HTML, CSS, JavaScript, and all five industry images are byte-identical to the release artefact
+- Broader Production replay was infrastructure-limited by transient empty provider responses; direct content checks, cross-breakpoint overflow checks, exact-byte verification, and `app.synqdrive.eu` isolation **PASS**
+- Rollback artefact: `rollback/synqdrive.eu-pre-einsatzwelten-20260814_105923.tar.gz`, SHA-256 `b22e87737f2e7855d9135bcdf0251d93418ab8b8b366f2c3d52c45fd92d819a5`
+
+---
+
 ## Hero typography refinement — Production deployment — 2026-08-14
 
 **Scope:** German hero copy and typography refresh on `https://synqdrive.eu` (PR #13)
