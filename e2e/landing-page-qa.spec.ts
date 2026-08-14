@@ -70,32 +70,27 @@ const MOBILE_NAV = {
     openMenu: 'Menü öffnen',
     closeMenu: 'Menü schließen',
     platformCategory: 'Plattform',
-    accountLabel: 'Konto',
     languageLabel: 'Sprache',
     localeName: 'Deutsch',
     otherLocaleName: 'English',
     otherDir: '/en/',
+    sales: 'Vertrieb kontaktieren',
+    topLevel: ['Plattform', 'Lösungen', 'Branchen', 'Integrationen', 'Ressourcen', 'Preise', 'Anmelden'],
+    back: 'Zurück',
   },
   en: {
     openMenu: 'Open menu',
     closeMenu: 'Close menu',
     platformCategory: 'Platform',
-    accountLabel: 'Account',
     languageLabel: 'Language',
     localeName: 'English',
     otherLocaleName: 'Deutsch',
     otherDir: '/',
+    sales: 'Contact sales',
+    topLevel: ['Platform', 'Solutions', 'Industries', 'Integrations', 'Resources', 'Pricing', 'Log in'],
+    back: 'Back',
   },
 } as const;
-
-const MOBILE_PORTRAIT_SHOTS = [
-  [320, 700],
-  [375, 812],
-  [390, 844],
-  [430, 932],
-  [768, 1024],
-  [1024, 1366],
-] as const;
 
 const MOBILE_LANDSCAPE_SHOTS = [
   [844, 390],
@@ -524,6 +519,7 @@ test.describe('public landing page', () => {
     await expect(toggle).toHaveAttribute('aria-expanded', 'true');
     await expect(page.locator('.masthead__inner')).toHaveAttribute('inert', '');
 
+    await panel.getByRole('button', { name: 'Plattform' }).click();
     await panel.getByRole('link', { name: 'Integrationen & Erweiterung' }).click();
     await expect(panel).toBeHidden();
     await expect(page).toHaveURL(/#integrations$/);
@@ -546,8 +542,16 @@ test.describe('public landing page', () => {
       await expect(panel).toBeHidden();
 
       await toggle.click();
-      await expect(panel.getByText(mobile.platformCategory, { exact: true })).toBeVisible();
+      await expect(panel.locator('.mobilenav__brand img')).toBeVisible();
       await expect(panel.getByRole('button', { name: mobile.closeMenu })).toBeVisible();
+      await expect(panel.locator('.mobilenav__root-list > li')).toHaveCount(7);
+      for (const item of mobile.topLevel) {
+        await expect(
+          panel.getByRole(item === spec.login || item === mobile.topLevel[3] ? 'link' : 'button', {
+            name: item === mobile.topLevel[5] ? new RegExp(`^${item}`) : item,
+          }),
+        ).toBeVisible();
+      }
       await expect(panel.getByRole('link', { name: spec.login })).toHaveAttribute(
         'href',
         'https://app.synqdrive.eu',
@@ -556,20 +560,21 @@ test.describe('public landing page', () => {
         'href',
         /^mailto:info@synqdrive\.eu/,
       );
+      await expect(panel.getByRole('link', { name: mobile.sales })).toHaveAttribute(
+        'href',
+        'mailto:info@synqdrive.eu',
+      );
       await expect(panel.getByText(mobile.localeName)).toHaveAttribute('aria-current', 'true');
       await expect(panel.getByRole('link', { name: mobile.otherLocaleName })).toHaveAttribute(
         'href',
         mobile.otherDir,
       );
 
-      for (const deferred of spec.deferred) {
-        await expect(panel.getByRole('link', { name: deferred })).toHaveCount(0);
-        await expect(panel.getByRole('button', { name: deferred })).toHaveCount(0);
-      }
-
       for (const link of spec.links) {
-        await expect(panel.getByRole('link', { name: link.label })).toHaveCount(1);
+        await expect(panel.getByRole('link', { name: link.label })).toHaveCount(0);
       }
+      await expect(panel.getByText(/^(Konto|Account)$/)).toHaveCount(0);
+      await expect(panel.locator('.mobilenav__section-label')).toHaveCount(0);
 
       await page.keyboard.press('Escape');
       await expect(toggle).toBeFocused();
@@ -596,15 +601,12 @@ test.describe('public landing page', () => {
       await expect(panel).toBeVisible();
       await expect(panel).not.toHaveAttribute('inert');
       await expect(toggle).toHaveAttribute('aria-expanded', 'true');
-      await expect(page.locator(':focus')).toHaveClass(/mobilenav__link/);
-
-      await page.keyboard.press('Shift+Tab');
       await expect(close).toBeFocused();
 
       await page.keyboard.press('Tab');
-      await expect(page.locator(':focus')).toHaveClass(/mobilenav__link/);
+      await expect(panel.locator('[data-nav-submenu="platform"]')).toBeFocused();
 
-      const focusables = panel.locator('a[href], button:not([disabled])');
+      const focusables = panel.locator('a[href]:visible, button:not([disabled]):visible');
       const focusableCount = await focusables.count();
       for (let index = 1; index < focusableCount; index += 1) {
         await page.keyboard.press('Tab');
@@ -614,7 +616,7 @@ test.describe('public landing page', () => {
       }
 
       await page.keyboard.press('Tab');
-      await expect(page.locator(':focus')).toHaveClass(/mobilenav__link|mobilenav__brand/);
+      await expect(page.locator(':focus')).toHaveClass(/mobilenav__row|mobilenav__brand/);
 
       await close.focus();
       await page.keyboard.press('Enter');
@@ -622,7 +624,133 @@ test.describe('public landing page', () => {
       await expect(panel).toHaveAttribute('inert', '');
       await expect(toggle).toBeFocused();
     });
+
+    test(`mobile navigation hierarchy and subviews (${locale})`, async ({ page }) => {
+      await page.setViewportSize({ width: 390, height: 844 });
+      await page.goto(url, { waitUntil: 'load' });
+
+      const panel = page.locator('[data-nav-panel]');
+      const toggle = page.getByRole('button', { name: mobile.openMenu });
+      await toggle.click();
+
+      const platformTrigger = panel.locator('[data-nav-submenu="platform"]');
+      await platformTrigger.click();
+      await expect(platformTrigger).toHaveAttribute('aria-expanded', 'true');
+      await expect(panel.locator('[data-nav-view="root"]')).toBeHidden();
+      await expect(panel.locator('[data-nav-view="platform"]')).toBeVisible();
+      await expect(panel.getByRole('button', { name: mobile.back })).toBeFocused();
+      for (const link of spec.links) {
+        await expect(panel.getByRole('link', { name: link.label })).toHaveCount(1);
+      }
+
+      await panel.getByRole('button', { name: mobile.back }).click();
+      await expect(panel.locator('[data-nav-view="root"]')).toBeVisible();
+      await expect(platformTrigger).toBeFocused();
+
+      const solutionsLabel = mobile.topLevel[1];
+      await panel.getByRole('button', { name: solutionsLabel }).click();
+      await expect(panel.locator('[data-nav-view="solutions"]')).toBeVisible();
+      await expect(panel.locator('[data-nav-view="solutions"] [aria-disabled="true"]')).toHaveCount(4);
+      await expect(panel.locator('[data-nav-view="solutions"] a[href="#"]')).toHaveCount(0);
+      await panel.getByRole('button', { name: mobile.back }).click();
+
+      const industriesLabel = mobile.topLevel[2];
+      await panel.getByRole('button', { name: industriesLabel }).click();
+      await expect(panel.locator('[data-nav-view="industries"]')).toBeVisible();
+      await expect(panel.locator('[data-nav-view="industries"] [aria-disabled="true"]')).toHaveCount(5);
+      await expect(panel.locator('[data-nav-view="industries"] a')).toHaveCount(0);
+      await panel.getByRole('button', { name: mobile.back }).click();
+
+      const resourcesLabel = mobile.topLevel[4];
+      const resourcesTrigger = panel.locator('[data-nav-submenu="resources"]');
+      await resourcesTrigger.click();
+      await expect(panel.locator('[data-nav-view="root"]')).toBeHidden();
+      await expect(panel.locator('[data-nav-view="resources"]')).toBeVisible();
+      await expect(panel.getByRole('button', { name: mobile.back })).toBeFocused();
+      const resourcesLinks =
+        locale === 'de'
+          ? [
+              { label: 'Produktüberblick', href: '#platform' },
+              { label: 'Kontakt', href: 'mailto:info@synqdrive.eu' },
+              { label: 'Demo', href: /^mailto:info@synqdrive\.eu/ },
+            ]
+          : [
+              { label: 'Product Overview', href: '#platform' },
+              { label: 'Contact', href: 'mailto:info@synqdrive.eu' },
+              { label: 'Demo', href: /^mailto:info@synqdrive\.eu/ },
+            ];
+      for (const link of resourcesLinks) {
+        await expect(panel.getByRole('link', { name: link.label })).toHaveCount(1);
+        await expect(panel.getByRole('link', { name: link.label })).toHaveAttribute('href', link.href);
+      }
+      await expect(panel.locator('[data-nav-view="resources"] a[href="#"]')).toHaveCount(0);
+      await expect(panel.locator('[data-nav-view="resources"] [aria-disabled="true"]')).toHaveCount(0);
+
+      await panel.getByRole('button', { name: mobile.back }).click();
+      await expect(panel.locator('[data-nav-view="root"]')).toBeVisible();
+      await expect(resourcesTrigger).toBeFocused();
+
+      await page.keyboard.press('Escape');
+      await expect(panel).toBeHidden();
+      await expect(toggle).toBeFocused();
+    });
   }
+
+  test('mobile navigation responsive matrix and bottom actions', async ({ page }) => {
+    for (const [width, height] of [
+      [320, 700],
+      [360, 800],
+      [375, 812],
+      [390, 844],
+      [393, 852],
+      [414, 896],
+      [430, 932],
+      [480, 900],
+      [667, 375],
+      [844, 390],
+      [932, 430],
+    ] as const) {
+      await page.setViewportSize({ width, height });
+      await page.goto('/', { waitUntil: 'load' });
+      await page.getByRole('button', { name: 'Menü öffnen' }).click();
+
+      const panel = page.locator('[data-nav-panel]');
+      const scroll = panel.locator('.mobilenav__scroll');
+      await scroll.evaluate((node) => {
+        node.scrollTop = node.scrollHeight;
+      });
+
+      for (const label of ['Demo anfragen', 'Vertrieb kontaktieren', 'English']) {
+        const control = panel.getByRole('link', { name: label });
+        await expect(control).toBeVisible();
+        const box = await control.boundingBox();
+        expect(box?.height ?? 0, `${width}px ${label}`).toBeGreaterThanOrEqual(44);
+      }
+
+      const overflow = await panel.evaluate(
+        (node) => node.scrollWidth - node.clientWidth,
+      );
+      expect(overflow, `${width}x${height}`).toBeLessThanOrEqual(1);
+      await page.keyboard.press('Escape');
+    }
+
+    for (const [localeUrl, openLabel] of [
+      ['/', 'Menü öffnen'],
+      ['/en/', 'Open menu'],
+    ] as const) {
+      for (const width of [320, 390, 430]) {
+        await page.setViewportSize({ width, height: width === 320 ? 700 : 844 });
+        await page.goto(localeUrl, { waitUntil: 'load' });
+        await page.getByRole('button', { name: openLabel }).click();
+        await expect(page.locator('.mobilenav__root-list > li')).toHaveCount(7);
+        expect(
+          await page.locator('[data-nav-panel]').evaluate((node) => node.scrollWidth <= node.clientWidth + 1),
+          `${localeUrl} ${width}px`,
+        ).toBe(true);
+        await page.keyboard.press('Escape');
+      }
+    }
+  });
 
   for (const locale of ['de', 'en'] as const) {
     const url = locale === 'de' ? '/#vehicle-intelligence' : '/en/#vehicle-intelligence';
@@ -836,18 +964,38 @@ test.describe('public landing page', () => {
     }
   });
 
-  test('captures P1.4 mobile navigation screenshots', async ({ page }) => {
-    for (const [width, height] of MOBILE_PORTRAIT_SHOTS) {
+  test('captures mobile navigation hierarchy screenshots', async ({ page }) => {
+    for (const [locale, url, openLabel, platform, solutions, industries, resources, width, height] of [
+      ['de', '/', 'Menü öffnen', 'Plattform', 'Lösungen', 'Branchen', 'Ressourcen', 320, 700],
+      ['de', '/', 'Menü öffnen', 'Plattform', 'Lösungen', 'Branchen', 'Ressourcen', 390, 844],
+      ['de', '/', 'Menü öffnen', 'Plattform', 'Lösungen', 'Branchen', 'Ressourcen', 430, 932],
+      ['en', '/en/', 'Open menu', 'Platform', 'Solutions', 'Industries', 'Resources', 390, 844],
+    ] as const) {
       await page.setViewportSize({ width, height });
-      await page.goto('/', { waitUntil: 'load' });
-      await shootHeader(page, `p14-nav-${width}-closed`);
+      await page.goto(url, { waitUntil: 'load' });
+      await shootHeader(page, `nav-hotfix-${locale}-${width}-closed`);
 
-      await page.getByRole('button', { name: 'Menü öffnen' }).click();
-      await expect(page.locator('[data-nav-panel]')).toBeVisible();
-      await page.locator('[data-nav-panel]').screenshot({
-        path: path.join(OUT, `${LABEL}p14-nav-${width}-open-panel.png`),
+      await page.getByRole('button', { name: openLabel }).click();
+      const panel = page.locator('[data-nav-panel]');
+      await expect(panel).toBeVisible();
+      await panel.screenshot({
+        path: path.join(OUT, `${LABEL}nav-hotfix-${locale}-${width}-root.png`),
         animations: 'disabled',
       });
+
+      for (const [label, state] of [
+        [platform, 'platform'],
+        [solutions, 'solutions'],
+        [industries, 'industries'],
+        [resources, 'resources'],
+      ] as const) {
+        await panel.getByRole('button', { name: label }).click();
+        await panel.screenshot({
+          path: path.join(OUT, `${LABEL}nav-hotfix-${locale}-${width}-${state}.png`),
+          animations: 'disabled',
+        });
+        await panel.locator('[data-nav-view]:not([hidden]) [data-nav-back]').click();
+      }
       await page.keyboard.press('Escape');
     }
 
@@ -3404,6 +3552,7 @@ test.describe('public landing page', () => {
       await expect(panel).toBeVisible();
 
       const label = PLATFORM_NAV.de.links.find((link) => link.href === hash)!.label;
+      await panel.getByRole('button', { name: 'Plattform' }).click();
       await panel.getByRole('link', { name: label }).click();
       await expect(panel).toBeHidden();
 

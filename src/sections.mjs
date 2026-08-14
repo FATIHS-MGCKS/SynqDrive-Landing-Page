@@ -65,15 +65,66 @@ function renderPlatformPanel(c) {
 }
 
 function renderMobileNav(c, other, site) {
-  const platformLinks = flattenPlatformMenu(c.nav.platformMenu)
-    .map(
-      (item) => `<li>
-            <a class="mobilenav__link" href="${item.href}">
-              <span class="mobilenav__link-label">${esc(item.label)}</span>
-            </a>
-          </li>`,
-    )
-    .join('');
+  const mobile = c.nav.mobileNav;
+  const platformItems = [
+    { label: c.nav.platformMenu.overview.label, href: c.nav.platformMenu.overview.href },
+    { label: c.nav.platformMenu.overview.description, href: c.nav.platformMenu.overview.href },
+    ...flattenPlatformMenu(c.nav.platformMenu).slice(1),
+  ];
+
+  const submenuItem = (item) => {
+    if (item.href) {
+      return `<li>
+              <a class="mobilenav__subrow" href="${item.href}">
+                <span>${esc(item.label)}</span>
+                <span class="mobilenav__row-arrow">${icon('arrow-right')}</span>
+              </a>
+            </li>`;
+    }
+
+    const status = item.status === 'available' ? mobile.available : mobile.inProgress;
+    return `<li>
+              <div class="mobilenav__subrow mobilenav__subrow--static" aria-disabled="true">
+                <span>${esc(item.label)}</span>
+                <span class="mobilenav__badge">${esc(status)}</span>
+              </div>
+            </li>`;
+  };
+
+  const submenu = (id, title, items) => `<section
+          class="mobilenav__view mobilenav__view--submenu"
+          id="mobile-nav-${id}"
+          data-nav-view="${id}"
+          aria-labelledby="mobile-nav-${id}-title"
+          hidden
+          inert
+        >
+          <div class="mobilenav__subhead">
+            <button
+              type="button"
+              class="mobilenav__back"
+              data-nav-back
+              aria-label="${esc(mobile.back)}"
+            >
+              <span class="mobilenav__back-icon">${icon('arrow-right')}</span>
+            </button>
+            <p class="mobilenav__subhead-title" id="mobile-nav-${id}-title">${esc(title)}</p>
+          </div>
+          <ul class="mobilenav__sublist">${items.map(submenuItem).join('')}</ul>
+        </section>`;
+
+  const rootSubmenuRow = (id, label) => `<li>
+            <button
+              type="button"
+              class="mobilenav__row"
+              data-nav-submenu="${id}"
+              aria-expanded="false"
+              aria-controls="mobile-nav-${id}"
+            >
+              <span>${esc(label)}</span>
+              <span class="mobilenav__row-chevron">${icon('arrow-right')}</span>
+            </button>
+          </li>`;
 
   return `<div
         class="mobilenav"
@@ -86,7 +137,7 @@ function renderMobileNav(c, other, site) {
         inert
       >
         <div class="mobilenav__topbar">
-          <a class="brand mobilenav__brand" href="${c.dir}" aria-label="${esc(c.nav.home)}">
+          <a class="brand mobilenav__brand" href="${c.dir}" tabindex="-1" aria-label="${esc(c.nav.home)}">
             <img src="/assets/synqdrive-logo.png" width="1024" height="216" alt="SynqDrive" />
           </a>
           <button
@@ -99,32 +150,56 @@ function renderMobileNav(c, other, site) {
           </button>
         </div>
         <div class="mobilenav__scroll">
-          <div class="mobilenav__section">
-            <p class="mobilenav__category" id="mobile-nav-title">${esc(c.nav.platform)}</p>
-            <ul class="mobilenav__list">${platformLinks}</ul>
-          </div>
+          <section
+            class="mobilenav__view mobilenav__view--root"
+            data-nav-view="root"
+            aria-labelledby="mobile-nav-title"
+          >
+            <p class="sr-only" id="mobile-nav-title">${esc(mobile.rootTitle)}</p>
+            <ul class="mobilenav__root-list">
+              ${rootSubmenuRow('platform', c.nav.platform)}
+              ${rootSubmenuRow('solutions', mobile.categories.solutions)}
+              ${rootSubmenuRow('industries', mobile.categories.industries)}
+              <li>
+                <a class="mobilenav__row" href="#${site.sectionIds.integrations}">
+                  <span>${esc(mobile.categories.integrations)}</span>
+                </a>
+              </li>
+              ${rootSubmenuRow('resources', mobile.categories.resources)}
+              <li>
+                <button type="button" class="mobilenav__row mobilenav__row--unavailable" aria-disabled="true">
+                  <span>${esc(mobile.categories.pricing)}</span>
+                  <span class="mobilenav__badge">${esc(mobile.inProgress)}</span>
+                </button>
+              </li>
+              <li>
+                <a class="mobilenav__row" href="${site.links.app}" rel="noopener">
+                  <span>${esc(c.nav.login)}</span>
+                </a>
+              </li>
+            </ul>
 
-          <div class="mobilenav__section mobilenav__section--account">
-            <p class="mobilenav__section-label">${esc(c.nav.mobileNav.accountLabel)}</p>
-            <div class="mobilenav__actions">
-              <a class="action action--ghost mobilenav__login" href="${site.links.app}" rel="noopener">${esc(c.nav.login)}</a>
-              ${action({ href: site.links.demo, label: c.nav.demo, variant: 'primary', className: 'mobilenav__demo' })}
+            <div class="mobilenav__bottom">
+              <div class="mobilenav__actions">
+                ${action({ href: site.links.demo, label: c.nav.demo, variant: 'primary', className: 'mobilenav__demo' })}
+                <a class="action action--secondary mobilenav__sales" href="${site.links.contact}">${esc(mobile.sales)}</a>
+              </div>
+              <div class="mobilenav__locale" role="group" aria-label="${esc(mobile.languageLabel)}">
+                <span class="mobilenav__locale-current" aria-current="true">${esc(c.meta.localeName)}</span>
+                <a
+                  class="mobilenav__locale-link"
+                  href="${other.dir}"
+                  hreflang="${other.htmlLang}"
+                  lang="${other.htmlLang}"
+                  aria-label="${esc(c.meta.localeSwitchLabel)}: ${esc(other.meta.localeName)}"
+                >${esc(other.meta.localeName)}</a>
+              </div>
             </div>
-          </div>
-
-          <div class="mobilenav__section mobilenav__section--locale" role="group" aria-label="${esc(c.nav.mobileNav.languageLabel)}">
-            <p class="mobilenav__section-label">${esc(c.nav.mobileNav.languageLabel)}</p>
-            <div class="mobilenav__locale">
-              <span class="mobilenav__locale-current" aria-current="true">${esc(c.meta.localeName)}</span>
-              <a
-                class="mobilenav__locale-link"
-                href="${other.dir}"
-                hreflang="${other.htmlLang}"
-                lang="${other.htmlLang}"
-                aria-label="${esc(c.meta.localeSwitchLabel)}: ${esc(other.meta.localeName)}"
-              >${esc(other.meta.localeName)}</a>
-            </div>
-          </div>
+          </section>
+          ${submenu('platform', c.nav.platform, platformItems)}
+          ${submenu('solutions', mobile.categories.solutions, mobile.solutions)}
+          ${submenu('industries', mobile.categories.industries, mobile.industries)}
+          ${submenu('resources', mobile.categories.resources, mobile.resources)}
         </div>
       </div>`;
 }

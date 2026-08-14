@@ -179,6 +179,21 @@ All entries below are **Accepted** unless otherwise stated.
 
 ---
 
+## DEC-011 — Mobile navigation may preview planned IA without dead routes
+
+| Field | Value |
+|---|---|
+| **ID** | DEC-011 |
+| **Date** | 2026-08-13 |
+| **Status** | Accepted |
+| **Decision** | Mobile navigation may expose planned top-level IA entries before dedicated destination pages launch, provided unavailable destinations are clearly marked **“In progress” / “In Arbeit”**, are not rendered as links, and never lead to placeholder or nonexistent routes. Mobile may use nested category views distinct from the accepted desktop disclosure IA. |
+| **Context** | Real-device review found that permanently expanding all Platform children and presenting Account/Language as oversized sections produced weak hierarchy. The approved mobile IA now exposes Platform, Solutions, Industries, Integrations, Resources, Pricing, and Login in a compact first-level view while destination pages remain staged. |
+| **Reason** | A premium mobile navigation needs a legible information architecture before all destination pages exist, without violating the no-dead-links trust boundary. |
+| **Consequences** | DEC-011 is a **scoped mobile exception** to **both DEC-003 and DEC-004**. It does **not** globally supersede DEC-003: DEC-003 remains the long-term/default public information architecture outside this explicit mobile exception. Desktop navigation remains **Platform-only** under DEC-004 staged activation until a separate accepted decision authorizes desktop IA expansion. This mobile exception permits planned top-level labels (Solutions, Industries, Resources, Pricing) and nested category views that DEC-003 and DEC-004 would otherwise defer on desktop. DEC-008’s dead-link prohibition remains fully binding: unavailable entries are non-link status rows; only real pages, anchors, and mail actions are navigable. |
+| **Owner** | Product / Fatih |
+
+---
+
 ## Related documents
 
 - `AGENTS.md` — agent operational instructions and authority hierarchy
