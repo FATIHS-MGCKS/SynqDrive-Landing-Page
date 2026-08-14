@@ -601,13 +601,10 @@ test.describe('public landing page', () => {
       await expect(panel).toBeVisible();
       await expect(panel).not.toHaveAttribute('inert');
       await expect(toggle).toHaveAttribute('aria-expanded', 'true');
-      await expect(page.locator(':focus')).toHaveClass(/mobilenav__row/);
-
-      await page.keyboard.press('Shift+Tab');
       await expect(close).toBeFocused();
 
       await page.keyboard.press('Tab');
-      await expect(page.locator(':focus')).toHaveClass(/mobilenav__row/);
+      await expect(panel.locator('[data-nav-submenu="platform"]')).toBeFocused();
 
       const focusables = panel.locator('a[href]:visible, button:not([disabled]):visible');
       const focusableCount = await focusables.count();
@@ -662,6 +659,36 @@ test.describe('public landing page', () => {
       await expect(panel.locator('[data-nav-view="industries"]')).toBeVisible();
       await expect(panel.locator('[data-nav-view="industries"] [aria-disabled="true"]')).toHaveCount(5);
       await expect(panel.locator('[data-nav-view="industries"] a')).toHaveCount(0);
+      await panel.getByRole('button', { name: mobile.back }).click();
+
+      const resourcesLabel = mobile.topLevel[4];
+      const resourcesTrigger = panel.locator('[data-nav-submenu="resources"]');
+      await resourcesTrigger.click();
+      await expect(panel.locator('[data-nav-view="root"]')).toBeHidden();
+      await expect(panel.locator('[data-nav-view="resources"]')).toBeVisible();
+      await expect(panel.getByRole('button', { name: mobile.back })).toBeFocused();
+      const resourcesLinks =
+        locale === 'de'
+          ? [
+              { label: 'Produktüberblick', href: '#platform' },
+              { label: 'Kontakt', href: 'mailto:info@synqdrive.eu' },
+              { label: 'Demo', href: /^mailto:info@synqdrive\.eu/ },
+            ]
+          : [
+              { label: 'Product Overview', href: '#platform' },
+              { label: 'Contact', href: 'mailto:info@synqdrive.eu' },
+              { label: 'Demo', href: /^mailto:info@synqdrive\.eu/ },
+            ];
+      for (const link of resourcesLinks) {
+        await expect(panel.getByRole('link', { name: link.label })).toHaveCount(1);
+        await expect(panel.getByRole('link', { name: link.label })).toHaveAttribute('href', link.href);
+      }
+      await expect(panel.locator('[data-nav-view="resources"] a[href="#"]')).toHaveCount(0);
+      await expect(panel.locator('[data-nav-view="resources"] [aria-disabled="true"]')).toHaveCount(0);
+
+      await panel.getByRole('button', { name: mobile.back }).click();
+      await expect(panel.locator('[data-nav-view="root"]')).toBeVisible();
+      await expect(resourcesTrigger).toBeFocused();
 
       await page.keyboard.press('Escape');
       await expect(panel).toBeHidden();
@@ -938,11 +965,11 @@ test.describe('public landing page', () => {
   });
 
   test('captures mobile navigation hierarchy screenshots', async ({ page }) => {
-    for (const [locale, url, openLabel, platform, solutions, industries, width, height] of [
-      ['de', '/', 'Menü öffnen', 'Plattform', 'Lösungen', 'Branchen', 320, 700],
-      ['de', '/', 'Menü öffnen', 'Plattform', 'Lösungen', 'Branchen', 390, 844],
-      ['de', '/', 'Menü öffnen', 'Plattform', 'Lösungen', 'Branchen', 430, 932],
-      ['en', '/en/', 'Open menu', 'Platform', 'Solutions', 'Industries', 390, 844],
+    for (const [locale, url, openLabel, platform, solutions, industries, resources, width, height] of [
+      ['de', '/', 'Menü öffnen', 'Plattform', 'Lösungen', 'Branchen', 'Ressourcen', 320, 700],
+      ['de', '/', 'Menü öffnen', 'Plattform', 'Lösungen', 'Branchen', 'Ressourcen', 390, 844],
+      ['de', '/', 'Menü öffnen', 'Plattform', 'Lösungen', 'Branchen', 'Ressourcen', 430, 932],
+      ['en', '/en/', 'Open menu', 'Platform', 'Solutions', 'Industries', 'Resources', 390, 844],
     ] as const) {
       await page.setViewportSize({ width, height });
       await page.goto(url, { waitUntil: 'load' });
@@ -960,6 +987,7 @@ test.describe('public landing page', () => {
         [platform, 'platform'],
         [solutions, 'solutions'],
         [industries, 'industries'],
+        [resources, 'resources'],
       ] as const) {
         await panel.getByRole('button', { name: label }).click();
         await panel.screenshot({
