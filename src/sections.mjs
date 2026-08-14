@@ -263,10 +263,9 @@ export function header(c, other, site) {
 
 export function hero(c) {
   const h = c.hero;
-  const proof = h.proof.map((line) => `<li>${esc(line)}</li>`).join('');
 
-  /* Mobile source order: intro → product → proof. Desktop grid keeps intro + proof
-     in the copy column and the product frame in the right column. */
+  /* Mobile source order: intro → product. Desktop grid keeps copy in the left column
+     and the product frame in the right column. */
   return `<section class="hero layout-split" aria-labelledby="hero-title">
       <div class="hero__intro">
         <p class="eyebrow" data-reveal>${esc(h.eyebrow)}</p>
@@ -285,7 +284,6 @@ export function hero(c) {
           sizes: HERO_SIZES,
         })}
       </div>
-      <ul class="hero__proof" data-reveal>${proof}</ul>
     </section>`;
 }
 

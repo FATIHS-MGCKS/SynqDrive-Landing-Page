@@ -1033,8 +1033,6 @@ html[data-nav-scroll-lock='true'] {
   grid-row: 1;
 }
 
-/* Upper bound is set by the German headline: "Betriebssystem" has to sit on one
-   line inside the copy column at the widest layout. */
 .hero__intro h1 {
   font-size: var(--type-display);
   letter-spacing: -0.03em;
@@ -1055,32 +1053,12 @@ html[data-nav-scroll-lock='true'] {
   margin-top: var(--stack-gap-loose);
 }
 
-/* Three short statements, set as a quiet rule-separated list rather than icon
-   cards, so the hero keeps one visual focus. */
-.hero__proof {
-  grid-column: 1;
-  grid-row: 2;
-  margin-top: var(--stack-gap-loose);
-  border-top: 1px solid var(--hairline);
-}
-
-.hero__proof li {
-  padding: 11px 0;
-  color: var(--ink-soft);
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.hero__proof li + li {
-  border-top: 1px solid var(--hairline);
-}
-
 /* The frame sits inside the shell: the wider grid share already gives the
    product enough presence, and bleeding past the gutter creates page-level
    horizontal scroll on every viewport wider than the shell. */
 .hero__media {
   grid-column: 2;
-  grid-row: 1 / span 2;
+  grid-row: 1;
   align-self: center;
   min-width: 0;
 }
@@ -2122,8 +2100,7 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .hero__intro,
-  .hero__media,
-  .hero__proof {
+  .hero__media {
     grid-column: 1;
     grid-row: auto;
   }
@@ -2134,10 +2111,6 @@ html[data-nav-scroll-lock='true'] {
 
   .hero__actions {
     margin-top: var(--stack-gap);
-  }
-
-  .hero__proof {
-    margin-top: 0;
   }
 
   .hero__body,
@@ -2281,12 +2254,6 @@ html[data-nav-scroll-lock='true'] {
   .hero {
     gap: var(--stack-gap);
     padding-block: clamp(32px, 6vw, 44px) clamp(36px, 6vw, 52px);
-  }
-
-  .hero__proof li {
-    padding: 8px 0;
-    font-size: 13.5px;
-    line-height: 1.45;
   }
 
   .notes {
