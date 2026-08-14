@@ -19,7 +19,7 @@ import { isFingerprintedCss, isFingerprintedJs } from './fingerprint-assets.mjs'
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 /** Runtime paths still referenced by cached locale HTML in the wild. */
-const LEGACY_RUNTIME_ALIASES = new Set(['styles.48fed002b23d.css', 'script.f02f7dcbd4a4.js']);
+const LEGACY_RUNTIME_ALIASES = new Set(['script.f02f7dcbd4a4.js']);
 const DIST = path.join(ROOT, 'dist');
 const OUTPUT = path.join(ROOT, 'synqdrive-landing-page.tar.gz');
 

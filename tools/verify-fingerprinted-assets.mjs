@@ -21,7 +21,7 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const DIST = path.join(ROOT, 'dist');
 const SRC_CSS = path.join(ROOT, 'src', 'styles.css');
 const SRC_JS = path.join(ROOT, 'src', 'script.js');
-const LEGACY_RUNTIME_ALIASES = new Set(['styles.48fed002b23d.css', 'script.f02f7dcbd4a4.js']);
+const LEGACY_RUNTIME_ALIASES = new Set(['script.f02f7dcbd4a4.js']);
 
 async function sha256(content) {
   return createHash('sha256').update(content).digest('hex');

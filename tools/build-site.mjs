@@ -51,13 +51,13 @@ const DIST = path.join(ROOT, 'dist');
 
 /** Runtime paths still referenced by cached locale HTML in the wild. */
 const LEGACY_RUNTIME_ALIASES = ['styles.48fed002b23d.css', 'script.f02f7dcbd4a4.js'];
+/** Keep serving updated JS at the legacy path; drop legacy CSS so stale HTML hits styles.css?v= retry. */
+const LEGACY_RUNTIME_JS_ALIAS = 'script.f02f7dcbd4a4.js';
 
 /** @param {{ cssHref: string; jsHref: string }} assets */
 function htaccessContent(assets) {
-  const [legacyCss, legacyJs] = LEGACY_RUNTIME_ALIASES;
   return `# SynqDrive landing page — never edge-cache locale HTML or fingerprinted runtime assets.
-Redirect 302 /${legacyCss} ${assets.cssHref}
-Redirect 302 /${legacyJs} ${assets.jsHref}
+Redirect 302 /${LEGACY_RUNTIME_JS_ALIAS} ${assets.jsHref}
 
 <IfModule mod_headers.c>
   <FilesMatch "index\\.html$">
@@ -332,9 +332,7 @@ async function main() {
   await writeRuntimeAsset(DIST, jsName, jsContent);
   await writeCompatibilityAlias(DIST, 'styles.css', cssContent);
   await writeCompatibilityAlias(DIST, 'script.js', jsContent);
-  for (const legacyName of LEGACY_RUNTIME_ALIASES) {
-    await writeCompatibilityAlias(DIST, legacyName, legacyName.endsWith('.css') ? cssContent : jsContent);
-  }
+  await writeCompatibilityAlias(DIST, LEGACY_RUNTIME_JS_ALIAS, jsContent);
   await copyPublicAssets(path.join(ROOT, 'assets'), path.join(DIST, 'assets'));
   await writeFile(path.join(DIST, 'robots.txt'), robots(), 'utf8');
   await writeFile(path.join(DIST, 'sitemap.xml'), sitemap(), 'utf8');
