@@ -2,7 +2,7 @@
 
 **Date:** 2026-08-13  
 **Scope:** Mobile navigation only  
-**Status:** Local release candidate; **NOT DEPLOYED**
+**Status:** **DEPLOYED** to Production (2026-08-14) — PR #10 merged via squash (`4d16ed0`)
 
 ## Executive Summary
 
@@ -213,15 +213,42 @@ The hotfix retains:
 | CSS | `styles.478b7a069726.css` |
 | JavaScript | `script.0501a8359cb4.js` |
 
-The package contains 36 archive entries at the site root, verified by `tools/package-site.mjs`. Its local QA identity is 1,030,289 bytes, SHA-256 `606ca121ab261765017a4923c2c933fd5769e659f6a686b66f0d4adbc4f1c2f4`; it is **not deployed**.
+The package contains 36 archive entries at the site root, verified by `tools/package-site.mjs`. Its approved release identity is 1,030,289 bytes, SHA-256 `606ca121ab261765017a4923c2c933fd5769e659f6a686b66f0d4adbc4f1c2f4`.
 
 ## Production Deployment Status
 
-**Production touched:** **NO**  
-**Hostinger cache purged:** **NO**  
-**`app.synqdrive.eu` touched:** **NO**
+**PR #10:** **MERGED** (squash) — `4d16ed0aedf24584ad140962dc66712fbedad907`  
+**Production touched:** **YES** — `https://synqdrive.eu`  
+**Deployed UTC:** **2026-08-14T03:43:49Z**  
+**Mechanism:** Hostinger `hosting_deployStaticWebsite` → `/home/u700268787/domains/synqdrive.eu/public_html`  
+**Archive deployed:** `synqdrive-landing-page.tar.gz` (SHA-256 `606ca121…`)  
+**Hostinger cache purged:** **NO** — cache-busted fetch served new fingerprinted HTML immediately  
+**`app.synqdrive.eu` touched:** **NO** (read-only health verified post-deploy)
 
-This hotfix is a local/Draft-PR release candidate only.
+### Pre-deploy baseline (serial)
+
+| URL | HTTP |
+|---|---|
+| `https://synqdrive.eu/` | 200 |
+| `https://synqdrive.eu/en/` | 200 |
+| `https://app.synqdrive.eu/` | 200 |
+| `https://app.synqdrive.eu/api/v1/health` | 200 (`status: ok`) |
+
+### Post-deploy verification
+
+| Check | Result |
+|---|---|
+| DE HTML fingerprints | **PASS** — `styles.478b7a069726.css`, `script.0501a8359cb4.js` |
+| EN HTML fingerprints | **PASS** |
+| Fingerprinted CSS/JS HTTP 200 | **PASS** |
+| Compatibility aliases HTTP 200 | **PASS** — `/styles.css`, `/script.js` |
+| Rollback artefact valid (not executed) | **PASS** — `rollback/synqdrive.eu-pre-p2.8-20260813_095611.tar.gz` |
+
+### Production mobile-nav smoke (390×844 DE, Chromium)
+
+Serial smoke **PASS**: seven-row root IA, Platform/Resources subviews, Back focus restoration, Demo + sales CTAs, compact locale, no horizontal overflow, `--synqdrive-release-css: 1` sentinel, fingerprinted delivery, bounded SVG geometry.
+
+**Real-iPhone acceptance:** **PENDING OWNER TEST**
 
 ## P10.1 Closure (2026-08-13)
 

@@ -3,10 +3,13 @@
 **Date:** 2026-08-11 (original report); Phase-1 navigation updates through P1.5  
 **Production URL:** <https://synqdrive.eu> (German), <https://synqdrive.eu/en/> (English)
 
-> **Current Production (Phase 2):** Full Phase-2 mobile composition live; deployed **2026-08-13T10:24:25Z** (P2.8B)  
-> **Production runtime source SHA:** `92392d23ca9f12c4d18befdcd06c611a593dd3a9`  
-> **Release artefact SHA-256:** `37abe53e1564542854b68ea57f1893c914645eb54ebc21f872680efc61326e09`  
+> **Current Production (Phase 2 + mobile navigation hotfix):** Phase-2 mobile composition plus mobile navigation hierarchy hotfix live; mobile nav deployed **2026-08-14T03:43:49Z** (PR #10 squash `4d16ed0`)  
+> **Prior Phase-2 deploy:** **2026-08-13T10:24:25Z** (P2.8B)  
+> **Production runtime source SHA:** `4d16ed0aedf24584ad140962dc66712fbedad907` (mobile nav hotfix)  
+> **Release artefact SHA-256:** `606ca121ab261765017a4923c2c933fd5769e659f6a686b66f0d4adbc4f1c2f4` (1,030,289 bytes)  
+> **Runtime fingerprints:** `styles.478b7a069726.css`, `script.0501a8359cb4.js`  
 > **Acceptance:** P2.8C **PASS WITH INFRASTRUCTURE-LIMITED PRODUCTION TESTING** — see [`docs/audits/landing-page-phase-2.8c-production-acceptance-2026-08.md`](audits/landing-page-phase-2.8c-production-acceptance-2026-08.md)  
+> **Mobile navigation hotfix:** PR #10 **MERGED** and **DEPLOYED** — see [`docs/audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md`](audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md). **Real-iPhone acceptance remains owner-controlled.**
 > **Post-release incident (E1–E2):** Real-device Mobile Safari unstyled presentation reported 2026-08-13 — see the [incident audit](audits/landing-page-mobile-safari-css-delivery-incident-2026-08.md) and [E2 deployment audit](audits/landing-page-mobile-safari-css-delivery-e2-production-2026-08.md). **Technical remediation deployed; real-iPhone acceptance remains owner-controlled.**
 > **Rollback (local; not used):** `rollback/synqdrive.eu-pre-p2.8-20260813_095611.tar.gz` + [`rollback/README.md`](../rollback/README.md)  
 > **Previous P1.6.1 deploy:** **2026-08-12T14:46:48Z** — see [`docs/audits/landing-page-phase-1.6.1-production-hygiene-2026-08.md`](audits/landing-page-phase-1.6.1-production-hygiene-2026-08.md)
@@ -357,6 +360,7 @@ screenshots are byte-identical to the locally approved build.
 - **P2.8C:** Production acceptance — **PASS WITH INFRASTRUCTURE-LIMITED PRODUCTION TESTING** (2026-08-13); exhaustive Production replay stopped due Hostinger rate limiting; critical serial smoke **PASS**.
 - **Phase 2 Production Accepted:** **YES** (P2.8C; pre-E1)
 - **E1 / E1.1 / E1.2 / E2 (Mobile Safari CSS delivery):** Fingerprinting, recovery, fallback, WebKit guards, and deterministic packaging deployed in E2; technical Production gate **PASS**. Real-iPhone acceptance remains owner-controlled.
+- **Mobile navigation hierarchy hotfix (PR #10 / DEC-011):** **merged to main** and **deployed to Production** (2026-08-14) — see [`docs/audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md`](audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md). Real-iPhone acceptance **pending owner test**.
 - Desktop Solutions, Resources, and Pricing remain deferred (DEC-004). Mobile may preview planned IA as non-link **In Arbeit** rows under DEC-011; no dead routes.
 - Taxi & Mobility may become a future Solutions page; it does not imply generally available Taxi Dispatch (DEC-009).
 - The product visuals are English on both locales. German screenshot variants deferred.

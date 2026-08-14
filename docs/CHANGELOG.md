@@ -8,9 +8,21 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+## Mobile navigation Production deployment — 2026-08-14
+
+**Scope:** Deploy approved mobile navigation hotfix (PR #10 squash) to `https://synqdrive.eu`  
+**Audit:** [`docs/audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md`](audits/landing-page-mobile-navigation-hierarchy-hotfix-2026-08.md)
+
+- Exact artefact deployed via Hostinger static deploy; package SHA-256 `606ca121ab261765017a4923c2c933fd5769e659f6a686b66f0d4adbc4f1c2f4`
+- No cache purge required; serial Production smoke **PASS**
+- `app.synqdrive.eu` isolation **PASS**
+- Real-iPhone acceptance **pending owner test**
+
+---
+
 ## Mobile navigation hierarchy hotfix — 2026-08-13
 
-**Scope:** Mobile navigation composition and IA only — **NOT DEPLOYED**
+**Scope:** Mobile navigation composition and IA only — merged via PR #10; **deployed 2026-08-14**
 
 ### Changed
 
