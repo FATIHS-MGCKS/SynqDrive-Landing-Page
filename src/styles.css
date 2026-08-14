@@ -2361,6 +2361,7 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .hero__actions {
+    justify-content: center;
     margin-top: 32px;
   }
 

@@ -1912,6 +1912,9 @@ test.describe('public landing page', () => {
         isMobile,
         isDesktop,
         introTextAlign: intro ? getComputedStyle(intro).textAlign : '',
+        actionsJustifyContent: document.querySelector('.hero__actions')
+          ? getComputedStyle(document.querySelector('.hero__actions')!).justifyContent
+          : '',
       };
     });
   }
@@ -1939,6 +1942,7 @@ test.describe('public landing page', () => {
         );
         expect(state.contentInUpperHero, `${width}px hero content upper`).toBe(true);
         expect(state.introTextAlign, `${width}px hero intro alignment`).toBe('center');
+        expect(state.actionsJustifyContent, `${width}px hero actions alignment`).toBe('center');
         expect(state.mobileSourceMedia, `${width}px hero mobile source`).toContain('760px');
         expect(state.heroImgLoading, `${width}px hero loading`).toBe('eager');
         expect(state.heroImgFetchPriority, `${width}px hero fetchpriority`).toBe('high');
