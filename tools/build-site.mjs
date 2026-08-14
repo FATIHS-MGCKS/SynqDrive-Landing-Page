@@ -56,12 +56,19 @@ const HERO_BG = locales[0].hero.background;
 const SOCIAL_CARD = { url: `${SITE.origin}/assets/landing-social-card.jpg`, width: 1200, height: 630 };
 
 /** Keep locale HTML fresh; fingerprinted CSS/JS may stay long-lived. */
-const HTML_CACHE_HEADERS = `# SynqDrive landing page — HTML must revalidate after deploy.
+const HTML_CACHE_HEADERS = `# SynqDrive landing page — locale HTML must never be edge-cached.
 <IfModule mod_headers.c>
   <FilesMatch "index\\.html$">
-    Header set Cache-Control "no-cache, must-revalidate, max-age=0"
+    Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
     Header set Pragma "no-cache"
     Header set Expires "0"
+    Header set Vary "Accept-Encoding"
+  </FilesMatch>
+</IfModule>
+
+<IfModule LiteSpeed>
+  <FilesMatch "index\\.html$">
+    Cache-Control no-cache
   </FilesMatch>
 </IfModule>
 `;
@@ -143,6 +150,7 @@ function document(locale, assets) {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="Cache-Control" content="no-cache, must-revalidate, max-age=0" />
+    <meta name="synqdrive-release" content="hero-subline-unified-20260814" />
     <title>${locale.meta.title}</title>
     <meta name="description" content="${locale.meta.description}" />
     <meta name="theme-color" content="#ffffff" />
