@@ -1903,7 +1903,7 @@ test.describe('public landing page', () => {
         hasHeroProductFrame: Boolean(document.querySelector('.hero__media .frame--product')),
         contentInUpperHero:
           introRect && heroHeight > 0
-            ? introRect.bottom <= heroTop + heroHeight * 0.74
+            ? introRect.bottom <= heroTop + heroHeight * 0.78
             : null,
         contentOnLeft:
           introRect && heroRect && isDesktop

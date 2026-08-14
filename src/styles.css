@@ -1034,12 +1034,20 @@ html[data-nav-scroll-lock='true'] {
   inset: 0;
   z-index: 0;
   pointer-events: none;
+  overflow: hidden;
+}
+
+.hero__background picture {
+  display: block;
+  width: 100%;
+  height: 100%;
 }
 
 .hero__background img {
   width: 100%;
   height: 100%;
   max-width: none;
+  min-height: 100%;
   object-fit: cover;
   object-position: 78% 92%;
 }
@@ -1050,7 +1058,7 @@ html[data-nav-scroll-lock='true'] {
   max-width: var(--shell);
   margin-inline: auto;
   padding-inline: var(--gutter);
-  padding-block: clamp(72px, 7.5vw, 104px) clamp(56px, 6vw, 88px);
+  padding-block: 96px 120px;
 }
 
 .hero__intro {
@@ -1070,9 +1078,9 @@ html[data-nav-scroll-lock='true'] {
   letter-spacing: -0.006em;
   margin-bottom: 20px;
   text-decoration-line: underline;
-  text-decoration-color: var(--brand);
-  text-decoration-thickness: 2px;
-  text-underline-offset: 6px;
+  text-decoration-color: var(--ink);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 4px;
 }
 
 .hero__intro h1 {
@@ -2296,15 +2304,15 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .hero.hero--fleet-background {
-    min-height: clamp(620px, 112vw, 820px);
+    min-height: clamp(560px, 92svh, 760px);
   }
 
   .hero__shell {
-    padding-block: clamp(40px, 7vw, 56px) clamp(220px, 48vw, 300px);
+    padding-block: clamp(40px, 7vw, 56px) clamp(48px, 8vw, 72px);
   }
 
   .hero__background img {
-    object-position: center 94%;
+    object-position: center bottom;
   }
 
   .hero__intro {
@@ -2481,11 +2489,11 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .hero.hero--fleet-background {
-    min-height: clamp(660px, 128vw, 880px);
+    min-height: clamp(520px, 88svh, 680px);
   }
 
   .hero__shell {
-    padding-block: clamp(32px, 6vw, 44px) clamp(240px, 52vw, 320px);
+    padding-block: clamp(32px, 6vw, 44px) clamp(36px, 6vw, 52px);
   }
 
   .hero__body {

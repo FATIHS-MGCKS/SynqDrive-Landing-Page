@@ -285,9 +285,9 @@ export function hero(c) {
           height="${bg.height}"
         />
         <img
-          src="/assets/${esc(bg.file)}.webp"
-          width="${bg.width}"
-          height="${bg.height}"
+          src="/assets/${esc(bg.mobile.file)}.webp"
+          width="${bg.mobile.width}"
+          height="${bg.mobile.height}"
           alt=""
           loading="eager"
           decoding="sync"
