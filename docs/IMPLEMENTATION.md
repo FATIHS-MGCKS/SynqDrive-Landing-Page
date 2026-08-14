@@ -105,7 +105,7 @@ the page does not read as six repeated text-beside-screenshot rows.
 
 **Desktop (P1.3, current):** Single top-level **Platform** disclosure with a grouped panel (~560px): overview row, three capability groups (Intelligence, Automation, Platform), six anchor links with descriptions, optional footer discover link. Right cluster: locale switch, Log in, Demo CTA. **Contact removed** from primary desktop nav.
 
-**Mobile (hierarchy hotfix / DEC-011):** Full-viewport modal navigation layer (`role="dialog"`, `aria-modal="true"`, `aria-labelledby="mobile-nav-title"`). The root view is a compact seven-row IA: Platform, Solutions, Industries, Integrations, Resources, Pricing, Login. Platform, Solutions, Industries, and Resources open second-level in-modal views; Platform children are hidden until selected. Integrations is the real `#integrations` anchor. Pricing and unreleased child destinations are non-link rows marked **In progress / In Arbeit**. Demo + sales/contact actions and the locale switch form a compact bottom area. Normal `.masthead__inner` sits underneath and is `inert` while open. Modal behaviour remains: `inert` on `.masthead__inner`, `#main`, footer, skip link; explicit scroll-lock state (`scrollLockActive`); focus trap includes Close; Escape or Close returns focus to the menu trigger; Back returns focus to the category trigger.
+**Mobile (hierarchy hotfix / DEC-011):** Full-viewport modal navigation layer (`role="dialog"`, `aria-modal="true"`, `aria-labelledby="mobile-nav-title"`). The root view is a compact seven-row IA: Platform, Products, Industries, Integrations, Resources, Pricing, Login. Platform, Products, Industries, and Resources open second-level in-modal views; Platform children are hidden until selected. Integrations is the real `#integrations` anchor. Pricing and unreleased child destinations are non-link rows marked **In progress / In Arbeit**. Demo + sales/contact actions and the locale switch form a compact bottom area. Normal `.masthead__inner` sits underneath and is `inert` while open. Modal behaviour remains: `inert` on `.masthead__inner`, `#main`, footer, skip link; explicit scroll-lock state (`scrollLockActive`); focus trap includes Close; Escape or Close returns focus to the menu trigger; Back returns focus to the category trigger.
 
 **Ratified target IA (DEC-003):** Platform · Solutions · Resources · Pricing.
 
@@ -114,7 +114,7 @@ the page does not read as six repeated text-beside-screenshot rows.
 | Category | Status |
 |---|---|
 | Platform — six homepage anchors | **Active** on desktop; seven-row Platform mobile subview includes the overview description as a second link to the same real section |
-| Solutions | **Mobile IA visible**; only Customer Communication and Automation & AI use real section anchors, remaining entries are non-link **In Arbeit** rows |
+| Products | **Mobile IA visible**; Rental Operations links to `https://app.synqdrive.eu`; Fleet, Delivery, and Mobility Operations are non-link **In Arbeit** rows |
 | Industries | **Mobile IA visible**; Car Rental marked available, other verticals marked **In Arbeit**; no fake routes |
 | Integrations | **Mobile direct link** to real `#integrations`; unchanged inside desktop Platform |
 | Resources | **Mobile IA visible** with real Product Overview, Contact, and Demo destinations |

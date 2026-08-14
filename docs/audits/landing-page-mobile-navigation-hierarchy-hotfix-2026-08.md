@@ -50,14 +50,14 @@ Subview transitions are state changes inside the modal, not browser-history chan
 Root order (DE / EN):
 
 1. Plattform / Platform
-2. Lösungen / Solutions
+2. Produkte / Products
 3. Branchen / Industries
 4. Integrationen / Integrations
 5. Ressourcen / Resources
 6. Preise / Pricing
 7. Anmelden / Log in
 
-Platform, Solutions, Industries, and Resources open nested views. Integrations and Login are direct real destinations. Pricing is a non-link **In Arbeit / In progress** row.
+Platform, Products, Industries, and Resources open nested views. Integrations and Login are direct real destinations. Pricing is a non-link **In Arbeit / In progress** row.
 
 DEC-011 is a scoped mobile exception to **both DEC-003 and DEC-004**. It does not globally supersede DEC-003; desktop remains Platform-only under staged activation until a separate accepted decision authorizes desktop IA expansion. DEC-008 dead-link authority is preserved.
 
@@ -66,9 +66,10 @@ DEC-011 is a scoped mobile exception to **both DEC-003 and DEC-004**. It does no
 | Mobile entry | Destination | State |
 |---|---|---|
 | Platform children | Existing locale-correct landing anchors | Active |
-| Customer & Driver Communication | `#communication` | Active |
-| Automation & AI | `#ai-orchestration` | Active |
-| Other Solutions children | None | Non-link **In Arbeit** |
+| Rental Operations | `https://app.synqdrive.eu` | Active |
+| Fleet Operations | None | Non-link **In Arbeit** |
+| Delivery Operations | None | Non-link **In Arbeit** |
+| Mobility Operations | None | Non-link **In Arbeit** |
 | Car Rental | No dedicated page | Non-link **Available / Verfügbar** |
 | Other Industries children | None | Non-link **In Arbeit** |
 | Integrations | `#integrations` | Active |
@@ -98,9 +99,16 @@ Selecting Platform opens a separate view with Back and the localized title. It c
 
 All destinations are existing anchors. Activation closes the modal; the existing document `scroll-padding-top` keeps target headings below the sticky masthead.
 
-## Solutions Subview
+## Products Subview
 
-The approved labels are present. Customer Communication and Automation & AI use matching real sections. Items without dedicated real destinations are static rows marked **In Arbeit / In progress** and are not announced as links.
+The Products submenu contains exactly four product rows in this order:
+
+1. Rental Operations — active link to `https://app.synqdrive.eu`
+2. Fleet Operations — non-link **In Arbeit / In progress**
+3. Delivery Operations — non-link **In Arbeit / In progress**
+4. Mobility Operations — non-link **In Arbeit / In progress**
+
+Previous Solutions labels (Booking & Dispatch, Customer Communication, Billing, Automation & AI, and related DE variants) were removed.
 
 ## Industries Subview
 
@@ -262,9 +270,21 @@ External review identified three interaction/governance gaps and one visual alig
 | Close control | Default soft neutral surface on `.mobilenav__close`; hover/focus slightly stronger |
 | Production | Still untouched |
 
+## Products submenu correction (2026-08-14)
+
+Mobile-only correction; **NOT DEPLOYED**.
+
+| Item | Change |
+|---|---|
+| Root label | **Lösungen / Solutions** → **Produkte / Products** |
+| Submenu | Replaced Solutions list with four Products rows |
+| Rental Operations | Active link to `https://app.synqdrive.eu` |
+| Fleet / Delivery / Mobility Operations | Non-link **In Arbeit / In progress** rows |
+| Removed | Previous Solutions entries (Booking & Dispatch, Communication, Billing, Automation & AI, DE variants) |
+
 ## Known Limitations
 
-- Planned mobile IA appears before dedicated Solutions, Industries, and Pricing pages; unavailable rows are intentionally non-navigating and visibly labeled.
+- Planned mobile IA appears before dedicated Products, Industries, and Pricing pages; unavailable rows are intentionally non-navigating and visibly labeled.
 - Car Rental is available as a product fit but has no dedicated public destination, so it is not a link.
 - Sales contact reuses the existing real email contact because no distinct sales route exists.
 - Mobile and desktop top-level IA intentionally differ temporarily under DEC-011; desktop expansion requires separate approval.
