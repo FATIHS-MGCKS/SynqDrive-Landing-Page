@@ -75,7 +75,7 @@ const MOBILE_NAV = {
     otherLocaleName: 'English',
     otherDir: '/en/',
     sales: 'Vertrieb kontaktieren',
-    topLevel: ['Plattform', 'Lösungen', 'Branchen', 'Integrationen', 'Ressourcen', 'Preise', 'Anmelden'],
+    topLevel: ['Plattform', 'Produkte', 'Branchen', 'Integrationen', 'Ressourcen', 'Preise', 'Anmelden'],
     back: 'Zurück',
   },
   en: {
@@ -87,7 +87,7 @@ const MOBILE_NAV = {
     otherLocaleName: 'Deutsch',
     otherDir: '/',
     sales: 'Contact sales',
-    topLevel: ['Platform', 'Solutions', 'Industries', 'Integrations', 'Resources', 'Pricing', 'Log in'],
+    topLevel: ['Platform', 'Products', 'Industries', 'Integrations', 'Resources', 'Pricing', 'Log in'],
     back: 'Back',
   },
 } as const;
@@ -633,6 +633,15 @@ test.describe('public landing page', () => {
       const toggle = page.getByRole('button', { name: mobile.openMenu });
       await toggle.click();
 
+      await expect(panel.locator('.mobilenav__root-list > li')).toHaveCount(7);
+      if (locale === 'de') {
+        await expect(panel.getByText(/^Lösungen$/)).toHaveCount(0);
+        await expect(panel.getByRole('button', { name: 'Produkte' })).toHaveCount(1);
+      } else {
+        await expect(panel.getByText(/^Solutions$/)).toHaveCount(0);
+        await expect(panel.getByRole('button', { name: 'Products' })).toHaveCount(1);
+      }
+
       const platformTrigger = panel.locator('[data-nav-submenu="platform"]');
       await platformTrigger.click();
       await expect(platformTrigger).toHaveAttribute('aria-expanded', 'true');
@@ -647,12 +656,53 @@ test.describe('public landing page', () => {
       await expect(panel.locator('[data-nav-view="root"]')).toBeVisible();
       await expect(platformTrigger).toBeFocused();
 
-      const solutionsLabel = mobile.topLevel[1];
-      await panel.getByRole('button', { name: solutionsLabel }).click();
-      await expect(panel.locator('[data-nav-view="solutions"]')).toBeVisible();
-      await expect(panel.locator('[data-nav-view="solutions"] [aria-disabled="true"]')).toHaveCount(4);
-      await expect(panel.locator('[data-nav-view="solutions"] a[href="#"]')).toHaveCount(0);
+      const productsLabel = mobile.topLevel[1];
+      const productsTrigger = panel.locator('[data-nav-submenu="products"]');
+      await productsTrigger.click();
+      await expect(panel.locator('[data-nav-view="products"]')).toBeVisible();
+      await expect(panel.locator('[data-nav-view="root"]')).toBeHidden();
+      await expect(panel.getByRole('button', { name: mobile.back })).toBeFocused();
+      const productLabels =
+        locale === 'de'
+          ? [
+              'Rental Operations',
+              'Fleet Operations',
+              'Delivery Operations',
+              'Mobility Operations',
+            ]
+          : [
+              'Rental Operations',
+              'Fleet Operations',
+              'Delivery Operations',
+              'Mobility Operations',
+            ];
+      for (const label of productLabels) {
+        await expect(panel.locator('[data-nav-view="products"]').getByText(label, { exact: true })).toHaveCount(1);
+      }
+      await expect(panel.locator('[data-nav-view="products"] li')).toHaveCount(4);
+      await expect(panel.getByRole('link', { name: 'Rental Operations' })).toHaveAttribute(
+        'href',
+        'https://app.synqdrive.eu',
+      );
+      await expect(panel.locator('[data-nav-view="products"] a[href]')).toHaveCount(1);
+      await expect(panel.locator('[data-nav-view="products"] [aria-disabled="true"]')).toHaveCount(3);
+      await expect(panel.locator('[data-nav-view="products"] a[href="#"]')).toHaveCount(0);
+      if (locale === 'de') {
+        await expect(panel.getByRole('link', { name: 'Fleet Operations' })).toHaveCount(0);
+        await expect(
+          panel.locator('[data-nav-view="products"] .mobilenav__badge', { hasText: 'In Arbeit' }),
+        ).toHaveCount(3);
+      } else {
+        await expect(
+          panel.locator('[data-nav-view="products"] .mobilenav__badge', { hasText: 'In progress' }),
+        ).toHaveCount(3);
+      }
+      await expect(panel.getByText('Buchung & Disposition')).toHaveCount(0);
+      await expect(panel.getByText('Booking & Dispatch')).toHaveCount(0);
+      await expect(panel.getByText('Kunden- & Fahrerkommunikation')).toHaveCount(0);
+      await expect(panel.getByText('Customer & Driver Communication')).toHaveCount(0);
       await panel.getByRole('button', { name: mobile.back }).click();
+      await expect(productsTrigger).toBeFocused();
 
       const industriesLabel = mobile.topLevel[2];
       await panel.getByRole('button', { name: industriesLabel }).click();
@@ -965,11 +1015,11 @@ test.describe('public landing page', () => {
   });
 
   test('captures mobile navigation hierarchy screenshots', async ({ page }) => {
-    for (const [locale, url, openLabel, platform, solutions, industries, resources, width, height] of [
-      ['de', '/', 'Menü öffnen', 'Plattform', 'Lösungen', 'Branchen', 'Ressourcen', 320, 700],
-      ['de', '/', 'Menü öffnen', 'Plattform', 'Lösungen', 'Branchen', 'Ressourcen', 390, 844],
-      ['de', '/', 'Menü öffnen', 'Plattform', 'Lösungen', 'Branchen', 'Ressourcen', 430, 932],
-      ['en', '/en/', 'Open menu', 'Platform', 'Solutions', 'Industries', 'Resources', 390, 844],
+    for (const [locale, url, openLabel, platform, products, industries, resources, width, height] of [
+      ['de', '/', 'Menü öffnen', 'Plattform', 'Produkte', 'Branchen', 'Ressourcen', 320, 700],
+      ['de', '/', 'Menü öffnen', 'Plattform', 'Produkte', 'Branchen', 'Ressourcen', 390, 844],
+      ['de', '/', 'Menü öffnen', 'Plattform', 'Produkte', 'Branchen', 'Ressourcen', 430, 932],
+      ['en', '/en/', 'Open menu', 'Platform', 'Products', 'Industries', 'Resources', 390, 844],
     ] as const) {
       await page.setViewportSize({ width, height });
       await page.goto(url, { waitUntil: 'load' });
@@ -985,7 +1035,7 @@ test.describe('public landing page', () => {
 
       for (const [label, state] of [
         [platform, 'platform'],
-        [solutions, 'solutions'],
+        [products, 'products'],
         [industries, 'industries'],
         [resources, 'resources'],
       ] as const) {

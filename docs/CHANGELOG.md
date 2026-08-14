@@ -8,6 +8,16 @@ Format: newest first. Each entry may link to decisions or audit records for cont
 
 ---
 
+## Mobile navigation Products correction — 2026-08-14
+
+**Scope:** Mobile navigation only — **NOT DEPLOYED**
+
+- Renamed mobile root **Lösungen / Solutions** → **Produkte / Products**
+- Replaced Solutions submenu with Products submenu (four product rows)
+- Rental Operations links to `https://app.synqdrive.eu`; Fleet, Delivery, and Mobility Operations remain non-link **In Arbeit / In progress**
+
+---
+
 ## Mobile navigation Production deployment — 2026-08-14
 
 **Scope:** Deploy approved mobile navigation hotfix (PR #10 squash) to `https://synqdrive.eu`  
