@@ -266,9 +266,6 @@ export function header(c, other, site) {
 export function hero(c) {
   const h = c.hero;
   const bg = h.background;
-  const bodyPrimary = h.body.primary
-    .map((line) => `<span class="hero__body-line">${esc(line)} </span>`)
-    .join('');
 
   return `<section class="hero hero--fleet-background" aria-labelledby="hero-title">
       <picture class="hero__background" aria-hidden="true">
@@ -301,10 +298,7 @@ export function hero(c) {
             <span class="hero__title-main">${esc(h.title.main)}</span>
             <span class="hero__title-emphasis">${esc(h.title.emphasis)}</span>
           </h1>
-          <p class="hero__body" data-reveal>
-            <span class="hero__body-primary">${bodyPrimary}</span>
-            <span class="hero__body-secondary">${esc(h.body.secondary)}</span>
-          </p>
+          <p class="hero__body" data-reveal>${esc(h.body)}</p>
           <div class="hero__actions" data-reveal>
             ${action({ href: 'mailto:info@synqdrive.eu?subject=SynqDrive%20demo%20request', label: h.primary, variant: 'primary' })}
             ${action({ href: `#${c.unified.id}`, label: h.secondary, variant: 'secondary' })}

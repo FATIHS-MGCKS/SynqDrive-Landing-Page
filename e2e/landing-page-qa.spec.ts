@@ -1951,20 +1951,14 @@ test.describe('public landing page', () => {
         ? {
             eyebrow: 'Connected Vehicle Intelligence Plattform',
             title: 'Alles, was Ihre Flotte braucht. In Echtzeit.',
-            lines: [
-              'SynqDrive verbindet Fahrzeuge,',
-              'Prozesse und KI in einer',
-              'Plattform',
-            ],
+            body:
+              'SynqDrive verbindet Fahrzeuge, Prozesse und KI in einer Plattform für automatisierte Abläufe, Effizienzsteigerung, bessere Auslastung und weniger Aufwand im Tagesgeschäft.',
           }
         : {
             eyebrow: 'Connected Vehicle Intelligence Platform',
             title: 'Everything your fleet needs. In real time.',
-            lines: [
-              'SynqDrive connects vehicles,',
-              'processes and AI in one',
-              'platform',
-            ],
+            body:
+              'SynqDrive connects vehicles, processes and AI in one platform for automated workflows, greater efficiency, better utilisation and less effort in day-to-day operations.',
           };
 
     test(`hero differentiated copy structure (${locale})`, async ({ page }) => {
@@ -1984,38 +1978,24 @@ test.describe('public landing page', () => {
           const main = hero.querySelector('.hero__title-main');
           const emphasis = hero.querySelector('.hero__title-emphasis');
           const body = hero.querySelector('.hero__body');
-          const secondary = hero.querySelector('.hero__body-secondary');
-          const lines = Array.from(hero.querySelectorAll('.hero__body-line'));
           const actions = hero.querySelector('.hero__actions');
-          const rangeLineCount = (element: Element) => {
-            const range = document.createRange();
-            range.selectNodeContents(element);
-            return range.getClientRects().length;
-          };
           const rect = (element: Element | null) => element?.getBoundingClientRect() ?? null;
           const bodyRect = rect(body);
-          const secondaryRect = rect(secondary);
-          const finalLineRect = rect(lines.at(-1) ?? null);
           const actionsRect = rect(actions);
 
           return {
             eyebrow: hero.querySelector('.eyebrow')?.textContent?.trim() ?? '',
             title: h1?.textContent?.trim().replace(/\s+/g, ' ') ?? '',
+            body: body?.textContent?.trim().replace(/\s+/g, ' ') ?? '',
             h1Children: h1?.children.length ?? 0,
             mainWeight: Number(main ? getComputedStyle(main).fontWeight : 0),
             emphasisWeight: Number(emphasis ? getComputedStyle(emphasis).fontWeight : 0),
             mainColor: main ? getComputedStyle(main).color : '',
             emphasisColor: emphasis ? getComputedStyle(emphasis).color : '',
             bodyTag: body?.tagName ?? '',
-            lines: lines.map((line) => line.textContent?.trim() ?? ''),
-            visualLineCounts: lines.map(rangeLineCount),
-            secondaryChildren: secondary?.children.length ?? 0,
-            secondaryWidth: secondaryRect?.width ?? 0,
+            bodyChildren: body?.children.length ?? 0,
             bodyWidth: bodyRect?.width ?? 0,
-            secondaryGap:
-              secondaryRect && finalLineRect ? secondaryRect.top - finalLineRect.bottom : 0,
-            actionsGap:
-              actionsRect && secondaryRect ? actionsRect.top - secondaryRect.bottom : 0,
+            actionsGap: actionsRect && bodyRect ? actionsRect.top - bodyRect.bottom : 0,
             overflow:
               document.documentElement.scrollWidth - document.documentElement.clientWidth,
           };
@@ -2023,22 +2003,16 @@ test.describe('public landing page', () => {
 
         expect(state.eyebrow, `${width}px eyebrow`).toBe(expected.eyebrow);
         expect(state.title, `${width}px h1`).toBe(expected.title);
+        expect(state.body, `${width}px body copy`).toBe(expected.body);
         expect(state.h1Children, `${width}px h1 span count`).toBe(2);
         expect(state.emphasisWeight, `${width}px emphasis weight`).toBeGreaterThan(
           state.mainWeight,
         );
         expect(state.emphasisColor, `${width}px emphasis color`).not.toBe(state.mainColor);
         expect(state.bodyTag, `${width}px semantic body`).toBe('P');
-        expect(state.lines, `${width}px primary copy`).toEqual(expected.lines);
-        expect(state.visualLineCounts, `${width}px deliberate primary lines`).toEqual([1, 1, 1]);
-        expect(state.secondaryChildren, `${width}px natural secondary wrapping`).toBe(0);
-        expect(
-          Math.abs(state.secondaryWidth - state.bodyWidth),
-          `${width}px secondary full width`,
-        ).toBeLessThanOrEqual(1);
-        expect(state.secondaryGap, `${width}px primary-secondary gap`).toBeGreaterThanOrEqual(16);
-        expect(state.secondaryGap, `${width}px primary-secondary gap`).toBeLessThanOrEqual(24);
-        expect(state.actionsGap, `${width}px secondary-actions gap`).toBeGreaterThanOrEqual(16);
+        expect(state.bodyChildren, `${width}px unified body children`).toBe(0);
+        expect(state.bodyWidth, `${width}px body width`).toBeGreaterThan(0);
+        expect(state.actionsGap, `${width}px body-actions gap`).toBeGreaterThanOrEqual(16);
         expect(state.overflow, `${width}px overflow`).toBeLessThanOrEqual(1);
       }
     });
