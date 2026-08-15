@@ -1978,6 +1978,8 @@ test.describe('public landing page', () => {
           const main = hero.querySelector('.hero__title-main');
           const emphasis = hero.querySelector('.hero__title-emphasis');
           const body = hero.querySelector('.hero__body');
+          const lead = hero.querySelector('.hero__body-lead');
+          const tail = hero.querySelector('.hero__body-tail');
           const actions = hero.querySelector('.hero__actions');
           const rect = (element: Element | null) => element?.getBoundingClientRect() ?? null;
           const bodyRect = rect(body);
@@ -1994,6 +1996,10 @@ test.describe('public landing page', () => {
             emphasisColor: emphasis ? getComputedStyle(emphasis).color : '',
             bodyTag: body?.tagName ?? '',
             bodyChildren: body?.children.length ?? 0,
+            leadColor: lead ? getComputedStyle(lead).color : '',
+            tailColor: tail ? getComputedStyle(tail).color : '',
+            leadWeight: Number(lead ? getComputedStyle(lead).fontWeight : 0),
+            bodyWeight: Number(body ? getComputedStyle(body).fontWeight : 0),
             bodyWidth: bodyRect?.width ?? 0,
             actionsGap: actionsRect && bodyRect ? actionsRect.top - bodyRect.bottom : 0,
             overflow:
@@ -2010,7 +2016,11 @@ test.describe('public landing page', () => {
         );
         expect(state.emphasisColor, `${width}px emphasis color`).not.toBe(state.mainColor);
         expect(state.bodyTag, `${width}px semantic body`).toBe('P');
-        expect(state.bodyChildren, `${width}px unified body children`).toBe(0);
+        expect(state.bodyChildren, `${width}px split body children`).toBe(2);
+        expect(state.leadColor, `${width}px body lead color`).toBe(state.mainColor);
+        expect(state.tailColor, `${width}px body tail color`).not.toBe(state.leadColor);
+        expect(state.leadWeight, `${width}px body lead weight`).toBeGreaterThanOrEqual(500);
+        expect(state.bodyWeight, `${width}px body weight`).toBeGreaterThanOrEqual(500);
         expect(state.bodyWidth, `${width}px body width`).toBeGreaterThan(0);
         expect(state.actionsGap, `${width}px body-actions gap`).toBeGreaterThanOrEqual(16);
         expect(state.overflow, `${width}px overflow`).toBeLessThanOrEqual(1);
