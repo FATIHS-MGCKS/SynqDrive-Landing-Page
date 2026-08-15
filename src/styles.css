@@ -1080,7 +1080,7 @@ html[data-nav-scroll-lock='true'] {
   text-decoration-line: underline;
   text-decoration-color: var(--ink);
   text-decoration-thickness: 1px;
-  text-underline-offset: 4px;
+  text-underline-offset: 6px;
 }
 
 .hero__intro h1 {
@@ -1125,11 +1125,31 @@ html[data-nav-scroll-lock='true'] {
   line-height: 1.65;
 }
 
+/* Stale HTML fallback: render split hero copy as one flowing paragraph. */
+.hero__body .hero__body-line,
+.hero__body .hero__body-primary,
+.hero__body .hero__body-secondary {
+  display: inline;
+}
+
+.hero__body .hero__body-secondary {
+  margin-top: 0;
+  color: inherit;
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: inherit;
+}
+
+.hero__body .hero__body-line::after {
+  content: ' ';
+  white-space: pre;
+}
+
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--stack-gap-tight);
-  margin-top: var(--stack-gap-loose);
+  margin-top: 44px;
 }
 
 /* ── Einsatzwelten ───────────────────────────────────────────────────────── */
@@ -2320,7 +2340,7 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .hero__actions {
-    margin-top: var(--stack-gap);
+    margin-top: 32px;
   }
 
   .section-body {
