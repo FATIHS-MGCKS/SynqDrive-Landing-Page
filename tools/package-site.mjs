@@ -18,6 +18,8 @@ import { forbiddenReason } from './public-artefact-policy.mjs';
 import { isFingerprintedCss, isFingerprintedJs } from './fingerprint-assets.mjs';
 
 const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
+/** Runtime paths still referenced by cached locale HTML in the wild. */
+const LEGACY_RUNTIME_ALIASES = new Set(['script.f02f7dcbd4a4.js']);
 const DIST = path.join(ROOT, 'dist');
 const OUTPUT = path.join(ROOT, 'synqdrive-landing-page.tar.gz');
 
@@ -121,8 +123,8 @@ async function verifyPackage() {
     }
   }
 
-  const cssFingerprinted = entries.filter(isFingerprintedCss);
-  const jsFingerprinted = entries.filter(isFingerprintedJs);
+  const cssFingerprinted = entries.filter(isFingerprintedCss).filter((name) => !LEGACY_RUNTIME_ALIASES.has(name));
+  const jsFingerprinted = entries.filter(isFingerprintedJs).filter((name) => !LEGACY_RUNTIME_ALIASES.has(name));
 
   if (cssFingerprinted.length !== 1 || jsFingerprinted.length !== 1) {
     console.error('package-site: archive must contain exactly one fingerprinted CSS and JS file');
