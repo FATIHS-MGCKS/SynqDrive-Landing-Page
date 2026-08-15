@@ -2345,20 +2345,15 @@ html[data-nav-scroll-lock='true'] {
 
   .hero.hero--fleet-background {
     min-height: clamp(560px, 92svh, 760px);
+    background: var(--canvas);
   }
 
   .hero__shell {
     padding-block: clamp(40px, 7vw, 56px) clamp(48px, 8vw, 72px);
   }
 
-  .hero__background {
-    top: clamp(320px, 54svh, 460px);
-    bottom: 0;
-    height: auto;
-  }
-
   .hero__background img {
-    object-position: center bottom;
+    object-position: center 108%;
   }
 
   .hero__intro {
@@ -2544,8 +2539,8 @@ html[data-nav-scroll-lock='true'] {
     padding-block: clamp(32px, 6vw, 44px) clamp(36px, 6vw, 52px);
   }
 
-  .hero__background {
-    top: clamp(360px, 60svh, 500px);
+  .hero__background img {
+    object-position: center 112%;
   }
 
   .hero__body {
