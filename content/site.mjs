@@ -69,7 +69,7 @@ const MEDIA = {
     file: 'landing-hero-fleet-background',
     width: 1672,
     height: 941,
-    mobile: { file: 'landing-hero-fleet-background-mobile', width: 1122, height: 1402 },
+    mobile: { file: 'landing-hero-fleet-background-mobile', width: 1122, height: 2162 },
   },
   useCases: {
     rental: {

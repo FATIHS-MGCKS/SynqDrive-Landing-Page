@@ -2353,7 +2353,7 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .hero__background img {
-    object-position: center 112%;
+    object-position: center bottom;
   }
 
   .hero__intro {
@@ -2364,6 +2364,7 @@ html[data-nav-scroll-lock='true'] {
   .hero__actions {
     justify-content: center;
     margin-top: 32px;
+    margin-bottom: 12px;
   }
 
   .section-body {
@@ -2537,10 +2538,6 @@ html[data-nav-scroll-lock='true'] {
 
   .hero__shell {
     padding-block: clamp(32px, 6vw, 44px) clamp(36px, 6vw, 52px);
-  }
-
-  .hero__background img {
-    object-position: center 116%;
   }
 
   .hero__body {
