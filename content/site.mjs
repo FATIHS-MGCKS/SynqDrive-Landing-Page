@@ -273,6 +273,20 @@ const en = {
         body: 'Manage bookings, vehicles, customers and billing in one seamless system.',
         media: MEDIA.useCases.rental,
         mediaAlt: 'Employee checking a modern car rental fleet with a tablet.',
+        features: [
+          {
+            title: 'Shared data model',
+            body: 'A booking, its vehicle, its customer and its invoice are the same record in every module.',
+          },
+          {
+            title: 'One operational context',
+            body: 'Fleet condition, bookings and open work are read together, not module by module.',
+          },
+          {
+            title: 'Fewer system breaks',
+            body: 'Handover, invoicing and follow-up work continue inside the same platform.',
+          },
+        ],
       },
       {
         key: 'fleet',
@@ -281,6 +295,7 @@ const en = {
         status: 'In progress',
         media: MEDIA.useCases.fleet,
         mediaAlt: 'Professionally managed corporate fleet at an operations site.',
+        features: [],
       },
       {
         key: 'taxi',
@@ -289,6 +304,7 @@ const en = {
         status: 'In progress',
         media: MEDIA.useCases.taxi,
         mediaAlt: 'Modern taxi fleet in an urban operations setting.',
+        features: [],
       },
       {
         key: 'passenger-transport',
@@ -297,6 +313,7 @@ const en = {
         status: 'In progress',
         media: MEDIA.useCases.passengerTransport,
         mediaAlt: 'Minibuses for school and passenger transport at an operations site.',
+        features: [],
       },
       {
         key: 'delivery-logistics',
@@ -305,6 +322,7 @@ const en = {
         status: 'In progress',
         media: MEDIA.useCases.deliveryLogistics,
         mediaAlt: 'Delivery vehicles at a modern logistics site.',
+        features: [],
       },
     ],
   },
@@ -622,6 +640,20 @@ const de = {
         body: 'Buchungen, Fahrzeuge, Kunden und Abrechnung in einem durchgängigen System verwalten.',
         media: MEDIA.useCases.rental,
         mediaAlt: 'Mitarbeiter betrachtet eine moderne Mietwagenflotte mit einem Tablet.',
+        features: [
+          {
+            title: 'Gemeinsame Datenbasis',
+            body: 'Buchung, Fahrzeug, Kunde und Rechnung sind in jedem Modul derselbe Datensatz.',
+          },
+          {
+            title: 'Ein operativer Kontext',
+            body: 'Flottenzustand, Buchungen und offene Arbeit werden gemeinsam gelesen, nicht Modul für Modul.',
+          },
+          {
+            title: 'Weniger Systembrüche',
+            body: 'Übergabe, Abrechnung und Folgearbeit laufen in derselben Plattform weiter.',
+          },
+        ],
       },
       {
         key: 'fleet',
@@ -630,6 +662,7 @@ const de = {
         status: 'In Arbeit',
         media: MEDIA.useCases.fleet,
         mediaAlt: 'Professionell verwaltete Unternehmensflotte an einem Betriebsstandort.',
+        features: [],
       },
       {
         key: 'taxi',
@@ -638,6 +671,7 @@ const de = {
         status: 'In Arbeit',
         media: MEDIA.useCases.taxi,
         mediaAlt: 'Moderne Taxiflotte in einem urbanen Betriebskontext.',
+        features: [],
       },
       {
         key: 'passenger-transport',
@@ -646,6 +680,7 @@ const de = {
         status: 'In Arbeit',
         media: MEDIA.useCases.passengerTransport,
         mediaAlt: 'Kleinbusse für Schüler- und Personenbeförderung an einem Betriebsstandort.',
+        features: [],
       },
       {
         key: 'delivery-logistics',
@@ -654,6 +689,7 @@ const de = {
         status: 'In Arbeit',
         media: MEDIA.useCases.deliveryLogistics,
         mediaAlt: 'Lieferfahrzeuge an einem modernen Logistikstandort.',
+        features: [],
       },
     ],
   },

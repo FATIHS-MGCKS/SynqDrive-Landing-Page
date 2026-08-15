@@ -422,6 +422,70 @@ test.describe('public landing page', () => {
     });
   }
 
+  test('use cases mobile header is centered', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto('/', { waitUntil: 'load' });
+    await settle(page);
+
+    const head = page.locator('#use-cases .section-head');
+    await expect(head).toHaveCSS('text-align', 'center');
+
+    const alignment = await head.evaluate((node) => {
+      const rect = node.getBoundingClientRect();
+      const viewport = document.documentElement.clientWidth;
+      const centerDelta = Math.abs(rect.left + rect.width / 2 - viewport / 2);
+      return { centerDelta, textAlign: window.getComputedStyle(node).textAlign };
+    });
+    expect(alignment.textAlign).toBe('center');
+    expect(alignment.centerDelta).toBeLessThanOrEqual(2);
+  });
+
+  test('use cases mobile cards expand and collapse', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto('/', { waitUntil: 'load' });
+    await settle(page);
+
+    const section = page.locator('#use-cases');
+    const rental = section.locator('.use-case-card--rental');
+    const fleet = section.locator('.use-case-card--fleet');
+    const rentalTrigger = rental.locator('.use-case-card__trigger');
+
+    await expect(rentalTrigger).toHaveAttribute('aria-expanded', 'false');
+    await expect(rental.locator('.use-case-card__panel')).toBeHidden();
+
+    await rentalTrigger.click();
+    await expect(rentalTrigger).toHaveAttribute('aria-expanded', 'true');
+    await expect(rental).toHaveAttribute('data-expanded', 'true');
+    await expect(rental.locator('.use-case-card__features li')).toHaveCount(3);
+
+    const expandedHeight = await rental.evaluate((node) => node.getBoundingClientRect().height);
+    expect(expandedHeight).toBeGreaterThan(520);
+
+    await fleet.locator('.use-case-card__trigger').click();
+    await expect(rentalTrigger).toHaveAttribute('aria-expanded', 'false');
+    await expect(fleet.locator('.use-case-card__trigger')).toHaveAttribute('aria-expanded', 'true');
+
+    await fleet.locator('.use-case-card__trigger').click();
+    await expect(fleet.locator('.use-case-card__trigger')).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  test('use cases desktop keeps static cards without mobile expand chrome', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+    await page.goto('/', { waitUntil: 'load' });
+    await settle(page);
+
+    const rental = page.locator('#use-cases .use-case-card--rental');
+    await expect(rental.locator('.use-case-card__chevron')).toBeHidden();
+    await expect(rental.locator('.use-case-card__panel')).toBeHidden();
+
+    await rental.evaluate((node) => {
+      const trigger = node.querySelector('.use-case-card__trigger');
+      trigger?.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    });
+    await expect(rental).not.toHaveAttribute('data-expanded', 'true');
+    await expect(rental.locator('.use-case-card__trigger')).toHaveAttribute('aria-expanded', 'false');
+  });
+
   test('use cases responsive composition', async ({ page }) => {
     const widths = [320, 390, 430, 760, 768, 1024, 1280, 1440] as const;
 
@@ -3729,7 +3793,7 @@ test.describe('public landing page', () => {
 
     const metrics = await readPhase2KeyMetrics(page);
     expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(10000);
-    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(10050);
+    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(10055);
     expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeGreaterThan(280);
     expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeLessThanOrEqual(520);
     expect(metrics.platform.frameTopRel!, '390px platform frame top').toBeGreaterThan(250);

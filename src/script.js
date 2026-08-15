@@ -408,6 +408,139 @@
     });
   }
 
+  /* ── Use case cards (mobile expand) ───────────────────────────────────── */
+
+  var useCaseCards = Array.prototype.slice.call(document.querySelectorAll('[data-use-case-card]'));
+  var useCaseMobileBreakpoint = 760;
+  var expandedCardId = null;
+  var useCaseExpandDuration = reduceMotion ? 0 : 520;
+
+  function isUseCaseMobile() {
+    return window.innerWidth <= useCaseMobileBreakpoint;
+  }
+
+  function getUseCaseCard(id) {
+    return document.querySelector('[data-use-case-card="' + id + '"]');
+  }
+
+  function useCasePanel(card) {
+    return card ? card.querySelector('.use-case-card__panel') : null;
+  }
+
+  function useCaseTrigger(card) {
+    return card ? card.querySelector('.use-case-card__trigger') : null;
+  }
+
+  function finishUseCaseCollapse(card) {
+    if (!card) return;
+    var panel = useCasePanel(card);
+    card.dataset.expanded = 'false';
+    var trigger = useCaseTrigger(card);
+    if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    if (panel) {
+      panel.hidden = true;
+      panel.setAttribute('inert', '');
+    }
+  }
+
+  function collapseUseCaseCard(card, immediate) {
+    if (!card || card.dataset.expanded !== 'true') return;
+    var panel = useCasePanel(card);
+    card.dataset.expanded = 'false';
+    var trigger = useCaseTrigger(card);
+    if (trigger) trigger.setAttribute('aria-expanded', 'false');
+    if (immediate || !useCaseExpandDuration) {
+      finishUseCaseCollapse(card);
+      return;
+    }
+    if (!panel) {
+      finishUseCaseCollapse(card);
+      return;
+    }
+    var done = false;
+    var onEnd = function (event) {
+      if (event.target !== panel && event.target !== card) return;
+      if (done) return;
+      done = true;
+      panel.removeEventListener('transitionend', onEnd);
+      card.removeEventListener('transitionend', onEnd);
+      finishUseCaseCollapse(card);
+    };
+    panel.addEventListener('transitionend', onEnd);
+    card.addEventListener('transitionend', onEnd);
+    window.setTimeout(function () {
+      onEnd({ target: panel });
+    }, useCaseExpandDuration + 80);
+  }
+
+  function maybeScrollUseCaseCard(card) {
+    if (reduceMotion || !card) return;
+    var rect = card.getBoundingClientRect();
+    if (rect.top >= 0 && rect.top <= window.innerHeight * 0.28) return;
+    card.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
+  }
+
+  function expandUseCaseCard(card) {
+    if (!card || !isUseCaseMobile()) return;
+    var id = card.getAttribute('data-use-case-card');
+    if (expandedCardId && expandedCardId !== id) {
+      collapseUseCaseCard(getUseCaseCard(expandedCardId), false);
+    }
+    var panel = useCasePanel(card);
+    var trigger = useCaseTrigger(card);
+    if (panel) {
+      panel.hidden = false;
+      panel.removeAttribute('inert');
+    }
+    card.dataset.expanded = 'true';
+    if (trigger) trigger.setAttribute('aria-expanded', 'true');
+    expandedCardId = id;
+    window.setTimeout(function () {
+      maybeScrollUseCaseCard(card);
+    }, useCaseExpandDuration);
+  }
+
+  function resetUseCaseCards() {
+    useCaseCards.forEach(function (card) {
+      collapseUseCaseCard(card, true);
+    });
+    expandedCardId = null;
+  }
+
+  function toggleUseCaseCard(card) {
+    if (!isUseCaseMobile()) return;
+    if (card.dataset.expanded === 'true') {
+      collapseUseCaseCard(card, false);
+      if (expandedCardId === card.getAttribute('data-use-case-card')) expandedCardId = null;
+      return;
+    }
+    expandUseCaseCard(card);
+  }
+
+  if (useCaseCards.length) {
+    useCaseCards.forEach(function (card) {
+      card.dataset.expanded = 'false';
+      var trigger = useCaseTrigger(card);
+      if (!trigger) return;
+
+      trigger.addEventListener('click', function () {
+        if (!isUseCaseMobile()) return;
+        toggleUseCaseCard(card);
+      });
+
+      trigger.addEventListener('keydown', function (event) {
+        if (!isUseCaseMobile()) return;
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        event.preventDefault();
+        toggleUseCaseCard(card);
+      });
+    });
+
+    window.addEventListener('resize', function () {
+      if (!isUseCaseMobile()) resetUseCaseCards();
+    });
+  }
+
   /* ── Reveal pass ──────────────────────────────────────────────────────── */
 
   // Tells the inline safety net in <head> that the reveal pass is running, so it
