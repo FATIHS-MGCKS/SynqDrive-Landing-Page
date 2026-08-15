@@ -1072,7 +1072,7 @@ html[data-nav-scroll-lock='true'] {
   border-radius: 0;
   background: transparent;
   color: var(--ink);
-  font-size: 13.5px;
+  font-size: 12.5px;
   font-weight: 650;
   line-height: 1.35;
   letter-spacing: -0.006em;
@@ -1080,7 +1080,7 @@ html[data-nav-scroll-lock='true'] {
   text-decoration-line: underline;
   text-decoration-color: var(--ink);
   text-decoration-thickness: 1px;
-  text-underline-offset: 4px;
+  text-underline-offset: 6px;
 }
 
 .hero__intro h1 {
@@ -1103,33 +1103,73 @@ html[data-nav-scroll-lock='true'] {
   width: 100%;
   margin-top: var(--space-m);
   max-width: none;
-  color: var(--ink-soft);
-  font-size: var(--type-body-large);
+  color: var(--ink);
+  font-size: var(--type-body);
+  font-weight: 500;
   line-height: 1.62;
 }
 
+.hero__body-lead,
+.hero__body-tail,
 .hero__body-primary,
 .hero__body-secondary,
 .hero__body-line {
-  display: block;
+  display: inline;
+}
+
+.hero__body-lead {
+  color: var(--ink);
+  font-weight: 550;
+}
+
+.hero__body-tail {
+  color: var(--muted);
+  font-weight: 500;
 }
 
 .hero__body-primary {
+  display: block;
   font-weight: 500;
 }
 
 .hero__body-secondary {
+  display: block;
   margin-top: 22px;
   color: var(--muted);
   font-size: var(--type-body);
   line-height: 1.65;
 }
 
+/* Stale HTML fallback: render split hero copy as one flowing paragraph. */
+.hero__body .hero__body-line,
+.hero__body .hero__body-primary,
+.hero__body .hero__body-secondary {
+  display: inline;
+}
+
+.hero__body .hero__body-primary {
+  color: var(--ink);
+  font-weight: 550;
+}
+
+.hero__body .hero__body-secondary {
+  margin-top: 0;
+  color: var(--muted);
+  font-size: inherit;
+  line-height: inherit;
+  font-weight: 500;
+}
+
+.hero__body .hero__body-line::after {
+  content: ' ';
+  white-space: pre;
+}
+
 .hero__actions {
   display: flex;
   flex-wrap: wrap;
   gap: var(--stack-gap-tight);
-  margin-top: var(--stack-gap-loose);
+  margin-top: 44px;
 }
 
 /* ── Einsatzwelten ───────────────────────────────────────────────────────── */
@@ -2317,10 +2357,12 @@ html[data-nav-scroll-lock='true'] {
 
   .hero__intro {
     max-width: none;
+    text-align: center;
   }
 
   .hero__actions {
-    margin-top: var(--stack-gap);
+    justify-content: center;
+    margin-top: 32px;
   }
 
   .section-body {
@@ -2497,12 +2539,13 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .hero__body {
-    font-size: 1rem;
-    line-height: 1.55;
+    font-size: 0.975rem;
+    line-height: 1.58;
+    font-weight: 500;
   }
 
-  .hero__body-secondary {
-    margin-top: 18px;
+  .hero__body-lead {
+    font-weight: 550;
   }
 
   .use-cases__grid {

@@ -298,7 +298,7 @@ export function hero(c) {
             <span class="hero__title-main">${esc(h.title.main)}</span>
             <span class="hero__title-emphasis">${esc(h.title.emphasis)}</span>
           </h1>
-          <p class="hero__body" data-reveal>${esc(h.body)}</p>
+          <p class="hero__body" data-reveal><span class="hero__body-lead">${esc(h.body.lead)}</span><span class="hero__body-tail">${esc(h.body.tail)}</span></p>
           <div class="hero__actions" data-reveal>
             ${action({ href: 'mailto:info@synqdrive.eu?subject=SynqDrive%20demo%20request', label: h.primary, variant: 'primary' })}
             ${action({ href: `#${c.unified.id}`, label: h.secondary, variant: 'secondary' })}
