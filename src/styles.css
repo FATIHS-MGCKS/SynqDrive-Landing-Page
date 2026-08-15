@@ -2336,10 +2336,12 @@ html[data-nav-scroll-lock='true'] {
 
   .hero__intro {
     max-width: none;
+    text-align: center;
   }
 
   .hero__actions {
-    margin-top: var(--stack-gap);
+    justify-content: center;
+    margin-top: 32px;
   }
 
   .section-body {
