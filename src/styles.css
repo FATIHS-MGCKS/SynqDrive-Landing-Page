@@ -2565,9 +2565,9 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .use-case-card {
-    --use-case-expand-duration: 520ms;
-    --use-case-expand-ease: cubic-bezier(0.22, 1, 0.36, 1);
-    --use-case-content-duration: 360ms;
+    --use-case-expand-duration: 580ms;
+    --use-case-expand-ease: cubic-bezier(0.32, 0.72, 0, 1);
+    --use-case-content-duration: 420ms;
     display: flex;
     flex-direction: column;
     min-height: 0;
@@ -2640,17 +2640,17 @@ html[data-nav-scroll-lock='true'] {
     min-height: 0;
     overflow: hidden;
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(6px);
     transition:
-      opacity var(--use-case-content-duration) ease,
-      transform var(--use-case-content-duration) ease;
+      opacity var(--use-case-content-duration) var(--use-case-expand-ease),
+      transform var(--use-case-content-duration) var(--use-case-expand-ease);
     transition-delay: 0ms;
   }
 
   .use-case-card[data-expanded='true'] .use-case-card__panel-inner {
     opacity: 1;
     transform: translateY(0);
-    transition-delay: 120ms;
+    transition-delay: 90ms;
   }
 
   .use-case-card__features {
@@ -2673,24 +2673,6 @@ html[data-nav-scroll-lock='true'] {
     line-height: 1.55;
   }
 
-  .use-case-card__media,
-  .use-case-card--lead .use-case-card__media {
-    transition:
-      aspect-ratio var(--use-case-expand-duration) var(--use-case-expand-ease),
-      min-height var(--use-case-expand-duration) var(--use-case-expand-ease);
-  }
-
-  .use-case-card[data-expanded='true'] .use-case-card__media,
-  .use-case-card[data-expanded='true'].use-case-card--lead .use-case-card__media {
-    aspect-ratio: 16 / 10;
-    min-height: clamp(180px, 34dvh, 280px);
-  }
-
-  .use-case-card__content,
-  .use-case-card--lead .use-case-card__content {
-    transition: padding var(--use-case-expand-duration) var(--use-case-expand-ease);
-  }
-
   .use-case-card[data-expanded='true'] .use-case-card__content,
   .use-case-card[data-expanded='true'].use-case-card--lead .use-case-card__content {
     padding-bottom: 14px;
@@ -2700,8 +2682,6 @@ html[data-nav-scroll-lock='true'] {
     .use-case-card,
     .use-case-card__panel,
     .use-case-card__panel-inner,
-    .use-case-card__media,
-    .use-case-card__content,
     .use-case-card__chevron {
       transition-duration: 0.01ms !important;
       transition-delay: 0ms !important;

@@ -413,7 +413,7 @@
   var useCaseCards = Array.prototype.slice.call(document.querySelectorAll('[data-use-case-card]'));
   var useCaseMobileBreakpoint = 760;
   var expandedCardId = null;
-  var useCaseExpandDuration = reduceMotion ? 0 : 520;
+  var useCaseExpandDuration = reduceMotion ? 0 : 580;
 
   function isUseCaseMobile() {
     return window.innerWidth <= useCaseMobileBreakpoint;
