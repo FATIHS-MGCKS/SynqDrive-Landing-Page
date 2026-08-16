@@ -410,8 +410,8 @@ test.describe('public landing page', () => {
       expect(images).toHaveLength(5);
       for (const image of images) {
         expect(image.alt).toBeTruthy();
-        expect(image.width).toBe('1536');
-        expect(image.height).toBe('1024');
+        expect(image.width).toBe('1672');
+        expect(image.height).toBe('941');
         expect(image.loading).toBe('lazy');
         expect(image.decoding).toBe('async');
         expect(image.loaded).toBe(true);
