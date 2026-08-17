@@ -431,26 +431,27 @@ const en = {
   },
   vehicle: {
     id: SECTION_IDS.vehicle,
-    eyebrow: null,
-    title: 'Connected vehicle intelligence',
-    body: 'Every vehicle carries its own live state: telemetry, location, condition, service status and the bookings that depend on it. A vehicle is an operational unit, not a static record.',
+    eyebrow: 'CONNECTED VEHICLE INTELLIGENCE',
+    title: 'Know what is happening across your fleet. And where action is needed.',
+    body: 'SynqDrive connects live vehicle data, condition, driving behaviour and maintenance information with the operational context of your business. You see more than a vehicle\'s location or mileage. You understand which vehicles are ready, where action is developing and which operational workflows may be affected.',
     media: MEDIA.vehicle,
     mediaAlt:
       'SynqDrive fleet list showing per vehicle status, health state, station, telemetry freshness and mileage.',
     points: [
       {
-        title: 'Live and last known state',
-        body: 'Telemetry freshness, mileage and station are shown per vehicle, including when a signal has gone stale.',
+        title: 'Understand vehicle condition',
+        body: 'Location, mileage, telemetry, warnings, battery, tyres, brakes and service status come together to form a clear picture of each vehicle\'s actual condition - current and traceable.',
       },
       {
-        title: 'Condition that blocks rentals',
-        body: 'Brakes, tyres, battery, error codes and service intervals can take a vehicle out of rental automatically.',
+        title: 'Identify maintenance needs earlier',
+        body: 'Changes, warnings and wear are considered together, helping teams plan inspections and maintenance earlier before they affect day-to-day operations.',
       },
       {
-        title: 'Trips from vehicle segments',
-        body: 'Trip boundaries come from vehicle segment data and are enriched with route and driving context.',
+        title: 'Analyse driving behaviour in context',
+        body: 'Trips and relevant driving events are connected with the vehicle, driver, time and usage context. Patterns become visible and can be reviewed, documented or used for further action.',
       },
     ],
+    closing: 'Don\'t just see vehicle data. Understand what it means for your operation.',
   },
   ai: {
     id: SECTION_IDS.ai,
@@ -870,26 +871,27 @@ const de = {
   },
   vehicle: {
     id: SECTION_IDS.vehicle,
-    eyebrow: null,
-    title: 'Vernetzte Fahrzeugintelligenz',
-    body: 'Jedes Fahrzeug trägt seinen eigenen Live-Zustand: Telemetrie, Standort, Zustand, Servicestatus und die Buchungen, die davon abhängen. Ein Fahrzeug ist eine operative Einheit, kein statischer Datensatz.',
+    eyebrow: 'VERNETZTE FAHRZEUGINTELLIGENZ',
+    title: 'Wissen, was mit Ihrer Flotte passiert. Und wo Sie handeln sollten.',
+    body: 'SynqDrive verbindet Live-Fahrzeugdaten, Zustand, Fahrverhalten und Wartungsinformationen mit dem operativen Kontext Ihres Betriebs. So sehen Sie nicht nur, wo ein Fahrzeug steht oder welchen Kilometerstand es hat. Sie erkennen, welche Fahrzeuge einsatzbereit sind, wo sich Handlungsbedarf entwickelt und welche betrieblichen Abläufe davon betroffen sind.',
     media: MEDIA.vehicle,
     mediaAlt:
       'SynqDrive Fahrzeugliste mit Status, Zustand, Station, Aktualität der Telemetrie und Laufleistung pro Fahrzeug.',
     points: [
       {
-        title: 'Live und letzter bekannter Stand',
-        body: 'Aktualität der Telemetrie, Laufleistung und Station je Fahrzeug, auch wenn ein Signal veraltet ist.',
+        title: 'Fahrzeugzustand wirklich verstehen',
+        body: 'Standort, Laufleistung, Telemetrie, Warnmeldungen, Batterie, Reifen, Bremsen und Servicestatus ergeben ein gemeinsames Bild des tatsächlichen Fahrzeugzustands - aktuell und nachvollziehbar.',
       },
       {
-        title: 'Zustand, der Vermietung blockiert',
-        body: 'Bremsen, Reifen, Batterie, Fehlercodes und Serviceintervalle können ein Fahrzeug automatisch aus der Vermietung nehmen.',
+        title: 'Wartungsbedarf früher erkennen',
+        body: 'Veränderungen, Warnmeldungen und Verschleiß werden im Zusammenhang betrachtet. So können notwendige Prüfungen und Wartungen früher eingeplant werden, bevor sie den laufenden Betrieb beeinträchtigen.',
       },
       {
-        title: 'Fahrten aus Fahrzeugsegmenten',
-        body: 'Fahrtgrenzen stammen aus Fahrzeug-Segmentdaten und werden um Route und Fahrkontext ergänzt.',
+        title: 'Fahrverhalten im Kontext analysieren',
+        body: 'Fahrten und relevante Fahrereignisse werden mit Fahrzeug, Fahrer, Zeitpunkt und Nutzung verknüpft. So werden Auffälligkeiten sichtbar und können gezielt geprüft, dokumentiert oder für weitere Maßnahmen genutzt werden.',
       },
     ],
+    closing: 'Nicht nur Fahrzeugdaten sehen. Verstehen, was sie für Ihren Betrieb bedeuten.',
   },
   ai: {
     id: SECTION_IDS.ai,
