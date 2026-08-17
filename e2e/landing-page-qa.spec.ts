@@ -456,10 +456,10 @@ test.describe('public landing page', () => {
     await rentalTrigger.click();
     await expect(rentalTrigger).toHaveAttribute('aria-expanded', 'true');
     await expect(rental).toHaveAttribute('data-expanded', 'true');
-    await expect(rental.locator('.use-case-card__features li')).toHaveCount(3);
+    await expect(rental.locator('.use-case-card__features li')).toHaveCount(4);
 
     const expandedHeight = await rental.evaluate((node) => node.getBoundingClientRect().height);
-    expect(expandedHeight).toBeGreaterThan(520);
+    expect(expandedHeight).toBeGreaterThan(560);
 
     await fleet.locator('.use-case-card__trigger').click();
     await expect(rentalTrigger).toHaveAttribute('aria-expanded', 'false');
@@ -484,6 +484,55 @@ test.describe('public landing page', () => {
     });
     await expect(rental).not.toHaveAttribute('data-expanded', 'true');
     await expect(rental.locator('.use-case-card__trigger')).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  test('use cases mobile expanded content shows four features per card', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto('/en/', { waitUntil: 'load' });
+    await settle(page);
+
+    const cards = page.locator('#use-cases .use-case-card');
+    await expect(cards).toHaveCount(5);
+
+    for (let index = 0; index < 5; index += 1) {
+      const card = cards.nth(index);
+      const trigger = card.locator('.use-case-card__trigger');
+      await trigger.click();
+      await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+      await expect(card.locator('.use-case-card__features li')).toHaveCount(4);
+      await trigger.click();
+      await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    }
+  });
+
+  test('use cases desktop never exposes expanded feature panels', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+
+    for (const url of ['/', '/en/'] as const) {
+      await page.goto(url, { waitUntil: 'load' });
+      await settle(page);
+
+      const cards = page.locator('#use-cases .use-case-card');
+      await expect(cards).toHaveCount(5);
+
+      for (let index = 0; index < 5; index += 1) {
+        const card = cards.nth(index);
+        await expect(card.locator('.use-case-card__panel')).toBeHidden();
+        await expect(card.locator('.use-case-card__features')).toBeHidden();
+      }
+
+      const forbiddenClaims = await page.locator('#use-cases').evaluate((section) => {
+        const text = section.textContent ?? '';
+        return [
+          /Dispatching/i.test(text),
+          /plan and dispatch recurring journeys/i.test(text),
+          /Coordinate vehicles, routes and dispatch/i.test(text),
+          /planen und disponieren/i.test(text),
+          /Touren und Dispatching/i.test(text),
+        ].some(Boolean);
+      });
+      expect(forbiddenClaims).toBe(false);
+    }
   });
 
   test('use cases responsive composition', async ({ page }) => {
@@ -3793,7 +3842,7 @@ test.describe('public landing page', () => {
 
     const metrics = await readPhase2KeyMetrics(page);
     expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(10000);
-    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(10055);
+    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(10450);
     expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeGreaterThan(280);
     expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeLessThanOrEqual(520);
     expect(metrics.platform.frameTopRel!, '390px platform frame top').toBeGreaterThan(250);

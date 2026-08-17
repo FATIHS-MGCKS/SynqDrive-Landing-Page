@@ -265,64 +265,136 @@ const en = {
   useCases: {
     id: SECTION_IDS.useCases,
     title: 'One platform for every kind of fleet.',
-    body: 'Whether rental, passenger transport or logistics: SynqDrive connects vehicles, teams and workflows on a shared foundation. Tailored to your operating model.',
+    body: 'Every fleet operation works differently. SynqDrive connects vehicles, teams and processes on one shared platform - tailored to the workflows and requirements of your business. Automate recurring work, identify the need for action earlier and replace fragmented tools with connected processes.',
     items: [
       {
         key: 'rental',
         title: 'Car rental companies',
-        body: 'Manage bookings, vehicles, customers and billing in one seamless system.',
+        body: 'SynqDrive connects bookings, customers, vehicles and handovers in one continuous workflow - and automates the work in between.',
         media: MEDIA.useCases.rental,
         mediaAlt: 'Employee checking a modern car rental fleet with a tablet.',
         features: [
           {
-            title: 'Shared data model',
-            body: 'A booking, its vehicle, its customer and its invoice are the same record in every module.',
+            title: 'Automate workflows',
+            body: 'Bookings, checks, documents, payments and internal tasks work together instead of being passed manually between separate systems.',
           },
           {
-            title: 'One operational context',
-            body: 'Fleet condition, bookings and open work are read together, not module by module.',
+            title: 'Keep vehicles ready',
+            body: 'Vehicle condition, warnings, maintenance and wear are considered together, helping teams identify the need for action before it affects the next rental.',
           },
           {
-            title: 'Fewer system breaks',
-            body: 'Handover, invoicing and follow-up work continue inside the same platform.',
+            title: 'Understand vehicle use',
+            body: 'Analyse driving behaviour, events and vehicle data in the context of a rental and identify unusual or particularly demanding use faster.',
+          },
+          {
+            title: 'Manage fewer tools',
+            body: 'Bookings, customer management, vehicle data, handovers, tasks, documents and communication come together on one shared platform.',
           },
         ],
       },
       {
         key: 'fleet',
         title: 'Fleet operators',
-        body: 'Centrally coordinate availability, vehicle condition and operational tasks.',
+        body: 'SynqDrive connects vehicle data, maintenance, drivers and operational workflows - helping teams manage the fleet more proactively.',
         status: 'In progress',
         media: MEDIA.useCases.fleet,
         mediaAlt: 'Professionally managed corporate fleet at an operations site.',
-        features: [],
+        features: [
+          {
+            title: 'Automate operations',
+            body: 'Recurring tasks, checks, notifications and internal workflows can be triggered automatically by rules and vehicle events, reducing manual monitoring and coordination.',
+          },
+          {
+            title: 'Identify wear earlier',
+            body: 'SynqDrive connects live vehicle data with maintenance, warnings and usage. Changes and potential action points become visible earlier, before they develop into unplanned downtime.',
+          },
+          {
+            title: 'Improve driving behaviour',
+            body: 'Analyse braking, acceleration, speed and other driving events in the context of a driver, vehicle and time period. Repeated patterns create a traceable basis for targeted driver coaching and internal action.',
+          },
+          {
+            title: 'Bring systems together',
+            body: 'Vehicle data, maintenance, driver information, tasks, documentation and communication come together on one platform instead of remaining spread across telematics portals, spreadsheets and separate tools.',
+          },
+        ],
       },
       {
         key: 'taxi',
         title: 'Taxi fleets',
-        body: 'Coordinate vehicles, routes and dispatch intelligently.',
+        body: 'SynqDrive connects vehicle condition, driving behaviour and operational workflows - improving fleet readiness while reducing manual coordination in day-to-day operations.',
         status: 'In progress',
         media: MEDIA.useCases.taxi,
         mediaAlt: 'Modern taxi fleet in an urban operations setting.',
-        features: [],
+        features: [
+          {
+            title: 'Automate operations',
+            body: 'Recurring checks, tasks, notifications and internal workflows can be triggered automatically when defined events or conditions occur, reducing the amount of work teams need to track manually.',
+          },
+          {
+            title: 'Keep vehicles available',
+            body: 'High mileage and intensive use increase wear. SynqDrive connects vehicle condition, warnings, maintenance requirements and usage so the need for action becomes visible earlier.',
+          },
+          {
+            title: 'Understand driving behaviour',
+            body: 'Braking, acceleration, speed and other driving events can be evaluated in the context of a driver, vehicle and time period. Repeated patterns create a traceable basis for targeted driver coaching and internal measures.',
+          },
+          {
+            title: 'Connect daily workflows',
+            body: 'Vehicle data, driver information, tasks, documentation and communication come together on one shared platform instead of remaining spread across portals, spreadsheets, messaging tools and separate applications.',
+          },
+        ],
       },
       {
         key: 'passenger-transport',
         title: 'School & passenger transport',
-        body: 'Reliably plan and dispatch recurring journeys.',
+        body: 'SynqDrive connects vehicles, drivers and operational workflows so action points become visible earlier, measures remain traceable and recurring work can be carried out more reliably.',
         status: 'In progress',
         media: MEDIA.useCases.passengerTransport,
         mediaAlt: 'Minibuses for school and passenger transport at an operations site.',
-        features: [],
+        features: [
+          {
+            title: 'Automate operational checks',
+            body: 'Recurring checks, tasks, notifications and internal controls can be triggered automatically, making important steps less dependent on manual reminders, individual employees or scattered lists.',
+          },
+          {
+            title: 'Keep vehicles ready for service',
+            body: 'SynqDrive connects vehicle condition, warnings, maintenance requirements and wear. Changes become visible earlier so necessary checks and measures can be planned in time.',
+          },
+          {
+            title: 'Understand and improve driving behaviour',
+            body: 'Braking, acceleration, speed and other driving events can be assigned to drivers, vehicles and time periods. Repeated patterns provide a traceable basis for targeted driver coaching and internal measures.',
+          },
+          {
+            title: 'Document checks and actions',
+            body: 'Driver information, vehicle condition, tasks, events and completed measures are brought together on one shared foundation instead of being distributed across paper, spreadsheets, messaging tools and separate applications.',
+          },
+        ],
       },
       {
         key: 'delivery-logistics',
         title: 'Delivery & logistics',
-        body: 'Coordinate vehicles, orders and routes throughout daily operations.',
+        body: 'SynqDrive connects vehicles, drivers and operational workflows - helping keep the fleet available and making action points visible before day-to-day operations are already affected.',
         status: 'In progress',
         media: MEDIA.useCases.deliveryLogistics,
         mediaAlt: 'Delivery vehicles at a modern logistics site.',
-        features: [],
+        features: [
+          {
+            title: 'Trigger workflows automatically',
+            body: 'Vehicle events, warnings and defined conditions can automatically trigger tasks, notifications and follow-up processes, turning information directly into the next operational step.',
+          },
+          {
+            title: 'Identify action points earlier',
+            body: 'High mileage and intensive use place delivery vehicles under constant load. SynqDrive connects vehicle condition, maintenance requirements, warnings and wear so changes become visible earlier.',
+          },
+          {
+            title: 'Analyse driving behaviour',
+            body: 'Braking, acceleration, speed and other driving events can be evaluated in the context of a driver, vehicle and time period. Repeated patterns can be investigated and used for driver coaching or internal measures.',
+          },
+          {
+            title: 'Connect fleet and operations',
+            body: 'Vehicle data, driver information, maintenance, tasks, documentation and communication come together on one shared platform instead of remaining spread across telematics portals, spreadsheets, messaging tools and separate systems.',
+          },
+        ],
       },
     ],
   },
@@ -632,64 +704,136 @@ const de = {
   useCases: {
     id: SECTION_IDS.useCases,
     title: 'Eine Plattform für jede Art von Flotte.',
-    body: 'Ob Vermietung, Beförderung oder Logistik: SynqDrive verbindet Fahrzeuge, Teams und Abläufe auf einer gemeinsamen Grundlage. Abgestimmt auf Ihr Betriebsmodell.',
+    body: 'Jeder Flottenbetrieb funktioniert anders. SynqDrive verbindet Fahrzeuge, Teams und Prozesse auf einer gemeinsamen Plattform - zugeschnitten auf die Abläufe und Anforderungen Ihres Unternehmens. So automatisieren Sie wiederkehrende Arbeit, erkennen Handlungsbedarf früher und ersetzen Insellösungen durch durchgängige Prozesse.',
     items: [
       {
         key: 'rental',
         title: 'Autovermietungen',
-        body: 'Buchungen, Fahrzeuge, Kunden und Abrechnung in einem durchgängigen System verwalten.',
+        body: 'SynqDrive verbindet Buchungen, Kunden, Fahrzeuge und Übergaben in einem durchgängigen Ablauf - und automatisiert die Arbeit dazwischen.',
         media: MEDIA.useCases.rental,
         mediaAlt: 'Mitarbeiter betrachtet eine moderne Mietwagenflotte mit einem Tablet.',
         features: [
           {
-            title: 'Gemeinsame Datenbasis',
-            body: 'Buchung, Fahrzeug, Kunde und Rechnung sind in jedem Modul derselbe Datensatz.',
+            title: 'Abläufe automatisieren',
+            body: 'Buchungen, Prüfungen, Dokumente, Zahlungen und interne Aufgaben greifen ineinander, statt manuell zwischen einzelnen Systemen weitergegeben zu werden.',
           },
           {
-            title: 'Ein operativer Kontext',
-            body: 'Flottenzustand, Buchungen und offene Arbeit werden gemeinsam gelesen, nicht Modul für Modul.',
+            title: 'Fahrzeuge einsatzbereit halten',
+            body: 'Fahrzeugzustand, Warnmeldungen, Wartung und Verschleiß werden kontinuierlich berücksichtigt - damit Handlungsbedarf möglichst erkannt wird, bevor er die nächste Vermietung beeinträchtigt.',
           },
           {
-            title: 'Weniger Systembrüche',
-            body: 'Übergabe, Abrechnung und Folgearbeit laufen in derselben Plattform weiter.',
+            title: 'Nutzung verstehen',
+            body: 'Analysieren Sie Fahrverhalten, Ereignisse und Fahrzeugdaten im Kontext einer Vermietung und erkennen Sie ungewöhnliche oder besonders belastende Nutzung schneller.',
+          },
+          {
+            title: 'Weniger Tools verwalten',
+            body: 'Buchung, Kundenverwaltung, Fahrzeugdaten, Übergaben, Aufgaben, Dokumente und Kommunikation laufen auf einer gemeinsamen Plattform zusammen.',
           },
         ],
       },
       {
         key: 'fleet',
         title: 'Flottenbetriebe',
-        body: 'Verfügbarkeit, Fahrzeugzustand und operative Aufgaben zentral koordinieren.',
+        body: 'SynqDrive verbindet Fahrzeugdaten, Wartung, Fahrer und operative Abläufe - damit Ihr Fuhrpark vorausschauender gesteuert werden kann.',
         status: 'In Arbeit',
         media: MEDIA.useCases.fleet,
         mediaAlt: 'Professionell verwaltete Unternehmensflotte an einem Betriebsstandort.',
-        features: [],
+        features: [
+          {
+            title: 'Betrieb automatisieren',
+            body: 'Wiederkehrende Aufgaben, Prüfungen, Benachrichtigungen und interne Abläufe werden durch Regeln und Fahrzeugereignisse automatisch angestoßen. So muss Ihr Team weniger überwachen, nachhalten und manuell koordinieren.',
+          },
+          {
+            title: 'Verschleiß früher erkennen',
+            body: 'SynqDrive verbindet laufende Fahrzeugdaten mit Wartung, Warnmeldungen und Nutzung. Auffälligkeiten und möglicher Handlungsbedarf werden früher sichtbar - bevor daraus ungeplante Ausfälle entstehen.',
+          },
+          {
+            title: 'Fahrverhalten gezielt verbessern',
+            body: 'Analysieren Sie Brems-, Beschleunigungs-, Geschwindigkeits- und weitere Fahrereignisse im Kontext von Fahrer, Fahrzeug und Zeitraum. Wiederkehrende Auffälligkeiten schaffen eine nachvollziehbare Grundlage für gezielte Nachbelehrungen und interne Maßnahmen.',
+          },
+          {
+            title: 'Systeme zusammenführen',
+            body: 'Fahrzeugdaten, Wartung, Fahrerinformationen, Aufgaben, Dokumentation und Kommunikation laufen auf einer gemeinsamen Plattform zusammen - statt über Telematik-Portale, Tabellen und einzelne Tools verteilt zu bleiben.',
+          },
+        ],
       },
       {
         key: 'taxi',
         title: 'Taxiflotten',
-        body: 'Fahrzeuge, Touren und Dispatching intelligent koordinieren.',
+        body: 'SynqDrive verbindet Fahrzeugzustand, Fahrverhalten und operative Abläufe - für mehr Einsatzbereitschaft und weniger manuelle Koordination im täglichen Betrieb.',
         status: 'In Arbeit',
         media: MEDIA.useCases.taxi,
         mediaAlt: 'Moderne Taxiflotte in einem urbanen Betriebskontext.',
-        features: [],
+        features: [
+          {
+            title: 'Betrieb automatisieren',
+            body: 'Wiederkehrende Prüfungen, Aufgaben, Benachrichtigungen und interne Abläufe werden automatisch angestoßen, sobald definierte Ereignisse oder Zustände eintreten. So muss Ihr Team weniger manuell nachhalten und koordinieren.',
+          },
+          {
+            title: 'Fahrzeuge verfügbar halten',
+            body: 'Hohe Laufleistungen und intensive Nutzung erhöhen den Verschleiß. SynqDrive verbindet Fahrzeugzustand, Warnmeldungen, Wartungsbedarf und Nutzung, damit Handlungsbedarf frühzeitig sichtbar wird.',
+          },
+          {
+            title: 'Fahrverhalten nachvollziehen',
+            body: 'Brems-, Beschleunigungs-, Geschwindigkeits- und weitere Fahrereignisse lassen sich im Kontext von Fahrer, Fahrzeug und Zeitraum auswerten. Wiederkehrende Auffälligkeiten schaffen eine nachvollziehbare Grundlage für gezielte Nachbelehrungen und interne Maßnahmen.',
+          },
+          {
+            title: 'Abläufe zusammenführen',
+            body: 'Fahrzeugdaten, Fahrerinformationen, Aufgaben, Dokumentation und Kommunikation laufen auf einer gemeinsamen Plattform zusammen - statt über mehrere Portale, Tabellen, Messenger und einzelne Anwendungen verteilt zu bleiben.',
+          },
+        ],
       },
       {
         key: 'passenger-transport',
         title: 'Schüler- & Personenbeförderung',
-        body: 'Wiederkehrende Fahrten zuverlässig planen und disponieren.',
+        body: 'SynqDrive verbindet Fahrzeuge, Fahrer und betriebliche Abläufe - damit Handlungsbedarf früher sichtbar, Maßnahmen nachvollziehbar dokumentiert und wiederkehrende Aufgaben zuverlässig ausgeführt werden.',
         status: 'In Arbeit',
         media: MEDIA.useCases.passengerTransport,
         mediaAlt: 'Kleinbusse für Schüler- und Personenbeförderung an einem Betriebsstandort.',
-        features: [],
+        features: [
+          {
+            title: 'Betriebliche Kontrollen automatisieren',
+            body: 'Wiederkehrende Prüfungen, Aufgaben, Benachrichtigungen und interne Kontrollen können automatisch angestoßen werden. So werden wichtige Schritte weniger abhängig von manuellen Erinnerungen, einzelnen Mitarbeitern oder verstreuten Listen.',
+          },
+          {
+            title: 'Fahrzeuge zuverlässig einsatzbereit halten',
+            body: 'SynqDrive verbindet Fahrzeugzustand, Warnmeldungen, Wartungsbedarf und Verschleiß. Auffälligkeiten werden früh sichtbar, damit notwendige Prüfungen und Maßnahmen rechtzeitig eingeplant werden können.',
+          },
+          {
+            title: 'Fahrverhalten nachvollziehen und verbessern',
+            body: 'Brems-, Beschleunigungs-, Geschwindigkeits- und weitere Fahrereignisse lassen sich Fahrern, Fahrzeugen und Zeiträumen zuordnen. Wiederkehrende Auffälligkeiten schaffen eine nachvollziehbare Grundlage für gezielte Nachbelehrungen und interne Maßnahmen.',
+          },
+          {
+            title: 'Kontrollen und Maßnahmen dokumentieren',
+            body: 'Fahrerinformationen, Fahrzeugzustand, Aufgaben, Auffälligkeiten und durchgeführte Maßnahmen werden auf einer gemeinsamen Grundlage zusammengeführt - statt über Papier, Tabellen, Messenger und einzelne Anwendungen verteilt zu bleiben.',
+          },
+        ],
       },
       {
         key: 'delivery-logistics',
         title: 'Lieferung & Logistik',
-        body: 'Fahrzeuge, Aufträge und Touren im laufenden Betrieb koordinieren.',
+        body: 'SynqDrive verbindet Fahrzeuge, Fahrer und operative Abläufe - damit Ihre Flotte verfügbar bleibt und Handlungsbedarf nicht erst auffällt, wenn der laufende Betrieb bereits betroffen ist.',
         status: 'In Arbeit',
         media: MEDIA.useCases.deliveryLogistics,
         mediaAlt: 'Lieferfahrzeuge an einem modernen Logistikstandort.',
-        features: [],
+        features: [
+          {
+            title: 'Abläufe automatisch anstoßen',
+            body: 'Fahrzeugereignisse, Warnmeldungen und definierte Zustände können automatisch Aufgaben, Benachrichtigungen und weitere Prozesse auslösen. So wird aus einer Information direkt der nächste operative Schritt.',
+          },
+          {
+            title: 'Handlungsbedarf früher erkennen',
+            body: 'Hohe Laufleistungen und intensive Nutzung belasten Lieferfahrzeuge täglich. SynqDrive verbindet Fahrzeugzustand, Wartungsbedarf, Warnmeldungen und Verschleiß, damit Auffälligkeiten früh sichtbar werden.',
+          },
+          {
+            title: 'Fahrverhalten analysieren',
+            body: 'Brems-, Beschleunigungs-, Geschwindigkeits- und weitere Fahrereignisse lassen sich im Kontext von Fahrer, Fahrzeug und Zeitraum auswerten. Wiederkehrende Auffälligkeiten können gezielt untersucht und für Nachbelehrungen oder interne Maßnahmen genutzt werden.',
+          },
+          {
+            title: 'Flotte und Betrieb zusammenführen',
+            body: 'Fahrzeugdaten, Fahrerinformationen, Wartung, Aufgaben, Dokumentation und Kommunikation laufen auf einer gemeinsamen Plattform zusammen - statt über Telematik-Portale, Tabellen, Messenger und einzelne Systeme verteilt zu bleiben.',
+          },
+        ],
       },
     ],
   },
