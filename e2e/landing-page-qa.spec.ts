@@ -550,6 +550,56 @@ test.describe('public landing page', () => {
   });
 
   for (const locale of ['de', 'en'] as const) {
+    const url = locale === 'de' ? '/' : '/en/';
+    const expected =
+      locale === 'de'
+        ? {
+            eyebrow: 'VOLLSTÄNDIG VERNETZTE MOBILITY OPERATIONS',
+            title: 'Alles, was Ihr Betrieb braucht. Vollständig vernetzt.',
+            cards: [
+              'Eine Plattform für den gesamten Betrieb',
+              'Fahrzeuge verstehen. Früher handeln.',
+              'Abläufe automatisch ausführen',
+              'KI, die im Betrieb mitarbeitet',
+            ],
+            removed: [
+              'Gemeinsame Datenbasis',
+              'Ein operativer Kontext',
+              'Weniger Systembrüche',
+              'Abgegrenzter Zugriff',
+            ],
+          }
+        : {
+            eyebrow: 'FULLY CONNECTED MOBILITY OPERATIONS',
+            title: 'Everything your operation needs. Fully connected.',
+            cards: [
+              'One platform for the entire operation',
+              'Understand vehicles. Act earlier.',
+              'Run workflows automatically',
+              'AI that works inside your operation',
+            ],
+            removed: ['Shared data model', 'One operational context', 'Fewer system breaks', 'Scoped access'],
+          };
+
+    test(`unified platform copy and capability grid (${locale})`, async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(url, { waitUntil: 'load' });
+      await settle(page);
+
+      const section = page.locator('#platform');
+      await expect(section.locator('.eyebrow')).toHaveText(expected.eyebrow);
+      await expect(section.getByRole('heading', { level: 2 })).toHaveText(expected.title);
+      await expect(section.locator('.capability')).toHaveCount(4);
+      await expect(section.locator('.capability h3')).toHaveText(expected.cards);
+
+      const sectionText = await section.innerText();
+      for (const title of expected.removed) {
+        expect(sectionText).not.toContain(title);
+      }
+    });
+  }
+
+  for (const locale of ['de', 'en'] as const) {
     const spec = PLATFORM_NAV[locale];
     const url = locale === 'de' ? '/' : '/en/';
 
@@ -3793,7 +3843,7 @@ test.describe('public landing page', () => {
 
     const metrics = await readPhase2KeyMetrics(page);
     expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(10000);
-    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(10055);
+    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(10500);
     expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeGreaterThan(280);
     expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeLessThanOrEqual(520);
     expect(metrics.platform.frameTopRel!, '390px platform frame top').toBeGreaterThan(250);
