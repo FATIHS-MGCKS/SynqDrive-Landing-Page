@@ -432,24 +432,24 @@ const en = {
   },
   communication: {
     id: SECTION_IDS.communication,
-    eyebrow: null,
-    title: 'Connected customer communication',
-    body: 'Messages sit next to the booking, the vehicle, the station and the open payment they belong to. Communication is part of the operation, not a separate inbox.',
+    eyebrow: 'CONNECTED CUSTOMER COMMUNICATION',
+    title: 'Every message. With the right context.',
+    body: 'SynqDrive connects WhatsApp, email, notifications and voice with the operational information behind them. Booking, vehicle, payment status and documents are available where communication happens, helping your team respond faster without gathering information across separate systems.',
     media: MEDIA.communication,
     mediaAlt:
       'SynqDrive customer conversation next to its operational context: booking, vehicle, station, payment status and documents.',
     points: [
       {
-        title: 'One conversation layer',
-        body: 'WhatsApp, email and in-app notifications share the same customer record. The voice assistant is being rolled out per organisation.',
+        title: 'Every message in the right context',
+        body: 'Customer conversations are directly connected with the booking, vehicle, location, payment status and open documents. Your team can immediately see what the conversation is about and which information matters for the response.',
       },
       {
-        title: 'Every message has context',
-        body: 'The booking, vehicle, station, payment state and open documents are visible while you reply.',
+        title: 'Bring communication together',
+        body: 'WhatsApp, email and notifications work with the same customer and operational context. Voice can be connected to the same operational workflow where it is enabled for the organisation.',
       },
       {
-        title: 'Assisted, not automatic',
-        body: 'The assistant can draft and suggest. Your team decides what is sent and when to escalate.',
+        title: 'AI supports the next step',
+        body: 'SynqDrive interprets information from the operational record, supports responses and helps with the next steps. Your team remains in control of sending and escalation.',
       },
     ],
   },
@@ -799,24 +799,24 @@ const de = {
   },
   communication: {
     id: SECTION_IDS.communication,
-    eyebrow: null,
-    title: 'Vernetzte Kundenkommunikation',
-    body: 'Nachrichten stehen neben der Buchung, dem Fahrzeug, der Station und der offenen Zahlung, zu denen sie gehören. Kommunikation ist Teil des Betriebs, nicht eine getrennte Inbox.',
+    eyebrow: 'VERNETZTE KUNDENKOMMUNIKATION',
+    title: 'Jede Nachricht. Direkt mit dem richtigen Kontext.',
+    body: 'SynqDrive verbindet WhatsApp, E-Mail, Benachrichtigungen und Sprache mit den operativen Informationen dahinter. Buchung, Fahrzeug, Zahlungsstatus und Dokumente stehen dort bereit, wo Kommunikation entsteht. So kann Ihr Team schneller reagieren, ohne Informationen aus verschiedenen Systemen zusammensuchen zu müssen.',
     media: MEDIA.communication,
     mediaAlt:
       'SynqDrive Kundenkonversation neben ihrem operativen Kontext: Buchung, Fahrzeug, Station, Zahlungsstatus und Dokumente.',
     points: [
       {
-        title: 'Eine Kommunikationsebene',
-        body: 'WhatsApp, E-Mail und Benachrichtigungen nutzen denselben Kundendatensatz. Der Sprachassistent wird organisationsweise ausgerollt.',
+        title: 'Jede Nachricht im richtigen Kontext',
+        body: 'Kundenanfragen stehen direkt im Zusammenhang mit Buchung, Fahrzeug, Station, Zahlungsstatus und offenen Dokumenten. Ihr Team sieht sofort, worum es geht und welche Informationen für die Antwort relevant sind.',
       },
       {
-        title: 'Jede Nachricht hat Kontext',
-        body: 'Buchung, Fahrzeug, Station, Zahlungsstand und offene Dokumente sind beim Antworten sichtbar.',
+        title: 'Kommunikation zusammenführen',
+        body: 'WhatsApp, E-Mail und Benachrichtigungen arbeiten mit demselben Kunden- und Vorgangskontext. Sprache kann in denselben operativen Ablauf eingebunden werden, sofern sie für die Organisation aktiviert ist.',
       },
       {
-        title: 'Unterstützt, nicht automatisch',
-        body: 'Der Assistent kann formulieren und vorschlagen. Ihr Team entscheidet, was gesendet und wann eskaliert wird.',
+        title: 'KI unterstützt beim nächsten Schritt',
+        body: 'SynqDrive ordnet Informationen aus dem Vorgang ein, unterstützt bei Antworten und hilft bei den nächsten Schritten. Ihr Team behält die Kontrolle über Versand und Eskalation.',
       },
     ],
   },
