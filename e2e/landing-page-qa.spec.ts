@@ -2500,6 +2500,56 @@ test.describe('public landing page', () => {
 
   for (const locale of ['de', 'en'] as const) {
     const url = locale === 'de' ? '/' : '/en/';
+    const expected =
+      locale === 'de'
+        ? {
+            eyebrow: 'VERNETZTE FAHRZEUGINTELLIGENZ',
+            title: 'Wissen, was mit Ihrer Flotte passiert. Und wo Sie handeln sollten.',
+            points: [
+              'Fahrzeugzustand wirklich verstehen',
+              'Wartungsbedarf früher erkennen',
+              'Fahrverhalten im Kontext analysieren',
+            ],
+            closing: 'Nicht nur Fahrzeugdaten sehen. Verstehen, was sie für Ihren Betrieb bedeuten.',
+            removed: [
+              'Live und letzter bekannter Stand',
+              'Zustand, der Vermietung blockiert',
+              'Fahrten aus Fahrzeugsegmenten',
+            ],
+          }
+        : {
+            eyebrow: 'CONNECTED VEHICLE INTELLIGENCE',
+            title: 'Know what is happening across your fleet. And where action is needed.',
+            points: [
+              'Understand vehicle condition',
+              'Identify maintenance needs earlier',
+              'Analyse driving behaviour in context',
+            ],
+            closing: "Don't just see vehicle data. Understand what it means for your operation.",
+            removed: ['Live and last known state', 'Condition that blocks rentals', 'Trips from vehicle segments'],
+          };
+
+    test(`vehicle intelligence copy and stage points (${locale})`, async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(url, { waitUntil: 'load' });
+      await settle(page);
+
+      const section = page.locator('#vehicle-intelligence');
+      await expect(section.locator('.eyebrow')).toHaveText(expected.eyebrow);
+      await expect(section.getByRole('heading', { level: 2 })).toHaveText(expected.title);
+      await expect(section.locator('.stage__notes li')).toHaveCount(3);
+      await expect(section.locator('.stage__notes h3')).toHaveText(expected.points);
+      await expect(section.locator('.stage__closing')).toHaveText(expected.closing);
+
+      const sectionText = await section.innerText();
+      for (const title of expected.removed) {
+        expect(sectionText).not.toContain(title);
+      }
+    });
+  }
+
+  for (const locale of ['de', 'en'] as const) {
+    const url = locale === 'de' ? '/' : '/en/';
 
     test(`P2.4 vehicle mobile composition invariants (${locale})`, async ({ page }) => {
       for (const width of [...P24_PHONE_WIDTHS, ...P24_TABLET_WIDTHS]) {
@@ -3793,7 +3843,7 @@ test.describe('public landing page', () => {
 
     const metrics = await readPhase2KeyMetrics(page);
     expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(10000);
-    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(10055);
+    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(10550);
     expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeGreaterThan(280);
     expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeLessThanOrEqual(520);
     expect(metrics.platform.frameTopRel!, '390px platform frame top').toBeGreaterThan(250);

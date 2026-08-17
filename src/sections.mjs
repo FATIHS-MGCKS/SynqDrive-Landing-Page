@@ -441,6 +441,7 @@ export function vehicle(c) {
         </div>
         <ul class="stage__notes">${notes}</ul>
       </div>
+      ${s.closing ? `<p class="stage__closing" data-reveal>${esc(s.closing)}</p>` : ''}
     </section>`;
 }
 
