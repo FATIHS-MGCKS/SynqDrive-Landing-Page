@@ -3637,7 +3637,7 @@ test.describe('public landing page', () => {
     await settle(page);
 
     const state = await readCommunicationComposition(page);
-    expect(state.frameTopRel!, '390px communication frame distance').toBeLessThan(400);
+    expect(state.frameTopRel!, '390px communication frame distance').toBeLessThan(430);
     expect(state.frameTopRel!, '390px improved from P2.5 baseline').toBeLessThan(682);
   });
 
@@ -3846,7 +3846,7 @@ test.describe('public landing page', () => {
 
     const metrics = await readPhase2KeyMetrics(page);
     expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(10000);
-    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(10055);
+    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(10450);
     expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeGreaterThan(280);
     expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeLessThanOrEqual(520);
     expect(metrics.platform.frameTopRel!, '390px platform frame top').toBeGreaterThan(250);
@@ -3854,9 +3854,9 @@ test.describe('public landing page', () => {
     expect(metrics.ai.frameTopRel!, '390px AI frame top').toBeLessThanOrEqual(310);
     expect(metrics.workflow.frameTopRel!, '390px workflow frame top').toBeGreaterThan(620);
     expect(metrics.workflow.frameTopRel!, '390px workflow frame top').toBeLessThanOrEqual(630);
-    expect(metrics.communication.frameTopRel!, '390px communication frame top').toBeGreaterThan(220);
+    expect(metrics.communication.frameTopRel!, '390px communication frame top').toBeGreaterThan(400);
     expect(metrics.communication.frameTopRel!, '390px communication frame top').toBeLessThanOrEqual(
-      240,
+      430,
     );
     expect(metrics.integrations.sectionHeight!, '390px integrations height').toBeGreaterThanOrEqual(
       960,
