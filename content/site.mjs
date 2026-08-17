@@ -420,25 +420,25 @@ const en = {
   },
   workflow: {
     id: SECTION_IDS.workflow,
-    eyebrow: null,
-    title: 'Workflow automation',
-    body: 'Operational events become operational reactions. Every automation is versioned, has a risk class and keeps a run history.',
+    eyebrow: 'WORKFLOW AUTOMATION',
+    title: 'When something happens, the next step is already in motion.',
+    body: 'SynqDrive connects events from vehicles, bookings, documents, payments and operational processes with the right next steps. Instead of identifying, assigning and tracking work manually, recurring workflows can be triggered, evaluated and documented automatically. Approvals and risk rules remain part of the process wherever additional control is required.',
     media: MEDIA.workflow,
     mediaAlt:
       'SynqDrive workflow overview listing active automations with their trigger, conditions, actions, risk class and last run result.',
-    chainLabel: 'How an automation runs',
+    chainLabel: 'From event to action',
     chain: [
       {
-        title: 'Trigger',
-        body: 'A booking is returned, a document expires, an invoice runs overdue, vehicle condition turns critical.',
+        title: 'An event starts the process',
+        body: 'A return is completed, a document expires, an invoice becomes overdue or vehicle condition changes. SynqDrive recognises the defined trigger and starts the intended workflow.',
       },
       {
-        title: 'Conditions',
-        body: 'Thresholds and scope decide whether this event applies to this vehicle, station or organisation.',
+        title: 'Rules determine what happens',
+        body: 'Conditions and thresholds determine when and where the workflow applies - for example to a vehicle, booking, location or the entire organisation.',
       },
       {
-        title: 'Action',
-        body: 'Create a task, change vehicle status, raise an alert or notify the responsible team.',
+        title: 'The next step runs automatically',
+        body: 'SynqDrive can create tasks, notify responsible teams, initiate checks, update status or start further defined processes. Where additional control is required, approval remains part of the workflow.',
       },
     ],
   },
@@ -799,25 +799,25 @@ const de = {
   },
   workflow: {
     id: SECTION_IDS.workflow,
-    eyebrow: null,
-    title: 'Workflow-Automatisierung',
-    body: 'Operative Ereignisse werden zu operativen Reaktionen. Jede Automatisierung ist versioniert, hat eine Risikoklasse und führt eine Laufhistorie.',
+    eyebrow: 'WORKFLOW-AUTOMATISIERUNG',
+    title: 'Wenn etwas passiert, läuft der nächste Schritt bereits an.',
+    body: 'SynqDrive verbindet Ereignisse aus Fahrzeugen, Buchungen, Dokumenten, Zahlungen und operativen Prozessen mit den passenden nächsten Schritten. Statt Aufgaben manuell zu erkennen, weiterzugeben und nachzuverfolgen, können wiederkehrende Abläufe automatisch angestoßen, geprüft und dokumentiert werden. Freigaben und Risikoregeln bleiben dort Teil des Prozesses, wo zusätzliche Kontrolle erforderlich ist.',
     media: MEDIA.workflow,
     mediaAlt:
       'SynqDrive Workflow-Übersicht mit aktiven Automatisierungen, ihren Auslösern, Bedingungen, Aktionen, Risikoklassen und letzten Läufen.',
-    chainLabel: 'So läuft eine Automatisierung',
+    chainLabel: 'Vom Ereignis zur Aktion',
     chain: [
       {
-        title: 'Auslöser',
-        body: 'Eine Buchung wird zurückgegeben, ein Dokument läuft ab, eine Rechnung wird überfällig, ein Fahrzeugzustand wird kritisch.',
+        title: 'Ein Ereignis startet den Prozess',
+        body: 'Eine Rückgabe wird abgeschlossen, ein Dokument läuft ab, eine Rechnung wird überfällig oder ein Fahrzeugzustand verändert sich. SynqDrive erkennt den definierten Auslöser und startet den vorgesehenen Ablauf.',
       },
       {
-        title: 'Bedingungen',
-        body: 'Schwellenwerte und Geltungsbereich entscheiden, ob das Ereignis für dieses Fahrzeug, diese Station oder diese Organisation gilt.',
+        title: 'Regeln entscheiden, was passieren soll',
+        body: 'Bedingungen und Schwellenwerte bestimmen, wann und für wen der Workflow gilt - etwa für ein Fahrzeug, eine Buchung, einen Standort oder die gesamte Organisation.',
       },
       {
-        title: 'Aktion',
-        body: 'Aufgabe anlegen, Fahrzeugstatus ändern, Warnung auslösen oder das zuständige Team informieren.',
+        title: 'Der nächste Schritt läuft automatisch',
+        body: 'SynqDrive kann Aufgaben erstellen, Verantwortliche informieren, Prüfungen anstoßen, Status aktualisieren oder weitere definierte Prozesse starten. Wo zusätzliche Kontrolle erforderlich ist, bleibt eine Freigabe Teil des Ablaufs.',
       },
     ],
   },

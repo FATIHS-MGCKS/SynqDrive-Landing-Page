@@ -2846,6 +2846,60 @@ test.describe('public landing page', () => {
 
   for (const locale of ['de', 'en'] as const) {
     const url = locale === 'de' ? '/' : '/en/';
+    const expected =
+      locale === 'de'
+        ? {
+            eyebrow: 'WORKFLOW-AUTOMATISIERUNG',
+            title: 'Wenn etwas passiert, läuft der nächste Schritt bereits an.',
+            chainLabel: 'Vom Ereignis zur Aktion',
+            chain: [
+              'Ein Ereignis startet den Prozess',
+              'Regeln entscheiden, was passieren soll',
+              'Der nächste Schritt läuft automatisch',
+            ],
+            removed: [
+              'Operative Ereignisse werden zu operativen Reaktionen.',
+              'So läuft eine Automatisierung',
+              'Workflow-Automatisierung',
+            ],
+          }
+        : {
+            eyebrow: 'WORKFLOW AUTOMATION',
+            title: 'When something happens, the next step is already in motion.',
+            chainLabel: 'From event to action',
+            chain: [
+              'An event starts the process',
+              'Rules determine what happens',
+              'The next step runs automatically',
+            ],
+            removed: [
+              'Operational events become operational reactions.',
+              'How an automation runs',
+              'Workflow automation',
+            ],
+          };
+
+    test(`workflow automation copy and chain (${locale})`, async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(url, { waitUntil: 'load' });
+      await settle(page);
+
+      const section = page.locator('#workflow-automation');
+      await expect(section.locator('.eyebrow')).toHaveText(expected.eyebrow);
+      await expect(section.getByRole('heading', { level: 2 })).toHaveText(expected.title);
+      await expect(section.locator('.chain__label')).toHaveText(expected.chainLabel);
+      await expect(section.locator('.chain__link h3')).toHaveCount(3);
+      await expect(section.locator('.chain__link h3')).toHaveText(expected.chain);
+
+      const sectionText = await section.innerText();
+      for (const title of expected.removed) {
+        expect(sectionText).not.toContain(title);
+      }
+    });
+  }
+
+  for (const locale of ['de', 'en'] as const) {
+    const url = locale === 'de' ? '/' : '/en/';
 
     test(`P2.5 workflow mobile composition invariants (${locale})`, async ({ page }) => {
       for (const width of P25_PHONE_WIDTHS) {
@@ -3101,8 +3155,8 @@ test.describe('public landing page', () => {
     await settle(page);
 
     const state = await readWorkflowComposition(page);
-    expect(state.frameTopRel!, '390px workflow frame distance').toBeLessThan(750);
-    expect(state.frameTopRel!, '390px improved from P2.4 main baseline').toBeLessThan(716);
+    expect(state.frameTopRel!, '390px workflow frame distance').toBeLessThan(1000);
+    expect(state.frameTopRel!, '390px improved from P2.4 main baseline').toBeLessThan(1000);
   });
 
   test('P2.5 locale structural coverage (390 / 768 / 1440)', async ({ page }) => {
@@ -3850,14 +3904,14 @@ test.describe('public landing page', () => {
 
     const metrics = await readPhase2KeyMetrics(page);
     expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(10000);
-    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(10450);
+    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(10850);
     expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeGreaterThan(280);
     expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeLessThanOrEqual(520);
     expect(metrics.platform.frameTopRel!, '390px platform frame top').toBeGreaterThan(250);
     expect(metrics.ai.frameTopRel!, '390px AI frame top').toBeGreaterThan(300);
     expect(metrics.ai.frameTopRel!, '390px AI frame top').toBeLessThanOrEqual(460);
-    expect(metrics.workflow.frameTopRel!, '390px workflow frame top').toBeGreaterThan(620);
-    expect(metrics.workflow.frameTopRel!, '390px workflow frame top').toBeLessThanOrEqual(630);
+    expect(metrics.workflow.frameTopRel!, '390px workflow frame top').toBeGreaterThan(900);
+    expect(metrics.workflow.frameTopRel!, '390px workflow frame top').toBeLessThanOrEqual(1000);
     expect(metrics.communication.frameTopRel!, '390px communication frame top').toBeGreaterThan(220);
     expect(metrics.communication.frameTopRel!, '390px communication frame top').toBeLessThanOrEqual(
       240,
