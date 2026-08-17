@@ -3320,6 +3320,59 @@ test.describe('public landing page', () => {
 
   for (const locale of ['de', 'en'] as const) {
     const url = locale === 'de' ? '/' : '/en/';
+    const expected =
+      locale === 'de'
+        ? {
+            eyebrow: 'VERNETZTE KUNDENKOMMUNIKATION',
+            title: 'Jede Nachricht. Direkt mit dem richtigen Kontext.',
+            points: [
+              'Jede Nachricht im richtigen Kontext',
+              'Kommunikation zusammenführen',
+              'KI unterstützt beim nächsten Schritt',
+            ],
+            removed: [
+              'Eine Kommunikationsebene',
+              'Jede Nachricht hat Kontext',
+              'Unterstützt, nicht automatisch',
+              'Vernetzte Kundenkommunikation',
+            ],
+          }
+        : {
+            eyebrow: 'CONNECTED CUSTOMER COMMUNICATION',
+            title: 'Every message. With the right context.',
+            points: [
+              'Every message in the right context',
+              'Bring communication together',
+              'AI supports the next step',
+            ],
+            removed: [
+              'One conversation layer',
+              'Every message has context',
+              'Assisted, not automatic',
+              'Connected customer communication',
+            ],
+          };
+
+    test(`connected customer communication copy and points (${locale})`, async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(url, { waitUntil: 'load' });
+      await settle(page);
+
+      const section = page.locator('#communication');
+      await expect(section.locator('.eyebrow')).toHaveText(expected.eyebrow);
+      await expect(section.getByRole('heading', { level: 2 })).toHaveText(expected.title);
+      await expect(section.locator('.notes__item h3')).toHaveCount(3);
+      await expect(section.locator('.notes__item h3')).toHaveText(expected.points);
+
+      const sectionText = await section.innerText();
+      for (const title of expected.removed) {
+        expect(sectionText).not.toContain(title);
+      }
+    });
+  }
+
+  for (const locale of ['de', 'en'] as const) {
+    const url = locale === 'de' ? '/' : '/en/';
 
     test(`P2.6 communication mobile composition invariants (${locale})`, async ({ page }) => {
       for (const width of P26_PHONE_WIDTHS) {
