@@ -382,27 +382,39 @@ const en = {
   },
   ai: {
     id: SECTION_IDS.ai,
-    eyebrow: 'AI orchestration',
-    title: 'AI that works with your operational data',
-    body: 'The assistant answers from the fleet, booking, finance and task data of your own organisation. Every answer names its sources and how fresh the underlying data is.',
+    eyebrow: 'AI ORCHESTRATION',
+    title: 'Ask your operation. SynqDrive knows the context.',
+    body: 'Instead of gathering information from vehicles, bookings, finance and tasks yourself, ask SynqDrive directly. The AI reads relevant operational data together, connects the context and delivers traceable answers and recommendations - with sources, data freshness and human approval where required.',
     media: MEDIA.ai,
     mediaAlt:
       'SynqDrive AI assistant answering an operational question with a structured summary, named data sources and a data freshness note.',
-    flowLabel: 'How an answer is produced',
+    flowLabel: 'How data becomes a decision',
     flow: [
-      { title: 'Signal', body: 'Telemetry, bookings, finance and task events.' },
-      { title: 'Context', body: 'Records are read together across modules.' },
-      { title: 'Recommendation', body: 'A grounded answer with sources and open gaps.' },
-      { title: 'Approved action', body: 'A person decides before anything is changed.' },
+      {
+        title: 'What is happening',
+        body: 'Vehicle data, bookings, finance and open tasks provide the relevant signals from across your operation.',
+      },
+      {
+        title: 'Understand the context',
+        body: 'SynqDrive does not read information in isolation. It connects records across vehicles, bookings and operational processes.',
+      },
+      {
+        title: 'Recommend clearly',
+        body: 'The AI summarises the situation, highlights where action is needed and suggests concrete next steps.',
+      },
+      {
+        title: 'Act with control',
+        body: 'Where an action can be triggered, approvals and risk rules remain part of the process. Your team stays in control.',
+      },
     ],
     governance: [
       {
-        title: 'Grounded, not generated',
-        body: 'Answers are built from tracked records. Missing data is reported instead of filled in.',
+        title: 'Answers grounded in your data',
+        body: 'SynqDrive shows which data an answer is based on and how current it is. Missing information is identified instead of being replaced with assumptions.',
       },
       {
-        title: 'People stay in control',
-        body: 'Higher risk automations wait for human approval before they run.',
+        title: 'Your team decides',
+        body: 'AI supports analysis, prioritisation and next steps. Higher-risk decisions follow the required approval process before changes are executed.',
       },
     ],
   },
@@ -750,26 +762,38 @@ const de = {
   ai: {
     id: SECTION_IDS.ai,
     eyebrow: 'KI-Orchestrierung',
-    title: 'KI, die mit Ihren operativen Daten arbeitet',
-    body: 'Der Assistent antwortet aus den Flotten-, Buchungs-, Finanz- und Aufgabendaten Ihrer eigenen Organisation. Jede Antwort nennt ihre Quellen und die Aktualität der Daten.',
+    title: 'Fragen Sie Ihren Betrieb. SynqDrive kennt den Kontext.',
+    body: 'Statt Informationen aus Fahrzeugen, Buchungen, Finanzen und Aufgaben selbst zusammenzusuchen, fragen Sie SynqDrive direkt. Die KI liest relevante operative Daten gemeinsam, erkennt Zusammenhänge und liefert nachvollziehbare Antworten und Empfehlungen - mit Quellen, Datenaktualität und menschlicher Freigabe dort, wo sie erforderlich ist.',
     media: MEDIA.ai,
     mediaAlt:
       'SynqDrive KI-Assistent mit strukturierter Antwort auf eine operative Frage, genannten Datenquellen und Hinweis zur Datenaktualität.',
-    flowLabel: 'So entsteht eine Antwort',
+    flowLabel: 'So wird aus Daten eine Entscheidung',
     flow: [
-      { title: 'Signal', body: 'Telemetrie, Buchungen, Finanzen und Aufgaben.' },
-      { title: 'Kontext', body: 'Datensätze werden modulübergreifend gemeinsam gelesen.' },
-      { title: 'Empfehlung', body: 'Eine belegte Antwort mit Quellen und offenen Lücken.' },
-      { title: 'Freigegebene Aktion', body: 'Ein Mensch entscheidet, bevor etwas verändert wird.' },
+      {
+        title: 'Was gerade passiert',
+        body: 'Fahrzeugdaten, Buchungen, Finanzen und offene Aufgaben liefern die relevanten Signale aus Ihrem Betrieb.',
+      },
+      {
+        title: 'Zusammenhänge verstehen',
+        body: 'SynqDrive betrachtet Informationen nicht isoliert, sondern verbindet sie über Fahrzeuge, Buchungen und operative Prozesse hinweg.',
+      },
+      {
+        title: 'Klar empfehlen',
+        body: 'Die KI fasst die Situation verständlich zusammen, zeigt Handlungsbedarf und schlägt konkrete nächste Schritte vor.',
+      },
+      {
+        title: 'Kontrolliert handeln',
+        body: 'Wo eine Aktion ausgelöst werden kann, bleiben Freigaben und Risikoregeln Teil des Prozesses. Ihr Team behält die Kontrolle.',
+      },
     ],
     governance: [
       {
-        title: 'Belegt statt erfunden',
-        body: 'Antworten entstehen aus erfassten Datensätzen. Fehlende Daten werden benannt, nicht ergänzt.',
+        title: 'Antworten, die auf Ihren Daten beruhen',
+        body: 'SynqDrive zeigt, welche Daten einer Antwort zugrunde liegen und wie aktuell sie sind. Fehlende Informationen werden kenntlich gemacht, statt durch Annahmen ersetzt zu werden.',
       },
       {
-        title: 'Menschen behalten die Kontrolle',
-        body: 'Automatisierungen mit höherem Risiko warten auf eine Freigabe, bevor sie laufen.',
+        title: 'Ihr Team entscheidet',
+        body: 'KI unterstützt bei Analyse, Priorisierung und nächsten Schritten. Entscheidungen mit höherem Risiko folgen den vorgesehenen Freigaben, bevor Änderungen ausgeführt werden.',
       },
     ],
   },
