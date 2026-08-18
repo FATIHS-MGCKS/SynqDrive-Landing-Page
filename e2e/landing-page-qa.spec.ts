@@ -456,10 +456,10 @@ test.describe('public landing page', () => {
     await rentalTrigger.click();
     await expect(rentalTrigger).toHaveAttribute('aria-expanded', 'true');
     await expect(rental).toHaveAttribute('data-expanded', 'true');
-    await expect(rental.locator('.use-case-card__features li')).toHaveCount(3);
+    await expect(rental.locator('.use-case-card__features li')).toHaveCount(4);
 
     const expandedHeight = await rental.evaluate((node) => node.getBoundingClientRect().height);
-    expect(expandedHeight).toBeGreaterThan(520);
+    expect(expandedHeight).toBeGreaterThan(560);
 
     await fleet.locator('.use-case-card__trigger').click();
     await expect(rentalTrigger).toHaveAttribute('aria-expanded', 'false');
@@ -484,6 +484,55 @@ test.describe('public landing page', () => {
     });
     await expect(rental).not.toHaveAttribute('data-expanded', 'true');
     await expect(rental.locator('.use-case-card__trigger')).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  test('use cases mobile expanded content shows four features per card', async ({ page }) => {
+    await page.setViewportSize({ width: 375, height: 812 });
+    await page.goto('/en/', { waitUntil: 'load' });
+    await settle(page);
+
+    const cards = page.locator('#use-cases .use-case-card');
+    await expect(cards).toHaveCount(5);
+
+    for (let index = 0; index < 5; index += 1) {
+      const card = cards.nth(index);
+      const trigger = card.locator('.use-case-card__trigger');
+      await trigger.click();
+      await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+      await expect(card.locator('.use-case-card__features li')).toHaveCount(4);
+      await trigger.click();
+      await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+    }
+  });
+
+  test('use cases desktop never exposes expanded feature panels', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 900 });
+
+    for (const url of ['/', '/en/'] as const) {
+      await page.goto(url, { waitUntil: 'load' });
+      await settle(page);
+
+      const cards = page.locator('#use-cases .use-case-card');
+      await expect(cards).toHaveCount(5);
+
+      for (let index = 0; index < 5; index += 1) {
+        const card = cards.nth(index);
+        await expect(card.locator('.use-case-card__panel')).toBeHidden();
+        await expect(card.locator('.use-case-card__features')).toBeHidden();
+      }
+
+      const forbiddenClaims = await page.locator('#use-cases').evaluate((section) => {
+        const text = section.textContent ?? '';
+        return [
+          /Dispatching/i.test(text),
+          /plan and dispatch recurring journeys/i.test(text),
+          /Coordinate vehicles, routes and dispatch/i.test(text),
+          /planen und disponieren/i.test(text),
+          /Touren und Dispatching/i.test(text),
+        ].some(Boolean);
+      });
+      expect(forbiddenClaims).toBe(false);
+    }
   });
 
   test('use cases responsive composition', async ({ page }) => {
@@ -548,6 +597,56 @@ test.describe('public landing page', () => {
       }
     }
   });
+
+  for (const locale of ['de', 'en'] as const) {
+    const url = locale === 'de' ? '/' : '/en/';
+    const expected =
+      locale === 'de'
+        ? {
+            eyebrow: 'VOLLSTÄNDIG VERNETZTE MOBILITY OPERATIONS',
+            title: 'Alles, was Ihr Betrieb braucht. Vollständig vernetzt.',
+            cards: [
+              'Eine Plattform für den gesamten Betrieb',
+              'Fahrzeuge verstehen. Früher handeln.',
+              'Abläufe automatisch ausführen',
+              'KI, die im Betrieb mitarbeitet',
+            ],
+            removed: [
+              'Gemeinsame Datenbasis',
+              'Ein operativer Kontext',
+              'Weniger Systembrüche',
+              'Abgegrenzter Zugriff',
+            ],
+          }
+        : {
+            eyebrow: 'FULLY CONNECTED MOBILITY OPERATIONS',
+            title: 'Everything your operation needs. Fully connected.',
+            cards: [
+              'One platform for the entire operation',
+              'Understand vehicles. Act earlier.',
+              'Run workflows automatically',
+              'AI that works inside your operation',
+            ],
+            removed: ['Shared data model', 'One operational context', 'Fewer system breaks', 'Scoped access'],
+          };
+
+    test(`unified platform copy and capability grid (${locale})`, async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(url, { waitUntil: 'load' });
+      await settle(page);
+
+      const section = page.locator('#platform');
+      await expect(section.locator('.eyebrow')).toHaveText(expected.eyebrow);
+      await expect(section.getByRole('heading', { level: 2 })).toHaveText(expected.title);
+      await expect(section.locator('.capability')).toHaveCount(4);
+      await expect(section.locator('.capability h3')).toHaveText(expected.cards);
+
+      const sectionText = await section.innerText();
+      for (const title of expected.removed) {
+        expect(sectionText).not.toContain(title);
+      }
+    });
+  }
 
   for (const locale of ['de', 'en'] as const) {
     const spec = PLATFORM_NAV[locale];
@@ -2500,6 +2599,56 @@ test.describe('public landing page', () => {
 
   for (const locale of ['de', 'en'] as const) {
     const url = locale === 'de' ? '/' : '/en/';
+    const expected =
+      locale === 'de'
+        ? {
+            eyebrow: 'VERNETZTE FAHRZEUGINTELLIGENZ',
+            title: 'Wissen, was mit Ihrer Flotte passiert. Und wo Sie handeln sollten.',
+            points: [
+              'Fahrzeugzustand wirklich verstehen',
+              'Wartungsbedarf früher erkennen',
+              'Fahrverhalten im Kontext analysieren',
+            ],
+            closing: 'Nicht nur Fahrzeugdaten sehen. Verstehen, was sie für Ihren Betrieb bedeuten.',
+            removed: [
+              'Live und letzter bekannter Stand',
+              'Zustand, der Vermietung blockiert',
+              'Fahrten aus Fahrzeugsegmenten',
+            ],
+          }
+        : {
+            eyebrow: 'CONNECTED VEHICLE INTELLIGENCE',
+            title: 'Know what is happening across your fleet. And where action is needed.',
+            points: [
+              'Understand vehicle condition',
+              'Identify maintenance needs earlier',
+              'Analyse driving behaviour in context',
+            ],
+            closing: "Don't just see vehicle data. Understand what it means for your operation.",
+            removed: ['Live and last known state', 'Condition that blocks rentals', 'Trips from vehicle segments'],
+          };
+
+    test(`vehicle intelligence copy and stage points (${locale})`, async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(url, { waitUntil: 'load' });
+      await settle(page);
+
+      const section = page.locator('#vehicle-intelligence');
+      await expect(section.locator('.eyebrow')).toHaveText(expected.eyebrow);
+      await expect(section.getByRole('heading', { level: 2 })).toHaveText(expected.title);
+      await expect(section.locator('.stage__notes li')).toHaveCount(3);
+      await expect(section.locator('.stage__notes h3')).toHaveText(expected.points);
+      await expect(section.locator('.stage__closing')).toHaveText(expected.closing);
+
+      const sectionText = await section.innerText();
+      for (const title of expected.removed) {
+        expect(sectionText).not.toContain(title);
+      }
+    });
+  }
+
+  for (const locale of ['de', 'en'] as const) {
+    const url = locale === 'de' ? '/' : '/en/';
 
     test(`P2.4 vehicle mobile composition invariants (${locale})`, async ({ page }) => {
       for (const width of [...P24_PHONE_WIDTHS, ...P24_TABLET_WIDTHS]) {
@@ -3846,7 +3995,7 @@ test.describe('public landing page', () => {
 
     const metrics = await readPhase2KeyMetrics(page);
     expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(10000);
-    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(10450);
+    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(11250);
     expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeGreaterThan(280);
     expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeLessThanOrEqual(520);
     expect(metrics.platform.frameTopRel!, '390px platform frame top').toBeGreaterThan(250);
