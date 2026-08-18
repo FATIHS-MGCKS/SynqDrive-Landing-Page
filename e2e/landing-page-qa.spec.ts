@@ -4052,11 +4052,7 @@ test.describe('public landing page', () => {
 
     const metrics = await readPhase2KeyMetrics(page);
     expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(10000);
-<<<<<<< HEAD
     expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(11250);
-=======
-    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(10450);
->>>>>>> origin/cursor/ai-orchestration-copy-1eee
     expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeGreaterThan(280);
     expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeLessThanOrEqual(520);
     expect(metrics.platform.frameTopRel!, '390px platform frame top').toBeGreaterThan(250);
