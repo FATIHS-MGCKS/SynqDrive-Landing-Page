@@ -544,7 +544,9 @@ test.describe('public landing page', () => {
       await settle(page);
 
       const geometry = await page.locator('#use-cases').evaluate((section) => {
+        const head = section.querySelector('.section-head');
         const cards = Array.from(section.querySelectorAll('.use-case-card'));
+        const headRect = head?.getBoundingClientRect();
         const rects = cards.map((card) => {
           const rect = card.getBoundingClientRect();
           return {
@@ -558,6 +560,7 @@ test.describe('public landing page', () => {
         return {
           clientWidth: document.documentElement.clientWidth,
           scrollWidth: document.documentElement.scrollWidth,
+          headTop: headRect ? Math.round(headRect.top) : null,
           rects,
         };
       });
@@ -582,18 +585,25 @@ test.describe('public landing page', () => {
             `${width}px single column width`,
           ).toBeLessThanOrEqual(1);
         }
-      } else if (width <= 1024) {
+      } else if (width < 1024) {
         expect(geometry.rects[0].width, `${width}px lead full width`).toBeGreaterThan(
           geometry.rects[1].width * 1.8,
         );
         expect(Math.abs(geometry.rects[1].top - geometry.rects[2].top)).toBeLessThanOrEqual(1);
         expect(Math.abs(geometry.rects[3].top - geometry.rects[4].top)).toBeLessThanOrEqual(1);
       } else {
+        expect(geometry.headTop, `${width}px headline present`).not.toBeNull();
+        expect(
+          Math.abs(geometry.headTop! - geometry.rects[1].top),
+          `${width}px headline aligns with right grid top`,
+        ).toBeLessThanOrEqual(2);
         expect(geometry.rects[0].left).toBeLessThan(geometry.rects[1].left);
-        expect(Math.abs(geometry.rects[0].top - geometry.rects[1].top)).toBeLessThanOrEqual(1);
         expect(Math.abs(geometry.rects[1].top - geometry.rects[2].top)).toBeLessThanOrEqual(1);
         expect(Math.abs(geometry.rects[3].top - geometry.rects[4].top)).toBeLessThanOrEqual(1);
-        expect(Math.abs(geometry.rects[0].bottom - geometry.rects[4].bottom)).toBeLessThanOrEqual(2);
+        expect(
+          Math.abs(geometry.rects[0].bottom - geometry.rects[4].bottom),
+          `${width}px rental bottom aligns with right grid bottom`,
+        ).toBeLessThanOrEqual(2);
       }
     }
   });

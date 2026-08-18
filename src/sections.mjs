@@ -323,66 +323,69 @@ function useCaseFeatures(features) {
   return `<ul class="use-case-card__features">${items}</ul>`;
 }
 
+function useCaseCard(s, item, index) {
+  const media = item.media;
+  const cardId = `${s.id}-${item.key}`;
+  const status = item.status ? `<span class="use-case-card__status">${esc(item.status)}</span>` : '';
+  const leadClass = index === 0 ? ' use-case-card--lead' : '';
+  const features = useCaseFeatures(item.features);
+
+  return `<li
+      class="use-case-card use-case-card--${esc(item.key)}${leadClass}"
+      data-use-case-card="${esc(item.key)}"
+      data-reveal
+    >
+      <button
+        type="button"
+        class="use-case-card__trigger"
+        id="${esc(cardId)}-trigger"
+        aria-expanded="false"
+        aria-controls="${esc(cardId)}-panel"
+      >
+        <div class="use-case-card__media">
+          <img
+            src="/assets/${esc(media.file)}.webp"
+            width="${media.width}"
+            height="${media.height}"
+            alt="${esc(item.mediaAlt)}"
+            loading="lazy"
+            decoding="async"
+          />
+        </div>
+        <div class="use-case-card__content">
+          <div class="use-case-card__heading">
+            <h3 id="${esc(cardId)}-title">${esc(item.title)}</h3>
+            ${status}
+            <span class="use-case-card__chevron" aria-hidden="true">${icon('chevron-down')}</span>
+          </div>
+          <p class="use-case-card__intro">${esc(item.body)}</p>
+        </div>
+      </button>
+      <div
+        class="use-case-card__panel"
+        id="${esc(cardId)}-panel"
+        role="region"
+        aria-labelledby="${esc(cardId)}-title"
+        hidden
+        inert
+      >
+        <div class="use-case-card__panel-inner">${features}</div>
+      </div>
+    </li>`;
+}
+
 export function useCases(c) {
   const s = c.useCases;
-  const items = s.items
-    .map((item, index) => {
-      const media = item.media;
-      const cardId = `${s.id}-${item.key}`;
-      const status = item.status
-        ? `<span class="use-case-card__status">${esc(item.status)}</span>`
-        : '';
-      const leadClass = index === 0 ? ' use-case-card--lead' : '';
-      const features = useCaseFeatures(item.features);
-
-      return `<li
-          class="use-case-card use-case-card--${esc(item.key)}${leadClass}"
-          data-use-case-card="${esc(item.key)}"
-          data-reveal
-        >
-          <button
-            type="button"
-            class="use-case-card__trigger"
-            id="${esc(cardId)}-trigger"
-            aria-expanded="false"
-            aria-controls="${esc(cardId)}-panel"
-          >
-            <div class="use-case-card__media">
-              <img
-                src="/assets/${esc(media.file)}.webp"
-                width="${media.width}"
-                height="${media.height}"
-                alt="${esc(item.mediaAlt)}"
-                loading="lazy"
-                decoding="async"
-              />
-            </div>
-            <div class="use-case-card__content">
-              <div class="use-case-card__heading">
-                <h3 id="${esc(cardId)}-title">${esc(item.title)}</h3>
-                ${status}
-                <span class="use-case-card__chevron" aria-hidden="true">${icon('chevron-down')}</span>
-              </div>
-              <p class="use-case-card__intro">${esc(item.body)}</p>
-            </div>
-          </button>
-          <div
-            class="use-case-card__panel"
-            id="${esc(cardId)}-panel"
-            role="region"
-            aria-labelledby="${esc(cardId)}-title"
-            hidden
-            inert
-          >
-            <div class="use-case-card__panel-inner">${features}</div>
-          </div>
-        </li>`;
-    })
-    .join('');
+  const [lead, ...aside] = s.items;
 
   return `<section class="section use-cases" id="${s.id}" aria-labelledby="${s.id}-title">
-      ${sectionHead({ eyebrow: null, title: s.title, body: s.body, id: s.id })}
-      <ul class="use-cases__grid">${items}</ul>
+      <div class="use-cases__layout">
+        <div class="use-cases__primary">
+          ${sectionHead({ eyebrow: null, title: s.title, body: s.body, id: s.id })}
+          <ul class="use-cases__lead">${useCaseCard(s, lead, 0)}</ul>
+        </div>
+        <ul class="use-cases__aside">${aside.map((item, index) => useCaseCard(s, item, index + 1)).join('')}</ul>
+      </div>
     </section>`;
 }
 
