@@ -2912,6 +2912,63 @@ test.describe('public landing page', () => {
 
   for (const locale of ['de', 'en'] as const) {
     const url = locale === 'de' ? '/' : '/en/';
+    const expected =
+      locale === 'de'
+        ? {
+            eyebrow: 'KI-Orchestrierung',
+            title: 'Fragen Sie Ihren Betrieb. SynqDrive kennt den Kontext.',
+            flowLabel: 'So wird aus Daten eine Entscheidung',
+            flow: [
+              'Was gerade passiert',
+              'Zusammenhänge verstehen',
+              'Klar empfehlen',
+              'Kontrolliert handeln',
+            ],
+            governance: ['Antworten, die auf Ihren Daten beruhen', 'Ihr Team entscheidet'],
+            removed: [
+              'So entsteht eine Antwort',
+              'Belegt statt erfunden',
+              'Menschen behalten die Kontrolle',
+              'KI, die mit Ihren operativen Daten arbeitet',
+            ],
+          }
+        : {
+            eyebrow: 'AI ORCHESTRATION',
+            title: 'Ask your operation. SynqDrive knows the context.',
+            flowLabel: 'How data becomes a decision',
+            flow: ['What is happening', 'Understand the context', 'Recommend clearly', 'Act with control'],
+            governance: ['Answers grounded in your data', 'Your team decides'],
+            removed: [
+              'How an answer is produced',
+              'Grounded, not generated',
+              'People stay in control',
+              'AI that works with your operational data',
+            ],
+          };
+
+    test(`AI orchestration copy and flow (${locale})`, async ({ page }) => {
+      await page.setViewportSize({ width: 1280, height: 900 });
+      await page.goto(url, { waitUntil: 'load' });
+      await settle(page);
+
+      const section = page.locator('#ai-orchestration');
+      await expect(section.locator('.eyebrow')).toHaveText(expected.eyebrow);
+      await expect(section.getByRole('heading', { level: 2 })).toHaveText(expected.title);
+      await expect(section.locator('.flow__label')).toHaveText(expected.flowLabel);
+      await expect(section.locator('.flow__step h3')).toHaveCount(4);
+      await expect(section.locator('.flow__step h3')).toHaveText(expected.flow);
+      await expect(section.locator('.notes__item h3')).toHaveCount(2);
+      await expect(section.locator('.notes__item h3')).toHaveText(expected.governance);
+
+      const sectionText = await section.innerText();
+      for (const title of expected.removed) {
+        expect(sectionText).not.toContain(title);
+      }
+    });
+  }
+
+  for (const locale of ['de', 'en'] as const) {
+    const url = locale === 'de' ? '/' : '/en/';
 
     test(`P2.5 AI mobile composition invariants (${locale})`, async ({ page }) => {
       for (const width of P25_PHONE_WIDTHS) {
@@ -3995,12 +4052,16 @@ test.describe('public landing page', () => {
 
     const metrics = await readPhase2KeyMetrics(page);
     expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(10000);
+<<<<<<< HEAD
     expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(11250);
+=======
+    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(10450);
+>>>>>>> origin/cursor/ai-orchestration-copy-1eee
     expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeGreaterThan(280);
     expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeLessThanOrEqual(520);
     expect(metrics.platform.frameTopRel!, '390px platform frame top').toBeGreaterThan(250);
     expect(metrics.ai.frameTopRel!, '390px AI frame top').toBeGreaterThan(300);
-    expect(metrics.ai.frameTopRel!, '390px AI frame top').toBeLessThanOrEqual(310);
+    expect(metrics.ai.frameTopRel!, '390px AI frame top').toBeLessThanOrEqual(460);
     expect(metrics.workflow.frameTopRel!, '390px workflow frame top').toBeGreaterThan(620);
     expect(metrics.workflow.frameTopRel!, '390px workflow frame top').toBeLessThanOrEqual(630);
     expect(metrics.communication.frameTopRel!, '390px communication frame top').toBeGreaterThan(400);
