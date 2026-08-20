@@ -11,6 +11,12 @@
 
   var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+  /* Flatten stale split hero markup when edge cache serves older HTML. */
+  var heroBody = document.querySelector('.hero .hero__body');
+  if (heroBody && heroBody.querySelector('.hero__body-secondary')) {
+    heroBody.textContent = heroBody.textContent.replace(/\s+/g, ' ').trim();
+  }
+
   /* ── Sticky masthead hairline ─────────────────────────────────────────── */
 
   var masthead = document.querySelector('[data-masthead]');

@@ -49,14 +49,16 @@ const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = path.join(ROOT, 'src');
 const DIST = path.join(ROOT, 'dist');
 
-/** Preloaded because it is the largest contentful paint on every page. */
-const HERO_BG = locales[0].hero.background;
+/** Runtime paths still referenced by cached locale HTML in the wild. */
+const LEGACY_RUNTIME_ALIASES = ['styles.48fed002b23d.css', 'script.f02f7dcbd4a4.js'];
+/** Keep serving updated JS at the legacy path; drop legacy CSS so stale HTML hits styles.css?v= retry. */
+const LEGACY_RUNTIME_JS_ALIAS = 'script.f02f7dcbd4a4.js';
 
-/** Fixed 1200x630 JPEG, see the social card target in build-assets.mjs. */
-const SOCIAL_CARD = { url: `${SITE.origin}/assets/landing-social-card.jpg`, width: 1200, height: 630 };
+/** @param {{ cssHref: string; jsHref: string }} assets */
+function htaccessContent(assets) {
+  return `# SynqDrive landing page — never edge-cache locale HTML or fingerprinted runtime assets.
+Redirect 302 /${LEGACY_RUNTIME_JS_ALIAS} ${assets.jsHref}
 
-/** Keep locale HTML fresh; fingerprinted CSS/JS may stay long-lived. */
-const HTML_CACHE_HEADERS = `# SynqDrive landing page — locale HTML must never be edge-cached.
 <IfModule mod_headers.c>
   <FilesMatch "index\\.html$">
     Header set Cache-Control "no-store, no-cache, must-revalidate, max-age=0"
@@ -64,16 +66,31 @@ const HTML_CACHE_HEADERS = `# SynqDrive landing page — locale HTML must never 
     Header set Expires "0"
     Header set Vary "Accept-Encoding"
   </FilesMatch>
+  <FilesMatch "\\.(css|js)$">
+    Header set Cache-Control "no-cache, must-revalidate, max-age=0"
+    Header set Pragma "no-cache"
+    Header set Expires "0"
+    Header set Vary "Accept-Encoding"
+  </FilesMatch>
 </IfModule>
 
 <IfModule LiteSpeed>
+  CacheLookup off
   RewriteEngine On
   RewriteRule ^(en/)?index\\.html$ - [E=cache-control:no-cache,E=no-brotli:1]
-  <FilesMatch "index\\.html$">
+  RewriteRule \\.(css|js)$ - [E=no-brotli:1,E=cache-control:no-cache]
+  <FilesMatch "(index\\.html|\\.css$|\\.js$)">
     Cache-Control no-cache
   </FilesMatch>
 </IfModule>
 `;
+}
+
+/** Preloaded because it is the largest contentful paint on every page. */
+const HERO_BG = locales[0].hero.background;
+
+/** Fixed 1200x630 JPEG, see the social card target in build-assets.mjs. */
+const SOCIAL_CARD = { url: `${SITE.origin}/assets/landing-social-card.jpg`, width: 1200, height: 630 };
 
 /**
  * Minimal inline safety net when the external stylesheet fails to load.
@@ -91,6 +108,12 @@ const CATASTROPHIC_FALLBACK_STYLE = [
   '.skip-link:focus-visible{top:14px}',
   '.nav-panel[inert]{display:none}',
 ].join('');
+
+/** Inline fix when edge cache serves pre-merge hero markup without refreshed CSS/JS. */
+const HERO_STALE_HTML_FIX_STYLE =
+  '.hero__body .hero__body-line,.hero__body .hero__body-primary,.hero__body .hero__body-secondary,.hero__body .hero__body-lead,.hero__body .hero__body-tail{display:inline}.hero__body .hero__body-primary,.hero__body .hero__body-lead{color:#111827;font-weight:550}.hero__body .hero__body-secondary,.hero__body .hero__body-tail{margin-top:0;color:#6b7280;font-size:inherit;line-height:inherit;font-weight:500}.hero__body .hero__body-line::after{content:" ";white-space:pre}';
+const HERO_STALE_HTML_FIX_SCRIPT =
+  '(function(){var b=document.querySelector(".hero .hero__body");if(!b||!b.querySelector(".hero__body-secondary"))return;b.textContent=b.textContent.replace(/\\s+/g," ").trim();})();';
 
 function stylesheetRecoveryScript(assets) {
   return `(function(){var primary=${JSON.stringify(assets.cssHref)};var fingerprint=${JSON.stringify(assets.cssFingerprint)};var link=document.querySelector('link[data-synqdrive-primary-stylesheet]');if(!link||link.getAttribute('href')!==primary)return;var retried=false;link.addEventListener('error',function(){if(retried)return;retried=true;var retry=document.createElement('link');retry.rel='stylesheet';retry.href='/styles.css?v='+encodeURIComponent(fingerprint);retry.setAttribute('data-synqdrive-stylesheet-retry','');link.after(retry);});})();`;
@@ -194,6 +217,8 @@ function document(locale, assets) {
       fetchpriority="high"
     />
     <style id="synqdrive-catastrophic-fallback">${CATASTROPHIC_FALLBACK_STYLE}</style>
+    <style id="synqdrive-hero-stale-html-fix">${HERO_STALE_HTML_FIX_STYLE}</style>
+    <script>${HERO_STALE_HTML_FIX_SCRIPT}</script>
     <link rel="stylesheet" href="${assets.cssHref}" data-synqdrive-primary-stylesheet />
     <script>${stylesheetRecoveryScript(assets)}</script>
     <script>
@@ -307,10 +332,11 @@ async function main() {
   await writeRuntimeAsset(DIST, jsName, jsContent);
   await writeCompatibilityAlias(DIST, 'styles.css', cssContent);
   await writeCompatibilityAlias(DIST, 'script.js', jsContent);
+  await writeCompatibilityAlias(DIST, LEGACY_RUNTIME_JS_ALIAS, jsContent);
   await copyPublicAssets(path.join(ROOT, 'assets'), path.join(DIST, 'assets'));
   await writeFile(path.join(DIST, 'robots.txt'), robots(), 'utf8');
   await writeFile(path.join(DIST, 'sitemap.xml'), sitemap(), 'utf8');
-  await writeFile(path.join(DIST, '.htaccess'), HTML_CACHE_HEADERS, 'utf8');
+  await writeFile(path.join(DIST, '.htaccess'), htaccessContent(assets), 'utf8');
 
   for (const locale of locales) {
     const html = await readFile(path.join(DIST, locale.dir, 'index.html'), 'utf8');
