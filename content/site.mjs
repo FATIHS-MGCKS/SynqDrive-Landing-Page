@@ -66,10 +66,10 @@ const MEDIA = {
     mobile: { file: 'landing-hero-operations-mobile', width: 968, height: 1104 },
   },
   heroBackground: {
-    file: 'landing-hero-fleet-background.2318cc94ef18',
+    file: 'landing-hero-fleet-background.42292610a7fd',
     width: 1672,
     height: 941,
-    mobile: { file: 'landing-hero-fleet-background-mobile', width: 1049, height: 1499 },
+    mobile: { file: 'landing-hero-fleet-background-mobile.51d351f648ec', width: 1122, height: 1402 },
   },
   useCases: {
     rental: {
