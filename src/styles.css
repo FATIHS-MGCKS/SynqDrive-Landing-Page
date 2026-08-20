@@ -560,9 +560,10 @@ svg {
 }
 
 .mobilenav__topbar {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  justify-content: flex-end;
   gap: 16px;
   flex: 0 0 auto;
   height: var(--masthead-h);
@@ -584,6 +585,9 @@ svg {
 }
 
 .mobilenav__brand {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
   min-height: 44px;
 }
 
@@ -2350,8 +2354,15 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .masthead__inner {
+    position: relative;
     gap: 16px;
-    justify-content: space-between;
+    justify-content: flex-end;
+  }
+
+  .masthead__inner > .brand {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
   }
 
   .brand img {
