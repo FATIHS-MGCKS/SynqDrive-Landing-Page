@@ -253,8 +253,10 @@ const en = {
       main: 'Everything your fleet needs.',
       emphasis: 'In real time.',
     },
-    body:
-      'SynqDrive connects vehicles, processes and AI in one platform for automated workflows, greater efficiency, better utilisation and less effort in day-to-day operations.',
+    body: {
+      lead: 'Connect vehicles, processes and AI in one platform',
+      rest: ' for automated workflows, greater efficiency, better utilisation and less effort in day-to-day operations.',
+    },
     primary: 'Book a demo',
     secondary: 'See the platform',
     background: MEDIA.heroBackground,
@@ -705,8 +707,10 @@ const de = {
       main: 'Alles, was Ihre Flotte braucht.',
       emphasis: 'In Echtzeit.',
     },
-    body:
-      'SynqDrive verbindet Fahrzeuge, Prozesse und KI in einer Plattform für automatisierte Abläufe, Effizienzsteigerung, bessere Auslastung und weniger Aufwand im Tagesgeschäft.',
+    body: {
+      lead: 'Verbinden Sie Fahrzeuge, Prozesse und KI in einer Plattform',
+      rest: ' für automatisierte Abläufe, höhere Effizienz, bessere Auslastung und weniger Aufwand im Tagesgeschäft.',
+    },
     primary: 'Demo anfragen',
     secondary: 'Plattform entdecken',
     background: MEDIA.heroBackground,

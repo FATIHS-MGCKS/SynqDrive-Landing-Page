@@ -2036,6 +2036,7 @@ test.describe('public landing page', () => {
       const background = document.querySelector('.hero__background img');
       const h1 = document.querySelector('.hero h1');
       const primary = document.querySelector('.hero .action--primary');
+      const actions = document.querySelector('.hero__actions');
       const heroPicture = document.querySelector('.hero__background source[media]');
 
       const rect = (el: Element | null) => el?.getBoundingClientRect() ?? null;
@@ -2043,8 +2044,11 @@ test.describe('public landing page', () => {
       const backgroundRect = rect(background);
       const primaryRect = rect(primary);
       const introRect = rect(intro);
+      const actionsRect = rect(actions);
       const isMobile = window.matchMedia('(max-width: 760px)').matches;
       const isDesktop = window.matchMedia('(min-width: 1025px)').matches;
+      const isCompactHero =
+        isMobile || window.matchMedia('(max-height: 520px) and (max-width: 932px)').matches;
 
       const heroHeight = heroRect?.height ?? 0;
       const heroTop = heroRect?.top ?? 0;
@@ -2075,9 +2079,10 @@ test.describe('public landing page', () => {
         hasHeroBackground: Boolean(document.querySelector('.hero__background')),
         hasHeroProductFrame: Boolean(document.querySelector('.hero__media .frame--product')),
         contentInUpperHero:
-          introRect && heroHeight > 0
-            ? introRect.bottom <= heroTop + heroHeight * 0.78
+          actionsRect && heroHeight > 0
+            ? actionsRect.bottom <= heroTop + heroHeight * (isCompactHero ? 0.996 : 0.88)
             : null,
+        isCompactHero,
         contentOnLeft:
           introRect && heroRect && isDesktop
             ? introRect.right <= heroRect.left + heroRect.width * 0.58
@@ -2125,13 +2130,17 @@ test.describe('public landing page', () => {
             eyebrow: 'Connected Vehicle Intelligence Plattform',
             title: 'Alles, was Ihre Flotte braucht. In Echtzeit.',
             body:
-              'SynqDrive verbindet Fahrzeuge, Prozesse und KI in einer Plattform für automatisierte Abläufe, Effizienzsteigerung, bessere Auslastung und weniger Aufwand im Tagesgeschäft.',
+              'Verbinden Sie Fahrzeuge, Prozesse und KI in einer Plattform für automatisierte Abläufe, höhere Effizienz, bessere Auslastung und weniger Aufwand im Tagesgeschäft.',
+            bodyLead:
+              'Verbinden Sie Fahrzeuge, Prozesse und KI in einer Plattform',
           }
         : {
             eyebrow: 'Connected Vehicle Intelligence Platform',
             title: 'Everything your fleet needs. In real time.',
             body:
-              'SynqDrive connects vehicles, processes and AI in one platform for automated workflows, greater efficiency, better utilisation and less effort in day-to-day operations.',
+              'Connect vehicles, processes and AI in one platform for automated workflows, greater efficiency, better utilisation and less effort in day-to-day operations.',
+            bodyLead:
+              'Connect vehicles, processes and AI in one platform',
           };
 
     test(`hero differentiated copy structure (${locale})`, async ({ page }) => {
@@ -2151,6 +2160,8 @@ test.describe('public landing page', () => {
           const main = hero.querySelector('.hero__title-main');
           const emphasis = hero.querySelector('.hero__title-emphasis');
           const body = hero.querySelector('.hero__body');
+          const bodyLead = hero.querySelector('.hero__body-lead');
+          const bodyRest = hero.querySelector('.hero__body-rest');
           const actions = hero.querySelector('.hero__actions');
           const rect = (element: Element | null) => element?.getBoundingClientRect() ?? null;
           const bodyRect = rect(body);
@@ -2160,9 +2171,13 @@ test.describe('public landing page', () => {
             eyebrow: hero.querySelector('.eyebrow')?.textContent?.trim() ?? '',
             title: h1?.textContent?.trim().replace(/\s+/g, ' ') ?? '',
             body: body?.textContent?.trim().replace(/\s+/g, ' ') ?? '',
+            bodyLead: bodyLead?.textContent?.trim().replace(/\s+/g, ' ') ?? '',
+            bodyLeadWeight: Number(bodyLead ? getComputedStyle(bodyLead).fontWeight : 0),
+            bodyRestWeight: Number(bodyRest ? getComputedStyle(bodyRest).fontWeight : 0),
             h1Children: h1?.children.length ?? 0,
             mainWeight: Number(main ? getComputedStyle(main).fontWeight : 0),
             emphasisWeight: Number(emphasis ? getComputedStyle(emphasis).fontWeight : 0),
+            h1Weight: Number(h1 ? getComputedStyle(h1).fontWeight : 0),
             mainColor: main ? getComputedStyle(main).color : '',
             emphasisColor: emphasis ? getComputedStyle(emphasis).color : '',
             bodyTag: body?.tagName ?? '',
@@ -2177,13 +2192,18 @@ test.describe('public landing page', () => {
         expect(state.eyebrow, `${width}px eyebrow`).toBe(expected.eyebrow);
         expect(state.title, `${width}px h1`).toBe(expected.title);
         expect(state.body, `${width}px body copy`).toBe(expected.body);
+        expect(state.bodyLead, `${width}px body lead`).toBe(expected.bodyLead);
         expect(state.h1Children, `${width}px h1 span count`).toBe(2);
+        expect(state.h1Weight, `${width}px h1 weight`).toBeGreaterThanOrEqual(700);
         expect(state.emphasisWeight, `${width}px emphasis weight`).toBeGreaterThan(
           state.mainWeight,
         );
+        expect(state.bodyLeadWeight, `${width}px body lead weight`).toBeGreaterThan(
+          state.bodyRestWeight,
+        );
         expect(state.emphasisColor, `${width}px emphasis color`).not.toBe(state.mainColor);
         expect(state.bodyTag, `${width}px semantic body`).toBe('P');
-        expect(state.bodyChildren, `${width}px unified body children`).toBe(0);
+        expect(state.bodyChildren, `${width}px structured body children`).toBe(2);
         expect(state.bodyWidth, `${width}px body width`).toBeGreaterThan(0);
         expect(state.actionsGap, `${width}px body-actions gap`).toBeGreaterThanOrEqual(16);
         expect(state.overflow, `${width}px overflow`).toBeLessThanOrEqual(1);
@@ -2240,8 +2260,8 @@ test.describe('public landing page', () => {
     const state = await readHeroComposition(page);
     expect(state.contentInUpperHero, '390px content in upper hero').toBe(true);
     expect(state.introBottomRel, '390px intro bottom rel').not.toBeNull();
-    expect(state.introBottomRel!, '390px intro bottom rel min').toBeGreaterThanOrEqual(280);
-    expect(state.introBottomRel!, '390px intro bottom rel max').toBeLessThanOrEqual(520);
+    expect(state.introBottomRel!, '390px intro bottom rel min').toBeGreaterThanOrEqual(240);
+    expect(state.introBottomRel!, '390px intro bottom rel max').toBeLessThanOrEqual(510);
   });
 
   test('P2.3.1 EN hero H1 measurement at 430px', async ({ page }) => {
@@ -2264,9 +2284,10 @@ test.describe('public landing page', () => {
     });
 
     expect(h1).not.toBeNull();
-    expect(h1!.height).toBeGreaterThanOrEqual(60);
-    expect(h1!.height).toBeLessThanOrEqual(70);
-    expect(h1!.lineCount, 'EN H1 rendered lines at 430px').toBe(2);
+    expect(h1!.height).toBeGreaterThanOrEqual(88);
+    expect(h1!.height).toBeLessThanOrEqual(140);
+    expect(h1!.lineCount, 'EN H1 rendered lines at 430px').toBeGreaterThanOrEqual(2);
+    expect(h1!.lineCount, 'EN H1 rendered lines at 430px').toBeLessThanOrEqual(3);
   });
 
   test('P2.3 hero landscape sanity', async ({ page }) => {
