@@ -117,7 +117,7 @@ function structuredData(locale) {
     '@type': 'Organization',
     name: SITE.brand,
     url: `${SITE.origin}${locale.dir}`,
-    logo: `${SITE.origin}/assets/synqdrive-logo.png`,
+    logo: `${SITE.origin}/assets/synqdrive-logo-v2-blau.png`,
     email: SITE.links.email,
     description: locale.meta.description,
   });

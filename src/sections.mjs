@@ -140,7 +140,7 @@ function renderMobileNav(c, other, site) {
       >
         <div class="mobilenav__topbar">
           <a class="brand mobilenav__brand" href="${c.dir}" tabindex="-1" aria-label="${esc(c.nav.home)}">
-            <img src="/assets/synqdrive-logo.png" width="1024" height="216" alt="SynqDrive" />
+            <img src="/assets/synqdrive-logo-v2-blau.png" width="1764" height="254" alt="SynqDrive" />
           </a>
           <button
             type="button"
@@ -213,7 +213,7 @@ export function header(c, other, site) {
   return `<header class="masthead" data-masthead>
       <div class="masthead__inner">
         <a class="brand" href="${c.dir}" aria-label="${esc(c.nav.home)}">
-          <img src="/assets/synqdrive-logo.png" width="1024" height="216" alt="SynqDrive" />
+          <img src="/assets/synqdrive-logo-v2-blau.png" width="1764" height="254" alt="SynqDrive" />
         </a>
 
         <nav class="mainnav mainnav--platform" aria-label="${esc(c.nav.mainLabel)}">
@@ -557,7 +557,7 @@ export function integrations(c) {
       })}
       <div class="hub__diagram">
         <div class="hub__core">
-          <img src="/assets/synqdrive-logo.png" width="1024" height="216" alt="SynqDrive" />
+          <img src="/assets/synqdrive-logo-v2-blau.png" width="1764" height="254" alt="SynqDrive" />
           <p class="hub__core-label">${esc(s.hubLabel)}</p>
         </div>
         <ul class="hub__column hub__column--left">${left}</ul>
@@ -592,7 +592,7 @@ export function footer(c, site) {
   return `<footer class="sitefooter">
       <div class="sitefooter__inner">
         <div class="sitefooter__brand">
-          <img src="/assets/synqdrive-logo.png" width="1024" height="216" alt="SynqDrive" />
+          <img src="/assets/synqdrive-logo-v2-blau.png" width="1764" height="254" alt="SynqDrive" />
           <p>${esc(c.footer.tagline)}</p>
         </div>
         <nav class="sitefooter__columns" aria-label="${esc(c.footer.columnsLabel)}">

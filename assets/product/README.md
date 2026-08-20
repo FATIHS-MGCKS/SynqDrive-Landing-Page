@@ -24,7 +24,7 @@ assets/landing-hero-operations-sm.webp
 assets/landing-hero-operations-mobile.webp
 … (five additional product visuals with -sm and -mobile variants)
 assets/landing-social-card.jpg
-assets/synqdrive-logo.png
+assets/synqdrive-logo-v2-blau.png
 assets/favicon.png
 assets/fonts/
 ```
