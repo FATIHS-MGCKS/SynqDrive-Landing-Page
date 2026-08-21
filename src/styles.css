@@ -2402,7 +2402,7 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .hero__shell {
-    padding-block: clamp(32px, 5.5vw, 44px) clamp(36px, 7vw, 56px);
+    padding-block: clamp(32px, 5.5vw, 44px) clamp(44px, 8vw, 64px);
   }
 
   .hero__background picture,
@@ -2415,11 +2415,11 @@ html[data-nav-scroll-lock='true'] {
   .hero__background img {
     object-fit: cover;
     object-position: center 100%;
-    transform: translateY(4%);
+    transform: translateY(9%);
   }
 
   .hero__intro .eyebrow {
-    margin-bottom: 14px;
+    margin-bottom: 18px;
   }
 
   .hero__intro {
@@ -2434,18 +2434,20 @@ html[data-nav-scroll-lock='true'] {
 
   .hero__title-emphasis {
     display: block;
+    margin-top: 0.14em;
   }
 
   .hero__body {
     max-width: min(34rem, 100%);
     margin-inline: auto;
+    margin-top: 24px;
     font-size: clamp(1.0625rem, 0.98rem + 0.35vw, 1.1875rem);
     line-height: 1.55;
   }
 
   .hero__actions {
     justify-content: center;
-    margin-top: 20px;
+    margin-top: 28px;
   }
 
   .section-body {
@@ -2617,18 +2619,23 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .hero__shell {
-    padding-block: clamp(24px, 4.5vw, 36px) clamp(28px, 6vw, 44px);
+    padding-block: clamp(24px, 4.5vw, 36px) clamp(36px, 7vw, 52px);
   }
 
   .hero__background img {
-    transform: translateY(5%);
+    transform: translateY(11%);
+  }
+
+  .hero__intro .eyebrow {
+    margin-bottom: 20px;
   }
 
   .hero__actions {
-    margin-top: 18px;
+    margin-top: 24px;
   }
 
   .hero__body {
+    margin-top: 22px;
     font-size: clamp(1.0625rem, 0.98rem + 0.4vw, 1.125rem);
     line-height: 1.52;
   }
