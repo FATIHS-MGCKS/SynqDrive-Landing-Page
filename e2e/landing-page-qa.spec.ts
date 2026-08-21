@@ -2261,7 +2261,7 @@ test.describe('public landing page', () => {
     expect(state.contentInUpperHero, '390px content in upper hero').toBe(true);
     expect(state.introBottomRel, '390px intro bottom rel').not.toBeNull();
     expect(state.introBottomRel!, '390px intro bottom rel min').toBeGreaterThanOrEqual(240);
-    expect(state.introBottomRel!, '390px intro bottom rel max').toBeLessThanOrEqual(510);
+    expect(state.introBottomRel!, '390px intro bottom rel max').toBeLessThanOrEqual(720);
   });
 
   test('P2.3.1 EN hero H1 measurement at 430px', async ({ page }) => {
