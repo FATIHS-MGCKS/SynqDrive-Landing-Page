@@ -2402,19 +2402,20 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .hero__shell {
-    padding-block: clamp(32px, 5.5vw, 44px) clamp(48px, 9vw, 72px);
+    padding-block: clamp(32px, 5.5vw, 44px) clamp(36px, 7vw, 56px);
   }
 
   .hero__background picture,
   .hero__background img {
+    width: 100%;
     height: 100%;
     min-height: 0;
   }
 
   .hero__background img {
-    object-fit: contain;
-    object-position: center bottom;
-    transform: none;
+    object-fit: cover;
+    object-position: center 100%;
+    transform: translateY(4%);
   }
 
   .hero__intro .eyebrow {
@@ -2616,7 +2617,11 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .hero__shell {
-    padding-block: clamp(24px, 4.5vw, 36px) clamp(44px, 10vw, 72px);
+    padding-block: clamp(24px, 4.5vw, 36px) clamp(28px, 6vw, 44px);
+  }
+
+  .hero__background img {
+    transform: translateY(5%);
   }
 
   .hero__actions {
