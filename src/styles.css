@@ -2385,15 +2385,10 @@ html[data-nav-scroll-lock='true'] {
     min-height: 100dvh;
   }
 
-  html {
-    scroll-snap-type: y proximity;
-  }
-
   .hero.hero--fleet-background,
   #main > .section,
   #main > .closing {
     min-height: 100svh;
-    scroll-snap-align: start;
   }
 
   #main > .section,
@@ -2410,20 +2405,22 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .hero__shell {
-    flex: 1;
+    flex: 0 0 auto;
+    padding-block: clamp(28px, 5vw, 40px) clamp(12px, 2.5vw, 20px);
+  }
+
+  .hero__background picture {
     display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    padding-block: clamp(28px, 5vw, 40px) clamp(56px, 10vw, 96px);
-  }
-
-  .hero__background picture,
-  .hero__background img {
+    align-items: flex-end;
+    justify-content: center;
     height: 100%;
-    min-height: 0;
   }
 
   .hero__background img {
+    width: 100%;
+    height: auto;
+    max-height: min(52svh, 430px);
+    min-height: 0;
     object-fit: contain;
     object-position: center bottom;
     transform: none;
@@ -2624,7 +2621,15 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .hero__shell {
-    padding-block: clamp(24px, 4.5vw, 36px) clamp(48px, 12vw, 88px);
+    padding-block: clamp(24px, 4.5vw, 36px) clamp(8px, 2vw, 16px);
+  }
+
+  .hero__background img {
+    max-height: min(48svh, 390px);
+  }
+
+  .hero__actions {
+    margin-top: 18px;
   }
 
   .hero__body {
