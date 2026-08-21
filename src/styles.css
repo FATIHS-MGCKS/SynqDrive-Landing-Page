@@ -2398,28 +2398,49 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .hero.hero--fleet-background {
+    display: grid;
+    grid-template-rows: auto auto;
+    align-content: start;
     min-height: clamp(500px, 72svh, 660px);
+    overflow: hidden;
   }
 
   .hero__shell {
-    padding-block: clamp(32px, 5.5vw, 44px) clamp(44px, 8vw, 64px);
+    grid-row: 1;
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    padding-block: clamp(32px, 5.5vw, 44px) 0;
   }
 
-  .hero__background picture,
+  .hero__background {
+    position: relative;
+    inset: auto;
+    grid-row: 2;
+    align-self: end;
+    width: 100%;
+    height: clamp(104px, 22svh, 156px);
+    margin-top: 16px;
+    overflow: hidden;
+  }
+
+  .hero__background picture {
+    display: block;
+    width: 100%;
+    height: 100%;
+  }
+
   .hero__background img {
     width: 100%;
     height: 100%;
     min-height: 0;
-  }
-
-  .hero__background img {
     object-fit: cover;
     object-position: center 100%;
-    transform: translateY(9%);
+    transform: none;
   }
 
   .hero__intro .eyebrow {
-    margin-bottom: 18px;
+    margin-bottom: 24px;
   }
 
   .hero__intro {
@@ -2434,20 +2455,20 @@ html[data-nav-scroll-lock='true'] {
 
   .hero__title-emphasis {
     display: block;
-    margin-top: 0.14em;
+    margin-top: 0.2em;
   }
 
   .hero__body {
     max-width: min(34rem, 100%);
     margin-inline: auto;
-    margin-top: 24px;
+    margin-top: 32px;
     font-size: clamp(1.0625rem, 0.98rem + 0.35vw, 1.1875rem);
     line-height: 1.55;
   }
 
   .hero__actions {
     justify-content: center;
-    margin-top: 28px;
+    margin-top: 36px;
   }
 
   .section-body {
@@ -2619,23 +2640,24 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .hero__shell {
-    padding-block: clamp(24px, 4.5vw, 36px) clamp(36px, 7vw, 52px);
+    padding-block: clamp(24px, 4.5vw, 36px) 0;
   }
 
-  .hero__background img {
-    transform: translateY(11%);
+  .hero__background {
+    height: clamp(92px, 20svh, 140px);
+    margin-top: 20px;
   }
 
   .hero__intro .eyebrow {
-    margin-bottom: 20px;
+    margin-bottom: 26px;
   }
 
   .hero__actions {
-    margin-top: 24px;
+    margin-top: 32px;
   }
 
   .hero__body {
-    margin-top: 22px;
+    margin-top: 28px;
     font-size: clamp(1.0625rem, 0.98rem + 0.4vw, 1.125rem);
     line-height: 1.52;
   }
