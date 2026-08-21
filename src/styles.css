@@ -2414,8 +2414,8 @@ html[data-nav-scroll-lock='true'] {
 
   .hero__background img {
     object-fit: cover;
-    object-position: center 100%;
-    transform: translateY(4%);
+    object-position: center 10%;
+    transform: none;
   }
 
   .hero__intro .eyebrow {
@@ -2621,7 +2621,8 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .hero__background img {
-    transform: translateY(5%);
+    object-position: center 10%;
+    transform: none;
   }
 
   .hero__actions {
