@@ -2385,12 +2385,36 @@ html[data-nav-scroll-lock='true'] {
     min-height: 100dvh;
   }
 
+  html {
+    scroll-snap-type: y proximity;
+  }
+
+  .hero.hero--fleet-background,
+  #main > .section,
+  #main > .closing {
+    min-height: 100svh;
+    scroll-snap-align: start;
+  }
+
+  #main > .section,
+  #main > .closing {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
   .hero.hero--fleet-background {
-    min-height: clamp(520px, 78svh, 720px);
+    min-height: 100svh;
+    display: flex;
+    flex-direction: column;
   }
 
   .hero__shell {
-    padding-block: clamp(32px, 5.5vw, 44px) clamp(72px, 12vw, 112px);
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-block: clamp(28px, 5vw, 40px) clamp(56px, 10vw, 96px);
   }
 
   .hero__background picture,
@@ -2599,12 +2623,8 @@ html[data-nav-scroll-lock='true'] {
     margin-bottom: 16px;
   }
 
-  .hero.hero--fleet-background {
-    min-height: clamp(480px, 74svh, 640px);
-  }
-
   .hero__shell {
-    padding-block: clamp(24px, 4.5vw, 36px) clamp(80px, 16vw, 128px);
+    padding-block: clamp(24px, 4.5vw, 36px) clamp(48px, 12vw, 88px);
   }
 
   .hero__body {

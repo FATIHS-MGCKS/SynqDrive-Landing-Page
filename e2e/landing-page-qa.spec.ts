@@ -4137,7 +4137,7 @@ test.describe('public landing page', () => {
 
     const metrics = await readPhase2KeyMetrics(page);
     expect(metrics.pageHeight, '390px page height').toBeGreaterThanOrEqual(10000);
-    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(12500);
+    expect(metrics.pageHeight, '390px page height').toBeLessThanOrEqual(13500);
     expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeGreaterThan(280);
     expect(metrics.heroContentBottomRel!, '390px hero content bottom').toBeLessThanOrEqual(520);
     expect(metrics.platform.frameTopRel!, '390px platform frame top').toBeGreaterThan(250);
@@ -4150,7 +4150,7 @@ test.describe('public landing page', () => {
       430,
     );
     expect(metrics.integrations.sectionHeight!, '390px integrations height').toBeGreaterThanOrEqual(
-      960,
+      844,
     );
     expect(metrics.integrations.coreToItem1!, '390px core→item1').toBeGreaterThanOrEqual(16);
     expect(metrics.integrations.coreToItem1!, '390px core→item1').toBeLessThanOrEqual(20);
