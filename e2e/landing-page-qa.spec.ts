@@ -2130,17 +2130,17 @@ test.describe('public landing page', () => {
             eyebrow: 'Connected Vehicle Intelligence Plattform',
             title: 'Alles, was Ihre Flotte braucht. In Echtzeit.',
             body:
-              'Verbinden Sie Fahrzeuge, Prozesse und KI in einer Plattform für automatisierte Abläufe, höhere Effizienz, bessere Auslastung und weniger Aufwand im Tagesgeschäft.',
+              'SynqDrive verbindet Fahrzeuge, Prozesse und KI in einer Plattform für automatisierte Abläufe, Effizienzsteigerung, bessere Auslastung und weniger Aufwand im Tagesgeschäft.',
             bodyLead:
-              'Verbinden Sie Fahrzeuge, Prozesse und KI in einer Plattform',
+              'SynqDrive verbindet Fahrzeuge, Prozesse und KI in einer Plattform',
           }
         : {
             eyebrow: 'Connected Vehicle Intelligence Platform',
             title: 'Everything your fleet needs. In real time.',
             body:
-              'Connect vehicles, processes and AI in one platform for automated workflows, greater efficiency, better utilisation and less effort in day-to-day operations.',
+              'SynqDrive connects vehicles, processes and AI in one platform for automated workflows, improved efficiency, better utilisation and less effort in day-to-day operations.',
             bodyLead:
-              'Connect vehicles, processes and AI in one platform',
+              'SynqDrive connects vehicles, processes and AI in one platform',
           };
 
     test(`hero differentiated copy structure (${locale})`, async ({ page }) => {
