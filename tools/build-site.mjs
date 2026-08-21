@@ -152,7 +152,7 @@ function document(locale, assets) {
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta http-equiv="Cache-Control" content="no-cache, must-revalidate, max-age=0" />
-    <meta name="synqdrive-release" content="hero-subline-unified-20260814" />
+    <meta name="synqdrive-release" content="hero-mobile-composition-20260821" />
     <title>${locale.meta.title}</title>
     <meta name="description" content="${locale.meta.description}" />
     <meta name="theme-color" content="#ffffff" />

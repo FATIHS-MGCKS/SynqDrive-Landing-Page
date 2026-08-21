@@ -2398,11 +2398,11 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .hero.hero--fleet-background {
-    min-height: clamp(520px, 78svh, 720px);
+    min-height: clamp(500px, 72svh, 660px);
   }
 
   .hero__shell {
-    padding-block: clamp(32px, 5.5vw, 44px) clamp(56px, 10vw, 88px);
+    padding-block: clamp(32px, 5.5vw, 44px) clamp(48px, 9vw, 72px);
   }
 
   .hero__background picture,
@@ -2612,11 +2612,11 @@ html[data-nav-scroll-lock='true'] {
   }
 
   .hero.hero--fleet-background {
-    min-height: clamp(480px, 74svh, 640px);
+    min-height: clamp(460px, 68svh, 580px);
   }
 
   .hero__shell {
-    padding-block: clamp(24px, 4.5vw, 36px) clamp(56px, 12vw, 88px);
+    padding-block: clamp(24px, 4.5vw, 36px) clamp(44px, 10vw, 72px);
   }
 
   .hero__actions {
